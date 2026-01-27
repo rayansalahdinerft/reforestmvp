@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { TreePine, Leaf, Heart } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { TreePine } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -15,21 +15,49 @@ interface ThirdwebBridgeWidgetProps {
 
 // Fee configuration - 1% (100 basis points) to ReforestWallet
 const FEE_CONFIG = {
-  // Fee in basis points (100 = 1%)
   feeBps: 100,
-  // EVM fee recipient address
   feeRecipient: '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669',
 };
+
+// Cost per tree in USD
+const COST_PER_TREE_USD = 2.5;
 
 const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRenderedRef = useRef(false);
+  const [estimatedTrees, setEstimatedTrees] = useState<number>(0);
+
+  // Calculate trees based on swap amount (observed from widget inputs)
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      // Try to find input values in the widget
+      const inputs = containerRef.current?.querySelectorAll('input');
+      inputs?.forEach(input => {
+        const value = parseFloat(input.value);
+        if (!isNaN(value) && value > 0) {
+          // Estimate USD value (simplified - assumes rough token prices)
+          const estimatedUSD = value * 100; // Placeholder estimation
+          const feeAmount = estimatedUSD * 0.01; // 1% fee
+          const reforestAmount = feeAmount * 0.40; // 40% to reforestation
+          const trees = reforestAmount / COST_PER_TREE_USD;
+          if (trees !== estimatedTrees) {
+            setEstimatedTrees(Math.max(0, trees));
+          }
+        }
+      });
+    });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current, { subtree: true, childList: true, characterData: true });
+    }
+
+    return () => observer.disconnect();
+  }, [estimatedTrees]);
 
   useEffect(() => {
     let mounted = true;
 
     const loadAndRender = async () => {
-      // Check if script already exists
       const existingScript = document.querySelector('script[src*="bridge-widget.js"]');
       
       if (!existingScript) {
@@ -43,7 +71,6 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
         });
       }
 
-      // Wait a bit for the script to initialize
       await new Promise(resolve => setTimeout(resolve, 100));
 
       if (mounted && containerRef.current && window.BridgeWidget && !widgetRenderedRef.current) {
@@ -53,7 +80,6 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
         window.BridgeWidget.render(containerRef.current, {
           clientId: clientId,
           theme: 'dark',
-          // Fee configuration for ReforestWallet (1% fee)
           fee: {
             bps: FEE_CONFIG.feeBps,
             recipient: FEE_CONFIG.feeRecipient,
@@ -71,27 +97,6 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Fee Info Banner - Above Widget */}
-      <div className="mb-4 p-4 rounded-2xl bg-primary/10 border border-primary/20 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-            <TreePine className="w-5 h-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">
-              Pour la planète 🌍
-            </p>
-            <p className="text-xs text-muted-foreground">
-              40% des frais financent la reforestation
-            </p>
-          </div>
-          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/20">
-            <Leaf className="w-3 h-3 text-primary" />
-            <span className="text-xs font-bold text-primary">40%</span>
-          </div>
-        </div>
-      </div>
-
       {/* Thirdweb Widget */}
       <div 
         ref={containerRef} 
@@ -99,20 +104,17 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
         className="min-h-[500px]"
       />
 
-      {/* Impact Info - Below Widget */}
-      <div className="mt-4 p-3 rounded-xl bg-secondary/50 border border-border/50">
-        <div className="flex items-start gap-3">
-          <Heart className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-          <div className="text-xs text-muted-foreground">
-            <p className="mb-1">
-              <span className="text-foreground font-medium">Comment ça marche ?</span>
-            </p>
-            <p>
-              40% des frais de ReforestWallet sont automatiquement reversés à des projets de reforestation. 
-              Swappez en toute tranquillité, on s'occupe de la planète. 🌱
-            </p>
-          </div>
-        </div>
+      {/* Simple footer text */}
+      <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+        <TreePine className="w-4 h-4 text-primary" />
+        <span>
+          40% des frais reversés à notre ONG partenaire
+          {estimatedTrees > 0.01 && (
+            <span className="text-primary font-medium">
+              {' '}• ~{estimatedTrees.toFixed(2)} arbres 🌱
+            </span>
+          )}
+        </span>
       </div>
     </div>
   );
