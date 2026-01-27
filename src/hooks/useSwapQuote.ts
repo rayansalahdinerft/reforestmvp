@@ -10,13 +10,14 @@ export interface SwapQuote {
   estimatedGas: string;
   protocols: string[];
   priceImpact: string;
+  source: 'oneinch' | 'jupiter';
 }
 
 export const useSwapQuote = (
   fromToken: Token | null,
   toToken: Token | null,
   amount: string,
-  chainId: number
+  chainId: number | string
 ) => {
   const [quote, setQuote] = useState<SwapQuote | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,11 @@ export const useSwapQuote = (
       setError(null);
 
       try {
-        const { data, error: fnError } = await supabase.functions.invoke('oneinch-quote', {
+        // Determine which aggregator to use based on chain
+        const isSolana = chainId === 'solana';
+        const endpoint = isSolana ? 'jupiter-quote' : 'oneinch-quote';
+        
+        const { data, error: fnError } = await supabase.functions.invoke(endpoint, {
           body: {
             chainId,
             fromToken: fromToken.address,
@@ -57,6 +62,7 @@ export const useSwapQuote = (
             estimatedGas: data.estimatedGas || '0',
             protocols: data.protocols || [],
             priceImpact: data.priceImpact || '0',
+            source: isSolana ? 'jupiter' : 'oneinch',
           });
         }
       } catch (err) {

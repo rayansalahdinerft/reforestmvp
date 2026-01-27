@@ -8,7 +8,7 @@ interface TokenSelectorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (token: Token) => void;
-  chainId: number;
+  chainId: number | string;
   selectedToken?: Token | null;
 }
 
