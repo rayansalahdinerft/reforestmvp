@@ -1,56 +1,109 @@
-import { useState } from "react";
-import { ArrowUpDown, Info, Leaf } from "lucide-react";
-import { Button } from "./ui/button";
-import TokenSelector from "./TokenSelector";
+import { useState, useEffect } from 'react';
+import { ArrowUpDown, Info, Leaf, Loader2 } from 'lucide-react';
+import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { Button } from './ui/button';
+import TokenSelector from './TokenSelector';
+import TokenSelectorModal from './TokenSelectorModal';
+import ChainSelector from './ChainSelector';
+import { useSwapQuote } from '@/hooks/useSwapQuote';
+import { getTokensForChain, type Token } from '@/config/tokens';
 
 const SwapCard = () => {
-  const [activeTab, setActiveTab] = useState<"swap" | "buy">("swap");
-  const [sellAmount, setSellAmount] = useState("");
-  const [buyAmount, setBuyAmount] = useState("");
+  const [activeTab, setActiveTab] = useState<'swap' | 'buy'>('swap');
+  const [sellAmount, setSellAmount] = useState('');
+  const [sellToken, setSellToken] = useState<Token | null>(null);
+  const [buyToken, setBuyToken] = useState<Token | null>(null);
+  const [chainId, setChainId] = useState(1); // Default to Ethereum
+  const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
+
+  const { isConnected } = useAppKitAccount();
+  const { chainId: walletChainId } = useAppKitNetwork();
+
+  // Sync chain with wallet
+  useEffect(() => {
+    if (walletChainId && typeof walletChainId === 'number') {
+      setChainId(walletChainId);
+    }
+  }, [walletChainId]);
+
+  // Reset tokens when chain changes
+  useEffect(() => {
+    const tokens = getTokensForChain(chainId);
+    setSellToken(tokens[0] || null);
+    setBuyToken(tokens[1] || null);
+    setSellAmount('');
+  }, [chainId]);
+
+  const { quote, loading: quoteLoading } = useSwapQuote(
+    sellToken,
+    buyToken,
+    sellAmount,
+    chainId
+  );
 
   const handleSwapTokens = () => {
-    // Swap the values
-    const temp = sellAmount;
-    setSellAmount(buyAmount);
-    setBuyAmount(temp);
+    const tempToken = sellToken;
+    const tempAmount = sellAmount;
+    setSellToken(buyToken);
+    setBuyToken(tempToken);
+    setSellAmount(quote?.toAmount || '');
   };
+
+  const handleSwap = async () => {
+    if (!isConnected) {
+      return;
+    }
+    // TODO: Implement actual swap with fee-splitter contract
+    console.log('Executing swap with 1% fee...');
+  };
+
+  const buyAmount = quote?.toAmount || '';
+  const sellUsdValue = sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
+  const buyUsdValue = buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
 
   return (
     <div className="w-full max-w-md mx-auto animate-slide-up">
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 p-1 bg-secondary/30 rounded-full w-fit">
-        <Button
-          variant="tab"
-          data-active={activeTab === "swap"}
-          onClick={() => setActiveTab("swap")}
-        >
-          Swap
-        </Button>
-        <Button
-          variant="tab"
-          data-active={activeTab === "buy"}
-          onClick={() => setActiveTab("buy")}
-        >
-          Buy
-        </Button>
+      {/* Header with Chain Selector */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex gap-2 p-1 bg-secondary/30 rounded-full">
+          <Button
+            variant="tab"
+            data-active={activeTab === 'swap'}
+            onClick={() => setActiveTab('swap')}
+          >
+            Swap
+          </Button>
+          <Button
+            variant="tab"
+            data-active={activeTab === 'buy'}
+            onClick={() => setActiveTab('buy')}
+          >
+            Buy
+          </Button>
+        </div>
+        <ChainSelector selectedChainId={chainId} onChainChange={setChainId} />
       </div>
 
       {/* Swap Container */}
-      <div className="glass-card rounded-3xl p-4 relative" style={{ boxShadow: "var(--shadow-card)" }}>
+      <div
+        className="glass-card rounded-3xl p-4 relative"
+        style={{ boxShadow: 'var(--shadow-card)' }}
+      >
         {/* Background glow */}
-        <div 
+        <div
           className="absolute inset-0 rounded-3xl opacity-50 pointer-events-none"
-          style={{ background: "var(--gradient-glow)" }}
+          style={{ background: 'var(--gradient-glow)' }}
         />
-        
+
         <div className="relative space-y-2">
           {/* Sell Token */}
           <TokenSelector
             label="Sell"
+            selectedToken={sellToken}
             amount={sellAmount}
-            usdValue={sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : "0"}
+            usdValue={sellUsdValue}
             onAmountChange={setSellAmount}
-            onTokenSelect={() => {}}
+            onTokenSelect={() => setModalOpen('sell')}
           />
 
           {/* Swap Button */}
@@ -66,11 +119,13 @@ const SwapCard = () => {
           {/* Buy Token */}
           <TokenSelector
             label="Buy"
+            selectedToken={buyToken}
             amount={buyAmount}
-            usdValue={buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : "0"}
-            onAmountChange={setBuyAmount}
-            onTokenSelect={() => {}}
+            usdValue={buyUsdValue}
+            onAmountChange={() => {}}
+            onTokenSelect={() => setModalOpen('buy')}
             readOnly
+            loading={quoteLoading}
           />
 
           {/* Fee Info */}
@@ -80,11 +135,37 @@ const SwapCard = () => {
               <span>1% ReforestWallet fee • DEX fees included</span>
               <Info className="w-3 h-3 ml-auto cursor-help" />
             </div>
+            {quote && (
+              <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Rate</span>
+                  <span className="text-foreground">
+                    1 {sellToken?.symbol} ≈{' '}
+                    {(parseFloat(buyAmount) / parseFloat(sellAmount)).toFixed(4)}{' '}
+                    {buyToken?.symbol}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Swap Button */}
-          <Button variant="swap" size="full" className="mt-4">
-            Swap
+          <Button
+            variant="swap"
+            size="full"
+            className="mt-4"
+            onClick={handleSwap}
+            disabled={!isConnected || !sellAmount || !sellToken || !buyToken}
+          >
+            {!isConnected ? (
+              'Connect Wallet'
+            ) : quoteLoading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : !sellAmount ? (
+              'Enter amount'
+            ) : (
+              'Swap'
+            )}
           </Button>
         </div>
       </div>
@@ -93,6 +174,22 @@ const SwapCard = () => {
       <p className="text-center text-sm text-muted-foreground mt-6">
         Every swap plants trees 🌱
       </p>
+
+      {/* Token Selector Modals */}
+      <TokenSelectorModal
+        isOpen={modalOpen === 'sell'}
+        onClose={() => setModalOpen(null)}
+        onSelect={setSellToken}
+        chainId={chainId}
+        selectedToken={buyToken}
+      />
+      <TokenSelectorModal
+        isOpen={modalOpen === 'buy'}
+        onClose={() => setModalOpen(null)}
+        onSelect={setBuyToken}
+        chainId={chainId}
+        selectedToken={sellToken}
+      />
     </div>
   );
 };
