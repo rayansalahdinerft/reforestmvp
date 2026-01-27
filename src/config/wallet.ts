@@ -1,6 +1,6 @@
 import { createAppKit } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { mainnet, polygon, arbitrum, base, bsc, type AppKitNetwork } from '@reown/appkit/networks';
+import { mainnet, type AppKitNetwork } from '@reown/appkit/networks';
 
 // Get project ID from WalletConnect Cloud - this is a public project ID for demo
 // In production, get your own at https://cloud.walletconnect.com
@@ -13,7 +13,8 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
 };
 
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, polygon, arbitrum, base, bsc];
+// Only Ethereum for EVM chains (Solana handled separately)
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet];
 
 export const wagmiAdapter = new WagmiAdapter({
   networks,

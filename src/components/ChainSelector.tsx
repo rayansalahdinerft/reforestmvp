@@ -8,8 +8,8 @@ import {
 import { CHAIN_INFO, type SupportedChainId } from '@/config/chains';
 
 interface ChainSelectorProps {
-  selectedChainId: number;
-  onChainChange: (chainId: number) => void;
+  selectedChainId: number | string;
+  onChainChange: (chainId: number | string) => void;
 }
 
 const ChainSelector = ({ selectedChainId, onChainChange }: ChainSelectorProps) => {
@@ -30,9 +30,9 @@ const ChainSelector = ({ selectedChainId, onChainChange }: ChainSelectorProps) =
         {Object.entries(CHAIN_INFO).map(([chainId, info]) => (
           <DropdownMenuItem
             key={chainId}
-            onClick={() => onChainChange(Number(chainId))}
+            onClick={() => onChainChange(chainId === 'solana' ? 'solana' : Number(chainId))}
             className={`flex items-center gap-2 cursor-pointer ${
-              Number(chainId) === selectedChainId ? 'bg-primary/10' : ''
+              String(chainId) === String(selectedChainId) ? 'bg-primary/10' : ''
             }`}
           >
             <span className="text-lg">{info.icon}</span>

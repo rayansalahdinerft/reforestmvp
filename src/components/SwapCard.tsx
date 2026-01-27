@@ -7,24 +7,31 @@ import TokenSelectorModal from './TokenSelectorModal';
 import ChainSelector from './ChainSelector';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { getTokensForChain, type Token } from '@/config/tokens';
+import { CHAIN_INFO } from '@/config/chains';
 
 const SwapCard = () => {
   const [activeTab, setActiveTab] = useState<'swap' | 'buy'>('swap');
   const [sellAmount, setSellAmount] = useState('');
   const [sellToken, setSellToken] = useState<Token | null>(null);
   const [buyToken, setBuyToken] = useState<Token | null>(null);
-  const [chainId, setChainId] = useState(1); // Default to Ethereum
+  const [chainId, setChainId] = useState<number | string>(1); // Default to Ethereum
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
 
   const { isConnected } = useAppKitAccount();
   const { chainId: walletChainId } = useAppKitNetwork();
 
-  // Sync chain with wallet
+  const isSolana = chainId === 'solana';
+  const chainInfo = CHAIN_INFO[chainId as keyof typeof CHAIN_INFO];
+
+  // Sync chain with wallet (only for EVM)
   useEffect(() => {
-    if (walletChainId && typeof walletChainId === 'number') {
-      setChainId(walletChainId);
+    if (walletChainId && typeof walletChainId === 'number' && !isSolana) {
+      // Only sync if the wallet chain is supported
+      if (walletChainId === 1) {
+        setChainId(walletChainId);
+      }
     }
-  }, [walletChainId]);
+  }, [walletChainId, isSolana]);
 
   // Reset tokens when chain changes
   useEffect(() => {
@@ -50,7 +57,7 @@ const SwapCard = () => {
   };
 
   const handleSwap = async () => {
-    if (!isConnected) {
+    if (!isConnected && !isSolana) {
       return;
     }
     // TODO: Implement actual swap with fee-splitter contract
@@ -60,6 +67,22 @@ const SwapCard = () => {
   const buyAmount = quote?.toAmount || '';
   const sellUsdValue = sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
   const buyUsdValue = buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
+
+  const getButtonText = () => {
+    if (isSolana) {
+      return 'Connect Solana Wallet';
+    }
+    if (!isConnected) {
+      return 'Connect Wallet';
+    }
+    if (quoteLoading) {
+      return <Loader2 className="w-5 h-5 animate-spin" />;
+    }
+    if (!sellAmount) {
+      return 'Enter amount';
+    }
+    return 'Swap';
+  };
 
   return (
     <div className="w-full max-w-md mx-auto animate-slide-up">
@@ -132,7 +155,7 @@ const SwapCard = () => {
           <div className="mt-4 p-3 rounded-xl bg-secondary/30 border border-border/50">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Leaf className="w-3 h-3 text-primary" />
-              <span>1% ReforestWallet fee • DEX fees included</span>
+              <span>1% ReforestWallet fee • {isSolana ? 'Jupiter' : '1inch'} DEX</span>
               <Info className="w-3 h-3 ml-auto cursor-help" />
             </div>
             {quote && (
@@ -145,6 +168,13 @@ const SwapCard = () => {
                     {buyToken?.symbol}
                   </span>
                 </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Network</span>
+                  <span className="text-foreground flex items-center gap-1">
+                    <span>{chainInfo?.icon}</span>
+                    {chainInfo?.name}
+                  </span>
+                </div>
               </div>
             )}
           </div>
@@ -155,17 +185,9 @@ const SwapCard = () => {
             size="full"
             className="mt-4"
             onClick={handleSwap}
-            disabled={!isConnected || !sellAmount || !sellToken || !buyToken}
+            disabled={(!isConnected && !isSolana) || !sellAmount || !sellToken || !buyToken}
           >
-            {!isConnected ? (
-              'Connect Wallet'
-            ) : quoteLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : !sellAmount ? (
-              'Enter amount'
-            ) : (
-              'Swap'
-            )}
+            {getButtonText()}
           </Button>
         </div>
       </div>
