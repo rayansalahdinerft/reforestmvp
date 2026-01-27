@@ -42,11 +42,6 @@ const Index = () => {
 
           {/* Thirdweb Bridge Widget */}
           <ThirdwebBridgeWidget clientId={THIRDWEB_CLIENT_ID} />
-          
-          {/* Eco message */}
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Every swap plants trees 🌱
-          </p>
         </main>
       </div>
     </div>
