@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { TreePine } from 'lucide-react';
+import { TreePine, Calculator } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -21,38 +21,19 @@ const FEE_CONFIG = {
 
 // Cost per tree in USD
 const COST_PER_TREE_USD = 2.5;
+const FEE_PERCENT = 0.01; // 1%
+const REFOREST_PERCENT = 0.40; // 40% of fees
 
 const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRenderedRef = useRef(false);
-  const [estimatedTrees, setEstimatedTrees] = useState<number>(0);
+  const [swapAmount, setSwapAmount] = useState<string>('');
 
-  // Calculate trees based on swap amount (observed from widget inputs)
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      // Try to find input values in the widget
-      const inputs = containerRef.current?.querySelectorAll('input');
-      inputs?.forEach(input => {
-        const value = parseFloat(input.value);
-        if (!isNaN(value) && value > 0) {
-          // Estimate USD value (simplified - assumes rough token prices)
-          const estimatedUSD = value * 100; // Placeholder estimation
-          const feeAmount = estimatedUSD * 0.01; // 1% fee
-          const reforestAmount = feeAmount * 0.40; // 40% to reforestation
-          const trees = reforestAmount / COST_PER_TREE_USD;
-          if (trees !== estimatedTrees) {
-            setEstimatedTrees(Math.max(0, trees));
-          }
-        }
-      });
-    });
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current, { subtree: true, childList: true, characterData: true });
-    }
-
-    return () => observer.disconnect();
-  }, [estimatedTrees]);
+  // Calculate impact
+  const amountUSD = parseFloat(swapAmount) || 0;
+  const feeAmount = amountUSD * FEE_PERCENT;
+  const reforestAmount = feeAmount * REFOREST_PERCENT;
+  const treesPlanted = reforestAmount / COST_PER_TREE_USD;
 
   useEffect(() => {
     let mounted = true;
@@ -97,6 +78,58 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
 
   return (
     <div className="w-full max-w-md mx-auto">
+      {/* Impact Calculator */}
+      <div className="mb-4 p-4 rounded-2xl bg-card border border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <Calculator className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-foreground">Calculez votre impact</span>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="flex-1">
+            <div className="relative">
+              <input
+                type="number"
+                value={swapAmount}
+                onChange={(e) => setSwapAmount(e.target.value)}
+                placeholder="Montant du swap"
+                className="w-full px-3 py-2 pr-14 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                USD
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {amountUSD > 0 && (
+          <div className="mt-3 pt-3 border-t border-border space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Frais (1%)</span>
+              <span className="text-foreground">${feeAmount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Reversé à l'ONG (40%)</span>
+              <span className="text-primary">${reforestAmount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t border-border">
+              <span className="text-sm font-medium text-foreground flex items-center gap-2">
+                <TreePine className="w-4 h-4 text-primary" />
+                Arbres plantés
+              </span>
+              <span className="text-lg font-bold text-primary">
+                {treesPlanted >= 1 
+                  ? `${Math.floor(treesPlanted)} 🌱` 
+                  : treesPlanted > 0 
+                    ? `~${treesPlanted.toFixed(2)} 🌱`
+                    : '0'
+                }
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Thirdweb Widget */}
       <div 
         ref={containerRef} 
@@ -105,17 +138,9 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
       />
 
       {/* Simple footer text */}
-      <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-        <TreePine className="w-4 h-4 text-primary" />
-        <span>
-          40% des frais reversés à notre ONG partenaire
-          {estimatedTrees > 0.01 && (
-            <span className="text-primary font-medium">
-              {' '}• ~{estimatedTrees.toFixed(2)} arbres 🌱
-            </span>
-          )}
-        </span>
-      </div>
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        40% des frais reversés à notre ONG partenaire • 1 arbre = $2.50
+      </p>
     </div>
   );
 };
