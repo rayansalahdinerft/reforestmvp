@@ -23,27 +23,32 @@ const FEE_CONFIG = {
 
 const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scriptLoadedRef = useRef(false);
+  const widgetRenderedRef = useRef(false);
 
   useEffect(() => {
-    // Load the Thirdweb Bridge Widget script
-    if (!scriptLoadedRef.current) {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/thirdweb/dist/scripts/bridge-widget.js';
-      script.async = true;
-      script.onload = () => {
-        scriptLoadedRef.current = true;
-        renderWidget();
-      };
-      document.head.appendChild(script);
-    } else {
-      renderWidget();
-    }
+    let mounted = true;
 
-    function renderWidget() {
-      if (containerRef.current && window.BridgeWidget) {
-        // Clear previous widget
+    const loadAndRender = async () => {
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src*="bridge-widget.js"]');
+      
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/thirdweb/dist/scripts/bridge-widget.js';
+        script.async = true;
+        
+        await new Promise<void>((resolve) => {
+          script.onload = () => resolve();
+          document.head.appendChild(script);
+        });
+      }
+
+      // Wait a bit for the script to initialize
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (mounted && containerRef.current && window.BridgeWidget && !widgetRenderedRef.current) {
         containerRef.current.innerHTML = '';
+        widgetRenderedRef.current = true;
         
         window.BridgeWidget.render(containerRef.current, {
           clientId: clientId,
@@ -55,12 +60,12 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
           },
         });
       }
-    }
+    };
+
+    loadAndRender();
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
+      mounted = false;
     };
   }, [clientId]);
 
@@ -74,15 +79,15 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-foreground">
-              1% pour la planète 🌍
+              Pour la planète 🌍
             </p>
             <p className="text-xs text-muted-foreground">
-              Chaque swap finance la reforestation
+              40% des frais financent la reforestation
             </p>
           </div>
           <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/20">
             <Leaf className="w-3 h-3 text-primary" />
-            <span className="text-xs font-bold text-primary">1%</span>
+            <span className="text-xs font-bold text-primary">40%</span>
           </div>
         </div>
       </div>
@@ -103,8 +108,8 @@ const ThirdwebBridgeWidget = ({ clientId }: ThirdwebBridgeWidgetProps) => {
               <span className="text-foreground font-medium">Comment ça marche ?</span>
             </p>
             <p>
-              1% de chaque transaction est automatiquement envoyé à notre fonds de reforestation. 
-              Pas de frais cachés, juste un petit geste pour la planète à chaque swap. 🌱
+              40% des frais de ReforestWallet sont automatiquement reversés à des projets de reforestation. 
+              Swappez en toute tranquillité, on s'occupe de la planète. 🌱
             </p>
           </div>
         </div>
