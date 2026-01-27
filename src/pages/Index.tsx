@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import ThirdwebBridgeWidget from "@/components/ThirdwebBridgeWidget";
+import TreeCounter from "@/components/TreeCounter";
 
 const THIRDWEB_CLIENT_ID = "30620e23089261001eb0b387c50b04a1";
 
@@ -28,8 +29,11 @@ const Index = () => {
         <Header />
         
         <main className="container mx-auto px-4 pt-8 pb-20">
+          {/* Global Tree Counter */}
+          <TreeCounter />
+
           {/* Hero Section */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 mt-4">
             <p className="text-muted-foreground text-lg mb-2">
               Clean swaps. Clean future.
             </p>

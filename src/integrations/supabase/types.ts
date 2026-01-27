@@ -14,7 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      tree_counter: {
+        Row: {
+          id: string
+          total_donations_usd: number
+          total_swaps: number
+          total_trees: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          total_donations_usd?: number
+          total_swaps?: number
+          total_trees?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          total_donations_usd?: number
+          total_swaps?: number
+          total_trees?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
