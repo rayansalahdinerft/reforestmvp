@@ -1,5 +1,7 @@
 import Header from "@/components/Header";
-import SwapCard from "@/components/SwapCard";
+import ThirdwebBridgeWidget from "@/components/ThirdwebBridgeWidget";
+
+const THIRDWEB_CLIENT_ID = "30620e23089261001eb0b387c50b04a1";
 
 const Index = () => {
   return (
@@ -38,8 +40,13 @@ const Index = () => {
             </h1>
           </div>
 
-          {/* Swap Interface */}
-          <SwapCard />
+          {/* Thirdweb Bridge Widget */}
+          <ThirdwebBridgeWidget clientId={THIRDWEB_CLIENT_ID} />
+          
+          {/* Eco message */}
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Every swap plants trees 🌱
+          </p>
         </main>
       </div>
     </div>
