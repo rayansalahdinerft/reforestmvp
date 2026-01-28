@@ -1,6 +1,5 @@
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
-import { Wallet, ChevronDown } from 'lucide-react';
-import { Button } from './ui/button';
+import { ChevronDown } from 'lucide-react';
 
 const ConnectButton = () => {
   const { open } = useAppKit();
@@ -12,23 +11,24 @@ const ConnectButton = () => {
 
   if (isConnected && address) {
     return (
-      <Button
-        variant="connect"
+      <button
         onClick={() => open({ view: 'Account' })}
-        className="gap-2"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary text-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
       >
-        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        <div className="w-2 h-2 rounded-full bg-green-500" />
         <span>{formatAddress(address)}</span>
-        <ChevronDown className="w-4 h-4" />
-      </Button>
+        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+      </button>
     );
   }
 
   return (
-    <Button variant="connect" onClick={() => open()}>
-      <Wallet className="w-4 h-4" />
-      Connect Wallet
-    </Button>
+    <button 
+      onClick={() => open()}
+      className="connect-wallet-btn"
+    >
+      Connect wallet
+    </button>
   );
 };
 
