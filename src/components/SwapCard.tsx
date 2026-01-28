@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ArrowUpDown, Info, Leaf, Loader2 } from 'lucide-react';
-import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { ArrowUpDown, Info, Leaf, Loader2, TreePine } from 'lucide-react';
+import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/react';
 import { Button } from './ui/button';
 import TokenSelector from './TokenSelector';
 import TokenSelectorModal from './TokenSelectorModal';
@@ -9,16 +9,22 @@ import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
 
+// Fee and impact constants
+const FEE_PERCENT = 0.01; // 1%
+const REFOREST_PERCENT = 0.40; // 40% of fees go to reforestation
+const COST_PER_TREE_USD = 2.5;
+
 const SwapCard = () => {
   const [activeTab, setActiveTab] = useState<'swap' | 'buy'>('swap');
   const [sellAmount, setSellAmount] = useState('');
   const [sellToken, setSellToken] = useState<Token | null>(null);
   const [buyToken, setBuyToken] = useState<Token | null>(null);
-  const [chainId, setChainId] = useState<number | string>(1); // Default to Ethereum
+  const [chainId, setChainId] = useState<number | string>(1);
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
 
   const { isConnected } = useAppKitAccount();
   const { chainId: walletChainId } = useAppKitNetwork();
+  const { open } = useAppKit();
 
   const isSolana = chainId === 'solana';
   const chainInfo = CHAIN_INFO[chainId as keyof typeof CHAIN_INFO];
@@ -26,7 +32,6 @@ const SwapCard = () => {
   // Sync chain with wallet (only for EVM)
   useEffect(() => {
     if (walletChainId && typeof walletChainId === 'number' && !isSolana) {
-      // Only sync if the wallet chain is supported
       if (walletChainId === 1) {
         setChainId(walletChainId);
       }
@@ -50,7 +55,6 @@ const SwapCard = () => {
 
   const handleSwapTokens = () => {
     const tempToken = sellToken;
-    const tempAmount = sellAmount;
     setSellToken(buyToken);
     setBuyToken(tempToken);
     setSellAmount(quote?.toAmount || '');
@@ -58,6 +62,7 @@ const SwapCard = () => {
 
   const handleSwap = async () => {
     if (!isConnected && !isSolana) {
+      open();
       return;
     }
     // TODO: Implement actual swap with fee-splitter contract
@@ -65,13 +70,18 @@ const SwapCard = () => {
   };
 
   const buyAmount = quote?.toAmount || '';
+  
+  // Calculate USD values (using mock price for demo)
   const sellUsdValue = sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
   const buyUsdValue = buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
 
+  // Calculate impact
+  const amountUSD = parseFloat(sellUsdValue) || 0;
+  const feeAmount = amountUSD * FEE_PERCENT;
+  const reforestAmount = feeAmount * REFOREST_PERCENT;
+  const treesPlanted = reforestAmount / COST_PER_TREE_USD;
+
   const getButtonText = () => {
-    if (isSolana) {
-      return 'Connect Solana Wallet';
-    }
     if (!isConnected) {
       return 'Connect Wallet';
     }
@@ -158,6 +168,7 @@ const SwapCard = () => {
               <span>1% ReforestWallet fee • {isSolana ? 'Jupiter' : '1inch'} DEX</span>
               <Info className="w-3 h-3 ml-auto cursor-help" />
             </div>
+            
             {quote && (
               <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
                 <div className="flex justify-between text-xs">
@@ -177,6 +188,34 @@ const SwapCard = () => {
                 </div>
               </div>
             )}
+
+            {/* Impact Display */}
+            {amountUSD > 0 && (
+              <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Fee (1%)</span>
+                  <span className="text-foreground">${feeAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">To reforestation (40%)</span>
+                  <span className="text-primary">${reforestAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <TreePine className="w-3 h-3 text-primary" />
+                    Trees planted
+                  </span>
+                  <span className="text-sm font-semibold text-primary">
+                    {treesPlanted >= 1 
+                      ? `~${Math.floor(treesPlanted)} 🌱` 
+                      : treesPlanted > 0 
+                        ? `~${treesPlanted.toFixed(2)} 🌱`
+                        : '0'
+                    }
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Swap Button */}
@@ -185,7 +224,7 @@ const SwapCard = () => {
             size="full"
             className="mt-4"
             onClick={handleSwap}
-            disabled={(!isConnected && !isSolana) || !sellAmount || !sellToken || !buyToken}
+            disabled={isConnected && (!sellAmount || !sellToken || !buyToken)}
           >
             {getButtonText()}
           </Button>
