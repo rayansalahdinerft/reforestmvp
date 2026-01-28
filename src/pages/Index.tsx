@@ -1,8 +1,6 @@
 import Header from "@/components/Header";
-import ThirdwebBridgeWidget from "@/components/ThirdwebBridgeWidget";
+import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
-
-const THIRDWEB_CLIENT_ID = "30620e23089261001eb0b387c50b04a1";
 
 const Index = () => {
   return (
@@ -44,8 +42,8 @@ const Index = () => {
           {/* Global Tree Counter */}
           <TreeCounter />
 
-          {/* Thirdweb Bridge Widget */}
-          <ThirdwebBridgeWidget clientId={THIRDWEB_CLIENT_ID} />
+          {/* Swap Card */}
+          <SwapCard />
         </main>
       </div>
     </div>
