@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { ArrowDown, ChevronDown, Settings, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowDown, ChevronDown, Settings, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/react';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
+import { useSwapExecution } from '@/hooks/useSwapExecution';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
 import { useTokenPrices } from '@/hooks/useTokenPrices';
+import { getContractAddress } from '@/config/contracts';
+import { toast } from 'sonner';
 
 const FEE_PERCENT = 0.01;
 
@@ -15,12 +18,21 @@ const SwapCard = () => {
   const [buyToken, setBuyToken] = useState<Token | null>(null);
   const [chainId, setChainId] = useState<number | string>(1);
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
+  const [slippage, setSlippage] = useState(1);
 
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
   const { chainId: walletChainId } = useAppKitNetwork();
   const { open } = useAppKit();
 
   const chainInfo = CHAIN_INFO[chainId as keyof typeof CHAIN_INFO];
+
+  const { 
+    status: swapStatus, 
+    error: swapError, 
+    txHash, 
+    executeSwap, 
+    reset: resetSwap 
+  } = useSwapExecution();
 
   useEffect(() => {
     if (walletChainId && typeof walletChainId === 'number') {
@@ -35,7 +47,8 @@ const SwapCard = () => {
     setSellToken(tokens[0] || null);
     setBuyToken(tokens[1] || null);
     setSellAmount('');
-  }, [chainId]);
+    resetSwap();
+  }, [chainId, resetSwap]);
 
   const { quote, loading: quoteLoading } = useSwapQuote(
     sellToken,
@@ -54,6 +67,7 @@ const SwapCard = () => {
     setSellToken(buyToken);
     setBuyToken(tempToken);
     setSellAmount(quote?.toAmount || '');
+    resetSwap();
   };
 
   const handleSwap = async () => {
@@ -61,7 +75,44 @@ const SwapCard = () => {
       open();
       return;
     }
-    console.log('Executing swap with 1% fee...');
+
+    if (!sellToken || !buyToken || !sellAmount) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    const numericChainId = typeof chainId === 'string' ? parseInt(chainId) : chainId;
+    
+    // Check if contract is deployed
+    const contractAddress = getContractAddress(numericChainId);
+    if (!contractAddress) {
+      toast.error('Smart contract not deployed on this chain yet. Demo mode active.');
+      return;
+    }
+
+    toast.info('Starting swap...', { id: 'swap-progress' });
+
+    const result = await executeSwap(
+      numericChainId,
+      sellToken,
+      buyToken,
+      sellAmount,
+      slippage
+    );
+
+    if (result.error) {
+      toast.error(result.error, { id: 'swap-progress' });
+    } else if (result.hash) {
+      toast.success(
+        <div>
+          <p>Swap successful! 🌱</p>
+          <p className="text-xs opacity-70">Trees planted with 1% fee</p>
+        </div>,
+        { id: 'swap-progress' }
+      );
+      // Reset form on success
+      setSellAmount('');
+    }
   };
 
   const buyAmount = quote?.toAmount || '';
@@ -77,15 +128,48 @@ const SwapCard = () => {
     ? (parseFloat(buyAmount) * buyPrice).toFixed(2) 
     : buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
   const feeAmount = parseFloat(sellUsdValue) * FEE_PERCENT;
+  const treesPlanted = (feeAmount * 0.40) / 2.5; // 40% of fee goes to trees at $2.50/tree
 
   const getButtonText = () => {
     if (!isConnected) return 'Connect Wallet';
     if (!sellToken || !buyToken) return 'Select Token';
     if (!sellAmount) return 'Enter Amount';
-    return 'Swap & Plant Trees 🌱';
+    
+    switch (swapStatus) {
+      case 'fetching-quote': return 'Getting quote...';
+      case 'approving': return 'Approving token...';
+      case 'swapping': return 'Swapping...';
+      case 'success': return 'Swap Successful! 🌱';
+      case 'error': return 'Try Again';
+      default: return 'Swap & Plant Trees 🌱';
+    }
   };
 
-  const isButtonDisabled = isConnected && (!sellAmount || !sellToken || !buyToken);
+  const getButtonIcon = () => {
+    switch (swapStatus) {
+      case 'fetching-quote':
+      case 'approving':
+      case 'swapping':
+        return <Loader2 className="w-5 h-5 animate-spin" />;
+      case 'success':
+        return <CheckCircle className="w-5 h-5" />;
+      case 'error':
+        return <AlertCircle className="w-5 h-5" />;
+      default:
+        return null;
+    }
+  };
+
+  const isButtonDisabled = isConnected && (
+    !sellAmount || 
+    !sellToken || 
+    !buyToken || 
+    swapStatus === 'fetching-quote' || 
+    swapStatus === 'approving' || 
+    swapStatus === 'swapping'
+  );
+
+  const isContractDeployed = getContractAddress(typeof chainId === 'string' ? parseInt(chainId) : chainId) !== null;
 
   return (
     <div className="w-full max-w-[460px] mx-auto animate-slide-up">
@@ -114,6 +198,15 @@ const SwapCard = () => {
           </button>
         </div>
 
+        {/* Demo mode indicator */}
+        {!isContractDeployed && (
+          <div className="mx-4 mb-2 px-3 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+            <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+              ⚠️ Demo mode: Contract not deployed on {chainInfo?.name}
+            </p>
+          </div>
+        )}
+
         {/* Sell Section */}
         <div className="px-4 pb-2">
           <div className="token-input-row">
@@ -127,7 +220,12 @@ const SwapCard = () => {
               <input
                 type="text"
                 value={sellAmount}
-                onChange={(e) => setSellAmount(e.target.value)}
+                onChange={(e) => {
+                  setSellAmount(e.target.value);
+                  if (swapStatus === 'error' || swapStatus === 'success') {
+                    resetSwap();
+                  }
+                }}
                 placeholder="0.00"
                 className="swap-input flex-1"
               />
@@ -203,10 +301,38 @@ const SwapCard = () => {
                 <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
                   <span className="text-xs">🌱</span>
                 </div>
-                <span className="text-sm font-medium text-foreground">1% goes to reforestation</span>
+                <div>
+                  <span className="text-sm font-medium text-foreground">1% goes to reforestation</span>
+                  {treesPlanted > 0 && (
+                    <p className="text-[10px] text-muted-foreground">≈ {treesPlanted.toFixed(2)} trees planted</p>
+                  )}
+                </div>
               </div>
               <span className="text-sm font-bold text-primary">${feeAmount.toFixed(2)}</span>
             </div>
+          </div>
+        )}
+
+        {/* Error Display */}
+        {swapError && (
+          <div className="px-5 pb-4">
+            <div className="px-4 py-3 rounded-xl bg-destructive/10 border border-destructive/20">
+              <p className="text-xs text-destructive">{swapError}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Transaction Hash */}
+        {txHash && (
+          <div className="px-5 pb-4">
+            <a 
+              href={`${chainInfo?.blockExplorer || 'https://etherscan.io'}/tx/${txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
+            >
+              <p className="text-xs text-primary truncate">View transaction: {txHash.slice(0, 10)}...{txHash.slice(-8)}</p>
+            </a>
           </div>
         )}
 
@@ -215,8 +341,9 @@ const SwapCard = () => {
           <button
             onClick={handleSwap}
             disabled={isButtonDisabled}
-            className="w-full premium-button"
+            className="w-full premium-button flex items-center justify-center gap-2"
           >
+            {getButtonIcon()}
             {getButtonText()}
           </button>
         </div>
