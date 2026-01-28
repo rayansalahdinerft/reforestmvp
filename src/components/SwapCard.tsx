@@ -1,17 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ArrowUpDown, Info, Leaf, Loader2, TreePine } from 'lucide-react';
+import { ArrowDown, ChevronDown, Settings, Info } from 'lucide-react';
 import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/react';
-import { Button } from './ui/button';
-import TokenSelector from './TokenSelector';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
 
-// Fee and impact constants
-const FEE_PERCENT = 0.01; // 1%
-const REFOREST_PERCENT = 0.40; // 40% of fees go to reforestation
-const COST_PER_TREE_USD = 2.5;
+const FEE_PERCENT = 0.01;
 
 const SwapCard = () => {
   const [sellAmount, setSellAmount] = useState('');
@@ -24,19 +19,16 @@ const SwapCard = () => {
   const { chainId: walletChainId } = useAppKitNetwork();
   const { open } = useAppKit();
 
-  const isSolana = chainId === 'solana';
   const chainInfo = CHAIN_INFO[chainId as keyof typeof CHAIN_INFO];
 
-  // Sync chain with wallet (only for EVM)
   useEffect(() => {
-    if (walletChainId && typeof walletChainId === 'number' && !isSolana) {
+    if (walletChainId && typeof walletChainId === 'number') {
       if (walletChainId === 1) {
         setChainId(walletChainId);
       }
     }
-  }, [walletChainId, isSolana]);
+  }, [walletChainId]);
 
-  // Reset tokens when chain changes
   useEffect(() => {
     const tokens = getTokensForChain(chainId);
     setSellToken(tokens[0] || null);
@@ -59,164 +51,150 @@ const SwapCard = () => {
   };
 
   const handleSwap = async () => {
-    if (!isConnected && !isSolana) {
+    if (!isConnected) {
       open();
       return;
     }
-    // TODO: Implement actual swap with fee-splitter contract
     console.log('Executing swap with 1% fee...');
   };
 
   const buyAmount = quote?.toAmount || '';
-  
-  // Calculate USD values (using mock price for demo)
   const sellUsdValue = sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
   const buyUsdValue = buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
-
-  // Calculate impact
-  const amountUSD = parseFloat(sellUsdValue) || 0;
-  const feeAmount = amountUSD * FEE_PERCENT;
-  const reforestAmount = feeAmount * REFOREST_PERCENT;
-  const treesPlanted = reforestAmount / COST_PER_TREE_USD;
+  const feeAmount = parseFloat(sellUsdValue) * FEE_PERCENT;
 
   const getButtonText = () => {
-    if (!isConnected) {
-      return 'Connect Wallet';
-    }
-    if (quoteLoading) {
-      return <Loader2 className="w-5 h-5 animate-spin" />;
-    }
-    if (!sellAmount) {
-      return 'Enter amount';
-    }
+    if (!isConnected) return 'Connect wallet';
+    if (!sellToken || !buyToken) return 'Select token';
+    if (!sellAmount) return 'Enter amount';
     return 'Swap';
   };
 
+  const isButtonDisabled = isConnected && (!sellAmount || !sellToken || !buyToken);
+
   return (
-    <div className="w-full max-w-md mx-auto animate-slide-up">
-      {/* Header - Clean title */}
-      <div className="flex items-center justify-center mb-6">
-        <h2 className="text-lg font-semibold text-foreground">Swap</h2>
-      </div>
-
-      {/* Swap Container */}
-      <div
-        className="glass-card rounded-3xl p-4 relative"
-        style={{ boxShadow: 'var(--shadow-card)' }}
-      >
-        {/* Background glow */}
-        <div
-          className="absolute inset-0 rounded-3xl opacity-50 pointer-events-none"
-          style={{ background: 'var(--gradient-glow)' }}
-        />
-
-        <div className="relative space-y-2">
-          {/* Sell Token */}
-          <TokenSelector
-            label="Sell"
-            selectedToken={sellToken}
-            amount={sellAmount}
-            usdValue={sellUsdValue}
-            onAmountChange={setSellAmount}
-            onTokenSelect={() => setModalOpen('sell')}
-          />
-
-          {/* Swap Button */}
-          <div className="flex justify-center -my-2 relative z-10">
-            <button
-              onClick={handleSwapTokens}
-              className="w-10 h-10 rounded-xl bg-card border-4 border-background flex items-center justify-center hover:bg-secondary transition-all duration-200 hover:scale-110 active:scale-95"
+    <div className="w-full max-w-[480px] mx-auto animate-slide-up">
+      {/* Card */}
+      <div className="swap-card p-1">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">Pay on</span>
+            <button 
+              onClick={() => setModalOpen('sell')}
+              className="flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
             >
-              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+              {chainInfo?.logoURI && (
+                <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-4 h-4 rounded-full" />
+              )}
+              {chainInfo?.name}
+              <ChevronDown className="w-3.5 h-3.5" />
             </button>
           </div>
+          <button className="p-2 hover:bg-secondary rounded-lg transition-colors">
+            <Settings className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
 
-          {/* Buy Token */}
-          <TokenSelector
-            label="Buy"
-            selectedToken={buyToken}
-            amount={buyAmount}
-            usdValue={buyUsdValue}
-            onAmountChange={() => {}}
-            onTokenSelect={() => setModalOpen('buy')}
-            readOnly
-            loading={quoteLoading}
-          />
-
-          {/* Fee Info */}
-          <div className="mt-4 p-3 rounded-xl bg-secondary/30 border border-border/50">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Leaf className="w-3 h-3 text-primary" />
-              <span>1% ReforestWallet fee • {isSolana ? 'Jupiter' : '1inch'} DEX</span>
-              <Info className="w-3 h-3 ml-auto cursor-help" />
+        {/* Sell Section */}
+        <div className="px-4 pb-2">
+          <div className="token-input-row">
+            <div className="flex items-center justify-between">
+              <input
+                type="text"
+                value={sellAmount}
+                onChange={(e) => setSellAmount(e.target.value)}
+                placeholder="0"
+                className="swap-input flex-1"
+              />
+              <button
+                onClick={() => setModalOpen('sell')}
+                className="token-selector-btn"
+              >
+                {sellToken?.logoURI && (
+                  <img src={sellToken.logoURI} alt={sellToken.symbol} className="w-6 h-6 rounded-full" />
+                )}
+                <span>{sellToken?.symbol || 'Select'}</span>
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              </button>
             </div>
-            
-            {quote && (
-              <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Rate</span>
-                  <span className="text-foreground">
-                    1 {sellToken?.symbol} ≈{' '}
-                    {(parseFloat(buyAmount) / parseFloat(sellAmount)).toFixed(4)}{' '}
-                    {buyToken?.symbol}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Network</span>
-                  <span className="text-foreground flex items-center gap-1">
-                    <span>{chainInfo?.icon}</span>
-                    {chainInfo?.name}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Impact Display */}
-            {amountUSD > 0 && (
-              <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Fee (1%)</span>
-                  <span className="text-foreground">${feeAmount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">To reforestation (40%)</span>
-                  <span className="text-primary">${reforestAmount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <TreePine className="w-3 h-3 text-primary" />
-                    Trees planted
-                  </span>
-                  <span className="text-sm font-semibold text-primary">
-                    {treesPlanted >= 1 
-                      ? `~${Math.floor(treesPlanted)} 🌱` 
-                      : treesPlanted > 0 
-                        ? `~${treesPlanted.toFixed(2)} 🌱`
-                        : '0'
-                    }
-                  </span>
-                </div>
-              </div>
+            {sellAmount && (
+              <p className="text-sm text-muted-foreground mt-2">${sellUsdValue}</p>
             )}
           </div>
+        </div>
 
-          {/* Swap Button */}
-          <Button
-            variant="swap"
-            size="full"
-            className="mt-4"
+        {/* Swap Arrow */}
+        <div className="flex justify-center -my-1 relative z-10">
+          <button
+            onClick={handleSwapTokens}
+            className="w-9 h-9 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+          >
+            <ArrowDown className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
+
+        {/* Buy Section */}
+        <div className="px-4 pt-2 pb-4">
+          <div className="token-input-row">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">Receive</span>
+            </div>
+            <div className="flex items-center justify-between">
+              {quoteLoading ? (
+                <div className="h-8 w-32 bg-muted animate-pulse rounded" />
+              ) : buyAmount ? (
+                <span className="swap-input">{parseFloat(buyAmount).toFixed(6)}</span>
+              ) : (
+                <span className="text-2xl font-medium text-muted-foreground">0</span>
+              )}
+              <button
+                onClick={() => setModalOpen('buy')}
+                className="token-selector-btn"
+              >
+                {buyToken ? (
+                  <>
+                    {buyToken.logoURI && (
+                      <img src={buyToken.logoURI} alt={buyToken.symbol} className="w-6 h-6 rounded-full" />
+                    )}
+                    <span>{buyToken.symbol}</span>
+                  </>
+                ) : (
+                  <span className="text-primary font-semibold">SELECT TOKEN +</span>
+                )}
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+            {buyAmount && (
+              <p className="text-sm text-muted-foreground mt-2">${buyUsdValue}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Fee Info */}
+        {sellAmount && parseFloat(sellAmount) > 0 && (
+          <div className="px-4 pb-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground flex items-center gap-1">
+                <Info className="w-3.5 h-3.5" />
+                1% ReforestWallet fee
+              </span>
+              <span className="text-foreground">${feeAmount.toFixed(2)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Swap Button */}
+        <div className="px-4 pb-4">
+          <button
             onClick={handleSwap}
-            disabled={isConnected && (!sellAmount || !sellToken || !buyToken)}
+            disabled={isButtonDisabled}
+            className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {getButtonText()}
-          </Button>
+          </button>
         </div>
       </div>
-
-      {/* Eco message */}
-      <p className="text-center text-sm text-muted-foreground mt-6">
-        Every swap plants trees 🌱
-      </p>
 
       {/* Token Selector Modals */}
       <TokenSelectorModal
