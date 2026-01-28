@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
+import NewsTicker from "@/components/NewsTicker";
 
 const Index = () => {
   return (
@@ -12,6 +13,7 @@ const Index = () => {
       </div>
       
       <Header />
+      <NewsTicker />
       
       <main className="max-w-6xl mx-auto px-4 py-16 relative z-10">
         {/* Hero Section */}

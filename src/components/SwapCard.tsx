@@ -5,6 +5,7 @@ import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
+import { useTokenPrices } from '@/hooks/useTokenPrices';
 
 const FEE_PERCENT = 0.01;
 
@@ -43,6 +44,11 @@ const SwapCard = () => {
     chainId
   );
 
+  // Get live prices
+  const { getPrice } = useTokenPrices(
+    [sellToken?.symbol, buyToken?.symbol].filter(Boolean) as string[]
+  );
+
   const handleSwapTokens = () => {
     const tempToken = sellToken;
     setSellToken(buyToken);
@@ -59,8 +65,17 @@ const SwapCard = () => {
   };
 
   const buyAmount = quote?.toAmount || '';
-  const sellUsdValue = sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
-  const buyUsdValue = buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
+  
+  // Calculate USD values with live prices
+  const sellPrice = sellToken ? getPrice(sellToken.symbol) : null;
+  const buyPrice = buyToken ? getPrice(buyToken.symbol) : null;
+  
+  const sellUsdValue = sellAmount && sellPrice 
+    ? (parseFloat(sellAmount) * sellPrice).toFixed(2) 
+    : sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
+  const buyUsdValue = buyAmount && buyPrice 
+    ? (parseFloat(buyAmount) * buyPrice).toFixed(2) 
+    : buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
   const feeAmount = parseFloat(sellUsdValue) * FEE_PERCENT;
 
   const getButtonText = () => {

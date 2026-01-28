@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { Search, X, Check } from 'lucide-react';
-import { Dialog, DialogContent } from './ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO, type SupportedChainId } from '@/config/chains';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface TokenSelectorModalProps {
   isOpen: boolean;
@@ -69,7 +70,10 @@ const TokenSelectorModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-card border-border max-w-3xl p-0 gap-0 overflow-hidden">
+      <DialogContent className="bg-card border-border max-w-3xl p-0 gap-0 overflow-hidden" aria-describedby={undefined}>
+        <VisuallyHidden>
+          <DialogTitle>Select a token</DialogTitle>
+        </VisuallyHidden>
         <div className="flex h-[520px]">
           {/* Left Panel - Chain Selection */}
           <div className="w-56 border-r border-border flex flex-col bg-secondary/30">
