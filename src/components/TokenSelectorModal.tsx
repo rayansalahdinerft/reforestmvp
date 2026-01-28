@@ -123,12 +123,6 @@ const TokenSelectorModal = ({
             <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-semibold text-foreground">Select token</h2>
-                <button
-                  onClick={handleClose}
-                  className="p-1.5 hover:bg-secondary rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-muted-foreground" />
-                </button>
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

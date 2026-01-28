@@ -12,32 +12,45 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title ReforestWallet Fee Splitter
- * @notice Wraps DEX aggregator calls and takes a 1% fee for reforestation
- * @dev Deploy this contract and use it as a proxy for 1inch/other DEX swaps
+ * @notice Wraps 1inch Aggregation Router V6 calls and takes a 1% fee for reforestation
+ * @dev Supports ALL tokens on ALL chains supported by 1inch
  * 
- * HOW IT WORKS:
- * 1. User approves this contract for their tokens
- * 2. User calls swap() with the DEX calldata
- * 3. Contract takes 1% fee, sends to feeRecipient
- * 4. Contract executes the swap with remaining 99%
- * 5. User receives swapped tokens
+ * 1inch Aggregation Router V6 Address (SAME on all chains):
+ * 0x111111125421cA6dc452d289314280a0f8842A65
+ * 
+ * SUPPORTED CHAINS:
+ * - Ethereum (1)
+ * - Polygon (137)  
+ * - Arbitrum One (42161)
+ * - Optimism (10)
+ * - Base (8453)
+ * - Avalanche C-Chain (43114)
+ * - BNB Chain (56)
+ * - Fantom (250)
+ * - Gnosis (100)
+ * - zkSync Era (324)
+ * - Linea (59144)
+ * - Scroll (534352)
+ * - Mantle (5000)
+ * - Blast (81457)
+ * - Aurora (1313161554)
+ * - Klaytn (8217)
+ * 
+ * SUPPORTS ALL TOKENS: 1inch aggregates liquidity from 400+ DEXs
+ * Get quotes: https://api.1inch.dev/swap/v6.0/{chainId}/quote
+ * Get swap data: https://api.1inch.dev/swap/v6.0/{chainId}/swap
  */
 contract ReforestFeeSplitter is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
+
+    // 1inch Aggregation Router V6 - SAME ADDRESS ON ALL SUPPORTED CHAINS
+    address public constant ONEINCH_ROUTER = 0x111111125421cA6dc452d289314280a0f8842A65;
 
     // Fee recipient address (receives 1% of all swaps)
     address public feeRecipient;
     
     // Fee percentage in basis points (100 = 1%)
     uint256 public feeBps = 100;
-    
-    // 1inch Aggregation Router addresses per chain
-    // Ethereum: 0x1111111254EEB25477B68fb85Ed929f73A960582
-    // Polygon: 0x1111111254EEB25477B68fb85Ed929f73A960582
-    // Arbitrum: 0x1111111254EEB25477B68fb85Ed929f73A960582
-    // Base: 0x1111111254EEB25477B68fb85Ed929f73A960582
-    // BSC: 0x1111111254EEB25477B68fb85Ed929f73A960582
-    address public aggregatorRouter;
 
     // Native token address used by 1inch
     address constant NATIVE_TOKEN = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -53,80 +66,94 @@ contract ReforestFeeSplitter is Ownable, ReentrancyGuard {
 
     event FeeRecipientUpdated(address indexed oldRecipient, address indexed newRecipient);
     event FeeBpsUpdated(uint256 oldFeeBps, uint256 newFeeBps);
-    event AggregatorRouterUpdated(address indexed oldRouter, address indexed newRouter);
 
-    constructor(
-        address _feeRecipient,
-        address _aggregatorRouter
-    ) Ownable(msg.sender) {
+    constructor(address _feeRecipient) Ownable(msg.sender) {
         require(_feeRecipient != address(0), "Invalid fee recipient");
-        require(_aggregatorRouter != address(0), "Invalid router");
-        
         feeRecipient = _feeRecipient;
-        aggregatorRouter = _aggregatorRouter;
     }
 
     /**
-     * @notice Execute a swap through 1inch with fee deduction
-     * @param srcToken Source token address (use NATIVE_TOKEN for ETH/native)
-     * @param srcAmount Total amount of source tokens
-     * @param minDstAmount Minimum destination tokens expected
-     * @param swapData Encoded 1inch swap calldata
+     * @notice Execute a swap through 1inch with 1% fee deduction
+     * @dev Works with ANY token pair on ANY 1inch-supported chain
+     * @param srcToken Source token address (use NATIVE_TOKEN for ETH/MATIC/AVAX/BNB/etc)
+     * @param dstToken Destination token address
+     * @param srcAmount Total amount of source tokens (fee will be deducted)
+     * @param minDstAmount Minimum destination tokens expected (slippage protection)
+     * @param swapData Encoded 1inch swap calldata from API
      */
     function swap(
         address srcToken,
+        address dstToken,
         uint256 srcAmount,
         uint256 minDstAmount,
         bytes calldata swapData
     ) external payable nonReentrant returns (uint256 dstAmount) {
         require(srcAmount > 0, "Amount must be > 0");
         
-        // Calculate fee (1%)
+        // Calculate 1% fee
         uint256 feeAmount = (srcAmount * feeBps) / 10000;
         uint256 swapAmount = srcAmount - feeAmount;
 
+        // Track balance before swap
+        uint256 balanceBefore;
+        if (dstToken == NATIVE_TOKEN) {
+            balanceBefore = address(this).balance;
+        } else {
+            balanceBefore = IERC20(dstToken).balanceOf(address(this));
+        }
+
         if (srcToken == NATIVE_TOKEN) {
-            require(msg.value >= srcAmount, "Insufficient ETH");
+            require(msg.value >= srcAmount, "Insufficient native token");
             
-            // Transfer fee to recipient
+            // Transfer 1% fee to recipient
             (bool feeSuccess, ) = feeRecipient.call{value: feeAmount}("");
             require(feeSuccess, "Fee transfer failed");
             
-            // Execute swap with remaining amount
-            (bool swapSuccess, bytes memory result) = aggregatorRouter.call{value: swapAmount}(swapData);
-            require(swapSuccess, "Swap failed");
+            // Execute swap with 99% via 1inch
+            (bool swapSuccess, ) = ONEINCH_ROUTER.call{value: swapAmount}(swapData);
+            require(swapSuccess, "1inch swap failed");
             
-            dstAmount = abi.decode(result, (uint256));
+            // Refund excess if any
+            if (msg.value > srcAmount) {
+                (bool refundSuccess, ) = msg.sender.call{value: msg.value - srcAmount}("");
+                require(refundSuccess, "Refund failed");
+            }
         } else {
             // Transfer tokens from user
             IERC20(srcToken).safeTransferFrom(msg.sender, address(this), srcAmount);
             
-            // Transfer fee to recipient
+            // Transfer 1% fee to recipient
             IERC20(srcToken).safeTransfer(feeRecipient, feeAmount);
             
-            // Approve router for swap amount
-            IERC20(srcToken).safeApprove(aggregatorRouter, swapAmount);
+            // Approve 1inch router for swap amount
+            IERC20(srcToken).forceApprove(ONEINCH_ROUTER, swapAmount);
             
-            // Execute swap
-            (bool swapSuccess, bytes memory result) = aggregatorRouter.call(swapData);
-            require(swapSuccess, "Swap failed");
-            
-            dstAmount = abi.decode(result, (uint256));
-            
-            // Reset approval
-            IERC20(srcToken).safeApprove(aggregatorRouter, 0);
+            // Execute swap via 1inch
+            (bool swapSuccess, ) = ONEINCH_ROUTER.call(swapData);
+            require(swapSuccess, "1inch swap failed");
+        }
+
+        // Calculate received amount
+        if (dstToken == NATIVE_TOKEN) {
+            dstAmount = address(this).balance - balanceBefore;
+            // Send to user
+            (bool success, ) = msg.sender.call{value: dstAmount}("");
+            require(success, "Native transfer failed");
+        } else {
+            dstAmount = IERC20(dstToken).balanceOf(address(this)) - balanceBefore;
+            // Send to user
+            IERC20(dstToken).safeTransfer(msg.sender, dstAmount);
         }
 
         require(dstAmount >= minDstAmount, "Slippage too high");
         
-        emit Swap(msg.sender, srcToken, address(0), srcAmount, feeAmount, dstAmount);
+        emit Swap(msg.sender, srcToken, dstToken, srcAmount, feeAmount, dstAmount);
         
         return dstAmount;
     }
 
     /**
      * @notice Update fee recipient address
-     * @param _newRecipient New fee recipient address
      */
     function setFeeRecipient(address _newRecipient) external onlyOwner {
         require(_newRecipient != address(0), "Invalid address");
@@ -136,8 +163,7 @@ contract ReforestFeeSplitter is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Update fee percentage
-     * @param _newFeeBps New fee in basis points (max 500 = 5%)
+     * @notice Update fee percentage (max 5%)
      */
     function setFeeBps(uint256 _newFeeBps) external onlyOwner {
         require(_newFeeBps <= 500, "Fee too high");
@@ -147,23 +173,12 @@ contract ReforestFeeSplitter is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Update aggregator router address
-     * @param _newRouter New router address
-     */
-    function setAggregatorRouter(address _newRouter) external onlyOwner {
-        require(_newRouter != address(0), "Invalid address");
-        address oldRouter = aggregatorRouter;
-        aggregatorRouter = _newRouter;
-        emit AggregatorRouterUpdated(oldRouter, _newRouter);
-    }
-
-    /**
      * @notice Rescue stuck tokens (emergency only)
      */
     function rescueTokens(address token, uint256 amount) external onlyOwner {
         if (token == NATIVE_TOKEN) {
             (bool success, ) = owner().call{value: amount}("");
-            require(success, "ETH rescue failed");
+            require(success, "Native rescue failed");
         } else {
             IERC20(token).safeTransfer(owner(), amount);
         }
