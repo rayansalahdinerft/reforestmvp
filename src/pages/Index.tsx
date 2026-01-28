@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import ThirdwebBridgeWidget from "@/components/ThirdwebBridgeWidget";
 import TreeCounter from "@/components/TreeCounter";
-import AnimatedGlobe from "@/components/AnimatedGlobe";
 
 const THIRDWEB_CLIENT_ID = "30620e23089261001eb0b387c50b04a1";
 
@@ -29,15 +28,9 @@ const Index = () => {
       <div className="relative z-10">
         <Header />
         
-        <main className="container mx-auto px-4 pt-4 pb-20">
-          {/* Animated Globe */}
-          <AnimatedGlobe />
-          
-          {/* Global Tree Counter */}
-          <TreeCounter />
-
+        <main className="container mx-auto px-4 pt-8 pb-20">
           {/* Hero Section */}
-          <div className="text-center mb-8 mt-4">
+          <div className="text-center mb-6">
             <p className="text-muted-foreground text-lg mb-2">
               Clean swaps. Clean future.
             </p>
@@ -47,6 +40,9 @@ const Index = () => {
               <span className="text-foreground">save the planet</span>
             </h1>
           </div>
+
+          {/* Global Tree Counter */}
+          <TreeCounter />
 
           {/* Thirdweb Bridge Widget */}
           <ThirdwebBridgeWidget clientId={THIRDWEB_CLIENT_ID} />
