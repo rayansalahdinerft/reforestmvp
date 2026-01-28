@@ -75,37 +75,43 @@ const TreeCounter = () => {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 md:gap-8 py-4">
+    <div className="flex flex-wrap justify-center gap-4 md:gap-6 animate-fade-in">
       {/* Trees Planted */}
-      <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20">
-        <TreePine className="w-5 h-5 text-primary" />
+      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-all">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <TreePine className="w-5 h-5 text-primary" />
+        </div>
         <div>
-          <p className="text-lg md:text-xl font-bold text-primary">
+          <p className="text-xl font-bold text-foreground tracking-tight">
             <AnimatedNumber value={stats.totalTrees} />
           </p>
-          <p className="text-xs text-muted-foreground">arbres plantés</p>
+          <p className="text-xs font-medium text-muted-foreground">Trees Planted</p>
         </div>
       </div>
 
       {/* Donations */}
-      <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/50 border border-border/50 transition-all duration-300 hover:scale-105">
-        <DollarSign className="w-5 h-5 text-foreground" />
+      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-all">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <DollarSign className="w-5 h-5 text-primary" />
+        </div>
         <div>
-          <p className="text-lg md:text-xl font-bold text-foreground">
+          <p className="text-xl font-bold text-foreground tracking-tight">
             <AnimatedNumber value={stats.totalDonationsUsd} prefix="$" />
           </p>
-          <p className="text-xs text-muted-foreground">reversés</p>
+          <p className="text-xs font-medium text-muted-foreground">Donated</p>
         </div>
       </div>
 
       {/* Swaps */}
-      <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/50 border border-border/50 transition-all duration-300 hover:scale-105">
-        <Users className="w-5 h-5 text-foreground" />
+      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-all">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Users className="w-5 h-5 text-primary" />
+        </div>
         <div>
-          <p className="text-lg md:text-xl font-bold text-foreground">
+          <p className="text-xl font-bold text-foreground tracking-tight">
             <AnimatedNumber value={stats.totalSwaps} />
           </p>
-          <p className="text-xs text-muted-foreground">swaps</p>
+          <p className="text-xs font-medium text-muted-foreground">Swaps Made</p>
         </div>
       </div>
     </div>
