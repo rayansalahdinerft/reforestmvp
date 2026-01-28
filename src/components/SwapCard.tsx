@@ -4,7 +4,6 @@ import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/rea
 import { Button } from './ui/button';
 import TokenSelector from './TokenSelector';
 import TokenSelectorModal from './TokenSelectorModal';
-import ChainSelector from './ChainSelector';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
@@ -15,7 +14,6 @@ const REFOREST_PERCENT = 0.40; // 40% of fees go to reforestation
 const COST_PER_TREE_USD = 2.5;
 
 const SwapCard = () => {
-  const [activeTab, setActiveTab] = useState<'swap' | 'buy'>('swap');
   const [sellAmount, setSellAmount] = useState('');
   const [sellToken, setSellToken] = useState<Token | null>(null);
   const [buyToken, setBuyToken] = useState<Token | null>(null);
@@ -96,25 +94,9 @@ const SwapCard = () => {
 
   return (
     <div className="w-full max-w-md mx-auto animate-slide-up">
-      {/* Header with Chain Selector */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex gap-2 p-1 bg-secondary/30 rounded-full">
-          <Button
-            variant="tab"
-            data-active={activeTab === 'swap'}
-            onClick={() => setActiveTab('swap')}
-          >
-            Swap
-          </Button>
-          <Button
-            variant="tab"
-            data-active={activeTab === 'buy'}
-            onClick={() => setActiveTab('buy')}
-          >
-            Buy
-          </Button>
-        </div>
-        <ChainSelector selectedChainId={chainId} onChainChange={setChainId} />
+      {/* Header - Clean title */}
+      <div className="flex items-center justify-center mb-6">
+        <h2 className="text-lg font-semibold text-foreground">Swap</h2>
       </div>
 
       {/* Swap Container */}
@@ -243,6 +225,7 @@ const SwapCard = () => {
         onSelect={setSellToken}
         chainId={chainId}
         selectedToken={buyToken}
+        onChainChange={setChainId}
       />
       <TokenSelectorModal
         isOpen={modalOpen === 'buy'}
@@ -250,6 +233,7 @@ const SwapCard = () => {
         onSelect={setBuyToken}
         chainId={chainId}
         selectedToken={sellToken}
+        onChainChange={setChainId}
       />
     </div>
   );
