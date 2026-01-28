@@ -1,62 +1,9 @@
-import { useState, useEffect } from 'react';
-import { ExternalLink, TrendingUp, Newspaper } from 'lucide-react';
-
-interface NewsItem {
-  id: string;
-  title: string;
-  url: string;
-  source: string;
-  publishedAt: string;
-}
-
-// Mock news data - in production, this would come from an API
-const MOCK_NEWS: NewsItem[] = [
-  {
-    id: '1',
-    title: 'Bitcoin breaks $100K milestone as institutional adoption accelerates',
-    url: '#',
-    source: 'CoinDesk',
-    publishedAt: '2h ago',
-  },
-  {
-    id: '2',
-    title: 'Ethereum Layer 2 networks see record TVL growth in 2025',
-    url: '#',
-    source: 'The Block',
-    publishedAt: '4h ago',
-  },
-  {
-    id: '3',
-    title: 'SEC approves new crypto ETF applications for major altcoins',
-    url: '#',
-    source: 'Bloomberg',
-    publishedAt: '6h ago',
-  },
-  {
-    id: '4',
-    title: 'DeFi protocols reach $500B in total value locked',
-    url: '#',
-    source: 'DeFi Pulse',
-    publishedAt: '8h ago',
-  },
-  {
-    id: '5',
-    title: 'Major banks announce blockchain-based cross-border payments',
-    url: '#',
-    source: 'Reuters',
-    publishedAt: '10h ago',
-  },
-  {
-    id: '6',
-    title: 'Solana ecosystem expands with new gaming partnerships',
-    url: '#',
-    source: 'CryptoSlate',
-    publishedAt: '12h ago',
-  },
-];
+import { useState } from 'react';
+import { ExternalLink, Newspaper, Loader2 } from 'lucide-react';
+import { useCryptoNews } from '@/hooks/useCryptoNews';
 
 const NewsTicker = () => {
-  const [news, setNews] = useState<NewsItem[]>(MOCK_NEWS);
+  const { news, loading } = useCryptoNews();
   const [isPaused, setIsPaused] = useState(false);
 
   return (
@@ -64,7 +11,11 @@ const NewsTicker = () => {
       <div className="flex items-center">
         {/* Label */}
         <div className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border-r border-border/50 shrink-0">
-          <Newspaper className="w-4 h-4 text-primary animate-subtle-bounce" />
+          {loading ? (
+            <Loader2 className="w-4 h-4 text-primary animate-spin" />
+          ) : (
+            <Newspaper className="w-4 h-4 text-primary animate-subtle-bounce" />
+          )}
           <span className="text-xs font-bold text-primary uppercase tracking-widest">Live</span>
         </div>
 
@@ -75,9 +26,9 @@ const NewsTicker = () => {
           onMouseLeave={() => setIsPaused(false)}
         >
           <div 
-            className={`flex gap-8 py-3 ${isPaused ? '' : 'animate-ticker'}`}
+            className={`flex gap-8 py-2.5 ${isPaused ? '' : 'animate-ticker'}`}
             style={{
-              animation: isPaused ? 'none' : 'ticker 25s linear infinite',
+              animation: isPaused ? 'none' : 'ticker 30s linear infinite',
             }}
           >
             {[...news, ...news].map((item, index) => (
@@ -111,7 +62,7 @@ const NewsTicker = () => {
           }
         }
         .animate-ticker {
-          animation: ticker 25s linear infinite;
+          animation: ticker 30s linear infinite;
         }
       `}</style>
     </div>
