@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/providers/WalletProvider";
 import Index from "./pages/Index";
+import Portfolio from "./pages/Portfolio";
+import Impact from "./pages/Impact";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -14,6 +16,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/impact" element={<Impact />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
