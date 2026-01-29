@@ -16,14 +16,30 @@ interface HistoricalData {
 
 // CoinGecko IDs and fallback prices
 const COINGECKO_IDS: Record<string, { id: string; fallbackPrice: number }> = {
+  // Major
   ETH: { id: 'ethereum', fallbackPrice: 2900 },
   BTC: { id: 'bitcoin', fallbackPrice: 95000 },
   SOL: { id: 'solana', fallbackPrice: 120 },
   BNB: { id: 'binancecoin', fallbackPrice: 650 },
+  // Layer 2
   MATIC: { id: 'matic-network', fallbackPrice: 0.5 },
   ARB: { id: 'arbitrum', fallbackPrice: 0.8 },
   OP: { id: 'optimism', fallbackPrice: 1.5 },
   AVAX: { id: 'avalanche-2', fallbackPrice: 25 },
+  // DeFi
+  UNI: { id: 'uniswap', fallbackPrice: 5 },
+  AAVE: { id: 'aave', fallbackPrice: 150 },
+  LINK: { id: 'chainlink', fallbackPrice: 12 },
+  CRV: { id: 'curve-dao-token', fallbackPrice: 0.35 },
+  // Stablecoins
+  USDC: { id: 'usd-coin', fallbackPrice: 1 },
+  USDT: { id: 'tether', fallbackPrice: 1 },
+  DAI: { id: 'dai', fallbackPrice: 1 },
+  // Memecoins
+  DOGE: { id: 'dogecoin', fallbackPrice: 0.12 },
+  SHIB: { id: 'shiba-inu', fallbackPrice: 0.00001 },
+  PEPE: { id: 'pepe', fallbackPrice: 0.000008 },
+  BONK: { id: 'bonk', fallbackPrice: 0.00002 },
 };
 
 // Map timeframe to CoinGecko parameters
