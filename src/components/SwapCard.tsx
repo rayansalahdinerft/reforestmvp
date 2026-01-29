@@ -4,11 +4,13 @@ import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/rea
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { useSwapExecution } from '@/hooks/useSwapExecution';
+import { useStarknetSwap } from '@/hooks/useStarknetSwap';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
 import { useTokenPrices } from '@/hooks/useTokenPrices';
 import { getContractAddress } from '@/config/contracts';
 import { toast } from 'sonner';
+import StarknetWalletButton from './StarknetWalletButton';
 
 const FEE_PERCENT = 0.01;
 
@@ -20,19 +22,41 @@ const SwapCard = () => {
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
   const [slippage, setSlippage] = useState(1);
 
-  const { isConnected, address } = useAppKitAccount();
+  const { isConnected: isEvmConnected, address: evmAddress } = useAppKitAccount();
   const { chainId: walletChainId } = useAppKitNetwork();
   const { open } = useAppKit();
+
+  // Starknet wallet
+  const {
+    status: starknetStatus,
+    error: starknetError,
+    txHash: starknetTxHash,
+    executeSwap: executeStarknetSwap,
+    reset: resetStarknetSwap,
+    isConnected: isStarknetConnected,
+    address: starknetAddress,
+    connect: connectStarknet,
+  } = useStarknetSwap();
+
+  const isStarknet = chainId === 'starknet';
+  const isConnected = isStarknet ? isStarknetConnected : isEvmConnected;
+  const address = isStarknet ? starknetAddress : evmAddress;
 
   const chainInfo = CHAIN_INFO[chainId as keyof typeof CHAIN_INFO];
 
   const { 
-    status: swapStatus, 
-    error: swapError, 
-    txHash, 
-    executeSwap, 
-    reset: resetSwap 
+    status: evmSwapStatus, 
+    error: evmSwapError, 
+    txHash: evmTxHash, 
+    executeSwap: executeEvmSwap, 
+    reset: resetEvmSwap 
   } = useSwapExecution();
+
+  // Unified status/error/txHash based on chain
+  const swapStatus = isStarknet ? starknetStatus : evmSwapStatus;
+  const swapError = isStarknet ? starknetError : evmSwapError;
+  const txHash = isStarknet ? starknetTxHash : evmTxHash;
+  const resetSwap = isStarknet ? resetStarknetSwap : resetEvmSwap;
 
   useEffect(() => {
     if (walletChainId && typeof walletChainId === 'number') {
@@ -72,7 +96,15 @@ const SwapCard = () => {
 
   const handleSwap = async () => {
     if (!isConnected) {
-      open();
+      if (isStarknet) {
+        try {
+          await connectStarknet();
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : 'Failed to connect Starknet wallet');
+        }
+      } else {
+        open();
+      }
       return;
     }
 
@@ -81,37 +113,59 @@ const SwapCard = () => {
       return;
     }
 
-    const numericChainId = typeof chainId === 'string' ? parseInt(chainId) : chainId;
-    
-    // Check if contract is deployed
-    const contractAddress = getContractAddress(numericChainId);
-    if (!contractAddress) {
-      toast.error('Smart contract not deployed on this chain yet. Demo mode active.');
-      return;
-    }
-
     toast.info('Starting swap...', { id: 'swap-progress' });
 
-    const result = await executeSwap(
-      numericChainId,
-      sellToken,
-      buyToken,
-      sellAmount,
-      slippage
-    );
-
-    if (result.error) {
-      toast.error(result.error, { id: 'swap-progress' });
-    } else if (result.hash) {
-      toast.success(
-        <div>
-          <p>Swap successful! 🌱</p>
-          <p className="text-xs opacity-70">Trees planted with 1% fee</p>
-        </div>,
-        { id: 'swap-progress' }
+    if (isStarknet) {
+      // Execute Starknet swap via AVNU
+      const result = await executeStarknetSwap(
+        sellToken,
+        buyToken,
+        sellAmount,
+        slippage
       );
-      // Reset form on success
-      setSellAmount('');
+
+      if (result.error) {
+        toast.error(result.error, { id: 'swap-progress' });
+      } else if (result.transactionHash) {
+        toast.success(
+          <div>
+            <p>Swap successful! 🌱</p>
+            <p className="text-xs opacity-70">Trees planted with 1% fee</p>
+          </div>,
+          { id: 'swap-progress' }
+        );
+        setSellAmount('');
+      }
+    } else {
+      // Execute EVM swap
+      const numericChainId = typeof chainId === 'string' ? parseInt(chainId) : chainId;
+      
+      const contractAddress = getContractAddress(numericChainId);
+      if (!contractAddress) {
+        toast.error('Smart contract not deployed on this chain yet. Demo mode active.');
+        return;
+      }
+
+      const result = await executeEvmSwap(
+        numericChainId,
+        sellToken,
+        buyToken,
+        sellAmount,
+        slippage
+      );
+
+      if (result.error) {
+        toast.error(result.error, { id: 'swap-progress' });
+      } else if (result.hash) {
+        toast.success(
+          <div>
+            <p>Swap successful! 🌱</p>
+            <p className="text-xs opacity-70">Trees planted with 1% fee</p>
+          </div>,
+          { id: 'swap-progress' }
+        );
+        setSellAmount('');
+      }
     }
   };
 
@@ -131,14 +185,20 @@ const SwapCard = () => {
   const treesPlanted = (feeAmount * 0.40) / 2.5; // 40% of fee goes to trees at $2.50/tree
 
   const getButtonText = () => {
-    if (!isConnected) return 'Connect Wallet';
+    if (!isConnected) {
+      return isStarknet ? 'Connect Starknet Wallet' : 'Connect Wallet';
+    }
     if (!sellToken || !buyToken) return 'Select Token';
     if (!sellAmount) return 'Enter Amount';
     
     switch (swapStatus) {
       case 'fetching-quote': return 'Getting quote...';
+      case 'building-tx': return 'Building transaction...';
+      case 'awaiting-signature': return 'Confirm in wallet...';
       case 'approving': return 'Approving token...';
-      case 'swapping': return 'Swapping...';
+      case 'swapping': 
+      case 'confirming':
+        return 'Swapping...';
       case 'success': return 'Swap Successful! 🌱';
       case 'error': return 'Try Again';
       default: return 'Swap & Plant Trees 🌱';
@@ -165,11 +225,23 @@ const SwapCard = () => {
     !sellToken || 
     !buyToken || 
     swapStatus === 'fetching-quote' || 
+    swapStatus === 'building-tx' ||
+    swapStatus === 'awaiting-signature' ||
     swapStatus === 'approving' || 
-    swapStatus === 'swapping'
+    swapStatus === 'swapping' ||
+    swapStatus === 'confirming'
   );
 
-  const isContractDeployed = getContractAddress(typeof chainId === 'string' ? parseInt(chainId) : chainId) !== null;
+  const isContractDeployed = isStarknet ? true : getContractAddress(typeof chainId === 'string' ? parseInt(chainId) : chainId) !== null;
+
+  // Get block explorer URL
+  const getExplorerTxUrl = () => {
+    if (!txHash) return '';
+    if (isStarknet) {
+      return `https://starkscan.co/tx/${txHash}`;
+    }
+    return `${chainInfo?.blockExplorer || 'https://etherscan.io'}/tx/${txHash}`;
+  };
 
   return (
     <div className="w-full max-w-[460px] mx-auto animate-slide-up">
@@ -326,7 +398,7 @@ const SwapCard = () => {
         {txHash && (
           <div className="px-5 pb-4">
             <a 
-              href={`${chainInfo?.blockExplorer || 'https://etherscan.io'}/tx/${txHash}`}
+              href={getExplorerTxUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="block px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
