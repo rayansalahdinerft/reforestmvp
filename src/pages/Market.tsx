@@ -23,7 +23,8 @@ const Market = () => {
     });
   }, [tokens, selectedCategory, searchQuery]);
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | null | undefined) => {
+    if (price == null) return 'N/A';
     if (price >= 1) {
       return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
