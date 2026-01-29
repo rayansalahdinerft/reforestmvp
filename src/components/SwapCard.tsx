@@ -1,84 +1,50 @@
 import { useState, useEffect } from 'react';
 import { ArrowDown, ChevronDown, Settings, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { useSwapExecution } from '@/hooks/useSwapExecution';
-import { useEkuboSwap } from '@/hooks/useEkuboSwap';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
 import { useTokenPrices } from '@/hooks/useTokenPrices';
 import { getContractAddress } from '@/config/contracts';
 import { toast } from 'sonner';
-import StarknetWalletButton from './StarknetWalletButton';
 
 const FEE_PERCENT = 0.01;
+const CHAIN_ID = 1; // Ethereum mainnet only
 
 const SwapCard = () => {
   const [sellAmount, setSellAmount] = useState('');
   const [sellToken, setSellToken] = useState<Token | null>(null);
   const [buyToken, setBuyToken] = useState<Token | null>(null);
-  const [chainId, setChainId] = useState<number | string>(1);
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
   const [slippage, setSlippage] = useState(1);
 
-  const { isConnected: isEvmConnected, address: evmAddress } = useAppKitAccount();
-  const { chainId: walletChainId } = useAppKitNetwork();
+  const { isConnected, address } = useAppKitAccount();
   const { open } = useAppKit();
 
-  // Starknet wallet (using Ekubo)
-  const {
-    status: starknetStatus,
-    error: starknetError,
-    txHash: starknetTxHash,
-    executeSwap: executeEkuboSwap,
-    reset: resetEkuboSwap,
-    isConnected: isStarknetConnected,
-    address: starknetAddress,
-    connect: connectStarknet,
-  } = useEkuboSwap();
-
-  const isStarknet = chainId === 'starknet';
-  const isConnected = isStarknet ? isStarknetConnected : isEvmConnected;
-  const address = isStarknet ? starknetAddress : evmAddress;
-
-  const chainInfo = CHAIN_INFO[chainId as keyof typeof CHAIN_INFO];
+  const chainInfo = CHAIN_INFO[CHAIN_ID];
 
   const { 
-    status: evmSwapStatus, 
-    error: evmSwapError, 
-    txHash: evmTxHash, 
-    executeSwap: executeEvmSwap, 
-    reset: resetEvmSwap 
+    status: swapStatus, 
+    error: swapError, 
+    txHash, 
+    executeSwap, 
+    reset: resetSwap 
   } = useSwapExecution();
 
-  // Unified status/error/txHash based on chain
-  const swapStatus = isStarknet ? starknetStatus : evmSwapStatus;
-  const swapError = isStarknet ? starknetError : evmSwapError;
-  const txHash = isStarknet ? starknetTxHash : evmTxHash;
-  const resetSwap = isStarknet ? resetEkuboSwap : resetEvmSwap;
-
+  // Initialize tokens on mount
   useEffect(() => {
-    if (walletChainId && typeof walletChainId === 'number') {
-      if (walletChainId === 1) {
-        setChainId(walletChainId);
-      }
-    }
-  }, [walletChainId]);
-
-  useEffect(() => {
-    const tokens = getTokensForChain(chainId);
-    setSellToken(tokens[0] || null);
-    setBuyToken(tokens[1] || null);
-    setSellAmount('');
-    resetSwap();
-  }, [chainId, resetSwap]);
+    const tokens = getTokensForChain(CHAIN_ID);
+    setSellToken(tokens[0] || null); // ETH
+    setBuyToken(tokens[2] || null);  // USDC
+  }, []);
 
   const { quote, loading: quoteLoading } = useSwapQuote(
     sellToken,
     buyToken,
     sellAmount,
-    chainId
+    CHAIN_ID
   );
 
   // Get live prices
@@ -96,15 +62,7 @@ const SwapCard = () => {
 
   const handleSwap = async () => {
     if (!isConnected) {
-      if (isStarknet) {
-        try {
-          await connectStarknet();
-        } catch (e) {
-          toast.error(e instanceof Error ? e.message : 'Failed to connect Starknet wallet');
-        }
-      } else {
-        open();
-      }
+      open();
       return;
     }
 
@@ -113,59 +71,33 @@ const SwapCard = () => {
       return;
     }
 
+    const contractAddress = getContractAddress(CHAIN_ID);
+    if (!contractAddress) {
+      toast.error('Smart contract not deployed yet. Demo mode active.');
+      return;
+    }
+
     toast.info('Starting swap...', { id: 'swap-progress' });
 
-    if (isStarknet) {
-      // Execute Starknet swap via Ekubo
-      const result = await executeEkuboSwap(
-        sellToken,
-        buyToken,
-        sellAmount,
-        slippage
+    const result = await executeSwap(
+      CHAIN_ID,
+      sellToken,
+      buyToken,
+      sellAmount,
+      slippage
+    );
+
+    if (result.error) {
+      toast.error(result.error, { id: 'swap-progress' });
+    } else if (result.hash) {
+      toast.success(
+        <div>
+          <p>Swap successful! 🌱</p>
+          <p className="text-xs opacity-70">Your fee saves the planet</p>
+        </div>,
+        { id: 'swap-progress' }
       );
-
-      if (result.error) {
-        toast.error(result.error, { id: 'swap-progress' });
-      } else if (result.transactionHash) {
-        toast.success(
-          <div>
-            <p>Swap successful! 🌱</p>
-            <p className="text-xs opacity-70">Trees planted with 1% fee</p>
-          </div>,
-          { id: 'swap-progress' }
-        );
-        setSellAmount('');
-      }
-    } else {
-      // Execute EVM swap
-      const numericChainId = typeof chainId === 'string' ? parseInt(chainId) : chainId;
-      
-      const contractAddress = getContractAddress(numericChainId);
-      if (!contractAddress) {
-        toast.error('Smart contract not deployed on this chain yet. Demo mode active.');
-        return;
-      }
-
-      const result = await executeEvmSwap(
-        numericChainId,
-        sellToken,
-        buyToken,
-        sellAmount,
-        slippage
-      );
-
-      if (result.error) {
-        toast.error(result.error, { id: 'swap-progress' });
-      } else if (result.hash) {
-        toast.success(
-          <div>
-            <p>Swap successful! 🌱</p>
-            <p className="text-xs opacity-70">Trees planted with 1% fee</p>
-          </div>,
-          { id: 'swap-progress' }
-        );
-        setSellAmount('');
-      }
+      setSellAmount('');
     }
   };
 
@@ -186,20 +118,14 @@ const SwapCard = () => {
   const treesPlanted = reforestationAmount / 2.5; // $2.50 per tree
 
   const getButtonText = () => {
-    if (!isConnected) {
-      return isStarknet ? 'Connect Starknet Wallet' : 'Connect Wallet';
-    }
+    if (!isConnected) return 'Connect Wallet';
     if (!sellToken || !buyToken) return 'Select Token';
     if (!sellAmount) return 'Enter Amount';
     
     switch (swapStatus) {
       case 'fetching-quote': return 'Getting quote...';
-      case 'building-tx': return 'Building transaction...';
-      case 'awaiting-signature': return 'Confirm in wallet...';
       case 'approving': return 'Approving token...';
-      case 'swapping': 
-      case 'confirming':
-        return 'Swapping...';
+      case 'swapping': return 'Swapping...';
       case 'success': return 'Swap Successful! 🌱';
       case 'error': return 'Try Again';
       default: return 'Swap & Plant Trees 🌱';
@@ -226,21 +152,15 @@ const SwapCard = () => {
     !sellToken || 
     !buyToken || 
     swapStatus === 'fetching-quote' || 
-    swapStatus === 'building-tx' ||
-    swapStatus === 'awaiting-signature' ||
     swapStatus === 'approving' || 
-    swapStatus === 'swapping' ||
-    swapStatus === 'confirming'
+    swapStatus === 'swapping'
   );
 
-  const isContractDeployed = isStarknet ? true : getContractAddress(typeof chainId === 'string' ? parseInt(chainId) : chainId) !== null;
+  const isContractDeployed = getContractAddress(CHAIN_ID) !== null;
 
   // Get block explorer URL
   const getExplorerTxUrl = () => {
     if (!txHash) return '';
-    if (isStarknet) {
-      return `https://starkscan.co/tx/${txHash}`;
-    }
     return `${chainInfo?.blockExplorer || 'https://etherscan.io'}/tx/${txHash}`;
   };
 
@@ -250,32 +170,26 @@ const SwapCard = () => {
       <div className="swap-card p-1.5">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-muted-foreground">Swap on</span>
-            </div>
-            <button 
-              onClick={() => setModalOpen('sell')}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary transition-all font-semibold text-sm group"
-            >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-muted-foreground">Swap on</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/80 font-semibold text-sm">
               {chainInfo?.logoURI && (
                 <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-5 h-5 rounded-full" />
               )}
               <span>{chainInfo?.name}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            </button>
+            </div>
           </div>
           <button className="p-2.5 hover:bg-secondary rounded-xl transition-all hover:rotate-45 duration-300">
             <Settings className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
-        {/* Demo mode indicator - only show for EVM chains without deployed contract */}
-        {!isStarknet && !isContractDeployed && (
+        {/* Demo mode indicator */}
+        {!isContractDeployed && (
           <div className="mx-4 mb-2 px-3 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
             <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
-              ⚠️ Demo mode: Contract not deployed on {chainInfo?.name}
+              ⚠️ Demo mode: Contract not deployed
             </p>
           </div>
         )}
@@ -422,22 +336,20 @@ const SwapCard = () => {
         </div>
       </div>
 
-      {/* Token Selector Modals */}
+      {/* Token Selector Modals - Ethereum only */}
       <TokenSelectorModal
         isOpen={modalOpen === 'sell'}
         onClose={() => setModalOpen(null)}
         onSelect={setSellToken}
-        chainId={chainId}
+        chainId={CHAIN_ID}
         selectedToken={buyToken}
-        onChainChange={setChainId}
       />
       <TokenSelectorModal
         isOpen={modalOpen === 'buy'}
         onClose={() => setModalOpen(null)}
         onSelect={setBuyToken}
-        chainId={chainId}
+        chainId={CHAIN_ID}
         selectedToken={sellToken}
-        onChainChange={setChainId}
       />
     </div>
   );
