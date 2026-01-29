@@ -78,14 +78,28 @@ export const CHAIN_INFO = {
     logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
     blockExplorer: 'https://solscan.io'
   },
+  // Starknet (non-EVM, uses AVNU/Ekubo)
+  'starknet': {
+    name: 'Starknet',
+    icon: '⬡',
+    color: '#EC796B',
+    slug: 'starknet',
+    type: 'starknet' as const,
+    logoURI: 'https://assets.coingecko.com/coins/images/26433/small/starknet.png',
+    blockExplorer: 'https://starkscan.co'
+  },
 } as const;
 
 export type SupportedChainId = keyof typeof CHAIN_INFO;
 export type EVMChainId = 1 | 137 | 42161 | 10 | 8453 | 43114 | 56;
 export type SolanaChainId = 'solana';
+export type StarknetChainId = 'starknet';
 
 // 1inch supported chain IDs (EVM only)
 export const ONEINCH_CHAIN_IDS = [1, 137, 42161, 10, 8453, 43114, 56] as const;
 
 // Jupiter supported (Solana)
 export const JUPITER_CHAIN_ID = 'solana' as const;
+
+// AVNU/Ekubo supported (Starknet)
+export const AVNU_CHAIN_ID = 'starknet' as const;
