@@ -374,7 +374,7 @@ const SwapCard = () => {
                   <span className="text-xs">🌱</span>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-foreground">1% goes to reforestation</span>
+                  <span className="text-sm font-medium text-foreground">40% of fees fund reforestation</span>
                   {treesPlanted > 0 && (
                     <p className="text-[10px] text-muted-foreground">≈ {treesPlanted.toFixed(2)} trees planted</p>
                   )}

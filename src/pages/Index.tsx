@@ -23,10 +23,10 @@ const Index = () => {
         {/* Hero Section */}
         <div className="text-center mb-10 animate-fade-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 tracking-tight">
-            Swap Tokens, <span className="text-primary glow-text">Plant Trees</span>
+            Every swap, <span className="text-primary glow-text">save the world</span>
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
-            Every trade contributes 1% to global reforestation. DeFi with purpose.
+            40% of our 1% fee funds global reforestation. DeFi with purpose.
           </p>
         </div>
 
