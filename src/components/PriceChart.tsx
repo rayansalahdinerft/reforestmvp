@@ -119,7 +119,7 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
       
       {/* Timeframe buttons */}
       <div className="flex gap-1 mt-3">
-        {(['1H', '1D', '1W', '1M'] as const).map((tf) => (
+        {(['1H', '1D', '1W', '1M', '1Y', 'ALL'] as const).map((tf) => (
           <button
             key={tf}
             onClick={() => setTimeframe(tf)}
