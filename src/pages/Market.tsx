@@ -1,7 +1,8 @@
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import SparklineChart from "@/components/SparklineChart";
-import { useMarketData, TOKEN_CATEGORIES } from "@/hooks/useMarketData";
+import TokenDetailModal from "@/components/TokenDetailModal";
+import { useMarketData, TOKEN_CATEGORIES, type MarketToken } from "@/hooks/useMarketData";
 import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 
@@ -10,8 +11,15 @@ const CATEGORIES = ['All', 'Major', 'Layer 2', 'DeFi', 'Stablecoin', 'Meme'];
 const Market = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedToken, setSelectedToken] = useState<MarketToken | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const { tokens, loading, error, refetch } = useMarketData();
+
+  const handleTokenClick = (token: MarketToken) => {
+    setSelectedToken(token);
+    setModalOpen(true);
+  };
 
   const filteredTokens = useMemo(() => {
     return tokens.filter(token => {
@@ -138,8 +146,12 @@ const Market = () => {
                     // Sample sparkline data for performance (every 4th point)
                     const sampledSparkline = sparklineData.filter((_, i) => i % 4 === 0);
 
-                    return (
-                      <tr key={token.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                      return (
+                      <tr 
+                        key={token.id} 
+                        className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
+                        onClick={() => handleTokenClick(token)}
+                      >
                         <td className="py-4 px-4 text-sm text-muted-foreground">{index + 1}</td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
@@ -198,6 +210,12 @@ const Market = () => {
             <p className="text-muted-foreground">No tokens found matching your criteria</p>
           </div>
         )}
+
+        <TokenDetailModal 
+          token={selectedToken}
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+        />
       </main>
     </div>
   );
