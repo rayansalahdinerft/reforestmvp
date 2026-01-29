@@ -19,30 +19,27 @@ export const ONEINCH_ROUTER_V6 = '0x111111125421cA6dc452d289314280a0f8842A65' as
 // Native token address used by 1inch
 export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const;
 
-// Fee recipient address
-export const FEE_RECIPIENT = '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669' as const;
+// Impact address (receives 1% of all swaps)
+export const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F' as const;
 
 // Fee in basis points (100 = 1%)
 export const FEE_BPS = 100;
 
 // ABI for the ReforestFeeSplitter contract
+// Function: takeFeeAndForward(address to) - takes 1% fee, forwards rest to `to`
 export const REFOREST_FEE_SPLITTER_ABI = [
   {
     inputs: [
-      { name: 'srcToken', type: 'address' },
-      { name: 'dstToken', type: 'address' },
-      { name: 'srcAmount', type: 'uint256' },
-      { name: 'minDstAmount', type: 'uint256' },
-      { name: 'swapData', type: 'bytes' }
+      { name: 'to', type: 'address' }
     ],
-    name: 'swap',
-    outputs: [{ name: 'dstAmount', type: 'uint256' }],
+    name: 'takeFeeAndForward',
+    outputs: [],
     stateMutability: 'payable',
     type: 'function'
   },
   {
     inputs: [],
-    name: 'feeRecipient',
+    name: 'impactAddress',
     outputs: [{ name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function'
@@ -57,14 +54,13 @@ export const REFOREST_FEE_SPLITTER_ABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, name: 'user', type: 'address' },
-      { indexed: true, name: 'srcToken', type: 'address' },
-      { indexed: true, name: 'dstToken', type: 'address' },
-      { indexed: false, name: 'srcAmount', type: 'uint256' },
+      { indexed: true, name: 'from', type: 'address' },
+      { indexed: true, name: 'to', type: 'address' },
+      { indexed: false, name: 'totalAmount', type: 'uint256' },
       { indexed: false, name: 'feeAmount', type: 'uint256' },
-      { indexed: false, name: 'dstAmount', type: 'uint256' }
+      { indexed: false, name: 'forwardedAmount', type: 'uint256' }
     ],
-    name: 'Swap',
+    name: 'FeeCollected',
     type: 'event'
   }
 ] as const;

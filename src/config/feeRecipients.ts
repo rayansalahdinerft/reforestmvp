@@ -2,12 +2,12 @@
 // These wallets receive the 1% fee from each swap
 
 export const FEE_RECIPIENTS = {
-  // EVM chains (Ethereum and L2s)
-  ethereum: '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669',
-  polygon: '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669',
-  arbitrum: '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669',
-  base: '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669',
-  bsc: '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669',
+  // EVM chains (Ethereum and L2s) - Impact address
+  ethereum: '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F',
+  polygon: '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F',
+  arbitrum: '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F',
+  base: '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F',
+  bsc: '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F',
   
   // Solana
   solana: 'A2P2damYLutEW74sBVZgcrpoJ1hYAMkfFKJEATa6PpWa',
