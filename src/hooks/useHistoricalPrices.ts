@@ -112,8 +112,13 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
         prices = prices.filter(([timestamp]) => timestamp >= oneHourAgo);
       }
 
-      // Reduce data points for better performance (max 24 points)
-      const step = Math.max(1, Math.floor(prices.length / 24));
+      // Adjust sampling based on timeframe for better visualization
+      // More data points for longer timeframes to show full history
+      let maxPoints = 24;
+      if (timeframe === '1Y') maxPoints = 52; // weekly points
+      if (timeframe === 'ALL') maxPoints = 100; // show more detail for full history
+
+      const step = Math.max(1, Math.floor(prices.length / maxPoints));
       const sampledPrices = prices.filter((_, index) => index % step === 0);
 
       const formattedData: PricePoint[] = sampledPrices.map(([timestamp, price]) => ({

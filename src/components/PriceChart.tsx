@@ -49,7 +49,7 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           {logoUrl && (
-            <img src={logoUrl} alt={symbol} className="w-10 h-10 rounded-full ring-2 ring-border" />
+            <img src={logoUrl} alt={symbol} className="w-10 h-10 rounded-full" />
           )}
           <div>
             <h3 className="font-bold text-foreground">{symbol}</h3>
