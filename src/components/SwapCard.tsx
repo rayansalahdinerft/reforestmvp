@@ -4,7 +4,7 @@ import { useAppKitAccount, useAppKitNetwork, useAppKit } from '@reown/appkit/rea
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { useSwapExecution } from '@/hooks/useSwapExecution';
-import { useStarknetSwap } from '@/hooks/useStarknetSwap';
+import { useEkuboSwap } from '@/hooks/useEkuboSwap';
 import { getTokensForChain, type Token } from '@/config/tokens';
 import { CHAIN_INFO } from '@/config/chains';
 import { useTokenPrices } from '@/hooks/useTokenPrices';
@@ -26,17 +26,17 @@ const SwapCard = () => {
   const { chainId: walletChainId } = useAppKitNetwork();
   const { open } = useAppKit();
 
-  // Starknet wallet
+  // Starknet wallet (using Ekubo)
   const {
     status: starknetStatus,
     error: starknetError,
     txHash: starknetTxHash,
-    executeSwap: executeStarknetSwap,
-    reset: resetStarknetSwap,
+    executeSwap: executeEkuboSwap,
+    reset: resetEkuboSwap,
     isConnected: isStarknetConnected,
     address: starknetAddress,
     connect: connectStarknet,
-  } = useStarknetSwap();
+  } = useEkuboSwap();
 
   const isStarknet = chainId === 'starknet';
   const isConnected = isStarknet ? isStarknetConnected : isEvmConnected;
@@ -56,7 +56,7 @@ const SwapCard = () => {
   const swapStatus = isStarknet ? starknetStatus : evmSwapStatus;
   const swapError = isStarknet ? starknetError : evmSwapError;
   const txHash = isStarknet ? starknetTxHash : evmTxHash;
-  const resetSwap = isStarknet ? resetStarknetSwap : resetEvmSwap;
+  const resetSwap = isStarknet ? resetEkuboSwap : resetEvmSwap;
 
   useEffect(() => {
     if (walletChainId && typeof walletChainId === 'number') {
@@ -116,8 +116,8 @@ const SwapCard = () => {
     toast.info('Starting swap...', { id: 'swap-progress' });
 
     if (isStarknet) {
-      // Execute Starknet swap via AVNU
-      const result = await executeStarknetSwap(
+      // Execute Starknet swap via Ekubo
+      const result = await executeEkuboSwap(
         sellToken,
         buyToken,
         sellAmount,
