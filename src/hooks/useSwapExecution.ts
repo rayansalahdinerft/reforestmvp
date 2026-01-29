@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
 import { parseUnits, formatUnits, createPublicClient, http } from 'viem';
 import { mainnet, polygon, arbitrum, optimism, base, avalanche, bsc } from 'viem/chains';
-import { supabase } from '@/integrations/supabase/client';
 import { 
   REFOREST_FEE_SPLITTER_ABI, 
   ERC20_ABI,
@@ -41,28 +40,8 @@ export const useSwapExecution = () => {
     hash: txHash ?? undefined,
   });
 
-  const getSwapData = async (
-    chainId: number,
-    fromToken: string,
-    toToken: string,
-    amount: string,
-    fromAddress: string,
-    slippage: number = 1
-  ) => {
-    const { data, error } = await supabase.functions.invoke('oneinch-swap', {
-      body: { chainId, fromToken, toToken, amount, fromAddress, slippage }
-    });
-
-    if (error) throw new Error(error.message);
-    if (!data.success) {
-      if (data.demo) {
-        throw new Error('DEMO_MODE: 1inch API key not configured. Add ONEINCH_API_KEY secret.');
-      }
-      throw new Error(data.error || 'Failed to get swap data');
-    }
-
-    return data;
-  };
+  // For EVM swaps, we use takeFeeAndForward which handles the 1% fee
+  // The contract takes the fee and forwards the rest to the destination
 
   const checkAndApproveToken = async (
     tokenAddress: `0x${string}`,
@@ -146,20 +125,9 @@ export const useSwapExecution = () => {
 
       // Convert amount to wei
       const amountInWei = parseUnits(sellAmount, sellToken.decimals);
-
-      // Get swap data from 1inch
-      const swapData = await getSwapData(
-        chainId,
-        sellToken.address,
-        buyToken.address,
-        amountInWei.toString(),
-        contractAddress,
-        slippage
-      );
-
       const isNativeToken = sellToken.address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase();
 
-      // Approve token if ERC20
+      // For ERC20 tokens, approve the contract first
       if (!isNativeToken) {
         await checkAndApproveToken(
           sellToken.address as `0x${string}`,
@@ -171,21 +139,13 @@ export const useSwapExecution = () => {
 
       setStatus('swapping');
 
-      // Calculate minimum output with slippage
-      const minDstAmount = BigInt(swapData.toAmount) * BigInt(100 - slippage) / 100n;
-
-      // Execute swap through our contract
+      // Execute swap through our contract using takeFeeAndForward
+      // The contract takes 1% fee and forwards the rest to the user
       const hash = await writeContractAsync({
         address: contractAddress,
         abi: REFOREST_FEE_SPLITTER_ABI,
-        functionName: 'swap',
-        args: [
-          sellToken.address as `0x${string}`,
-          buyToken.address as `0x${string}`,
-          amountInWei,
-          minDstAmount,
-          swapData.tx.data as `0x${string}`
-        ],
+        functionName: 'takeFeeAndForward',
+        args: [userAddress], // Forward remaining funds back to user
         value: isNativeToken ? amountInWei : 0n
       } as any);
 
@@ -203,7 +163,9 @@ export const useSwapExecution = () => {
       
       if (receipt?.status === 'success') {
         setStatus('success');
-        return { hash, dstAmount: formatUnits(BigInt(swapData.toAmount), buyToken.decimals) };
+        // Calculate the amount received (99% of original after 1% fee)
+        const receivedAmount = (amountInWei * 99n) / 100n;
+        return { hash, dstAmount: formatUnits(receivedAmount, buyToken.decimals) };
       } else {
         throw new Error('Transaction failed');
       }
