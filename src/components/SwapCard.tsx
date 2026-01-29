@@ -181,8 +181,9 @@ const SwapCard = () => {
   const buyUsdValue = buyAmount && buyPrice 
     ? (parseFloat(buyAmount) * buyPrice).toFixed(2) 
     : buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
-  const feeAmount = parseFloat(sellUsdValue) * FEE_PERCENT;
-  const treesPlanted = (feeAmount * 0.40) / 2.5; // 40% of fee goes to trees at $2.50/tree
+  const feeAmount = parseFloat(sellUsdValue) * FEE_PERCENT; // Total 1% fee
+  const reforestationAmount = feeAmount * 0.40; // 40% of fee goes to NGO
+  const treesPlanted = reforestationAmount / 2.5; // $2.50 per tree
 
   const getButtonText = () => {
     if (!isConnected) {
@@ -380,7 +381,7 @@ const SwapCard = () => {
                   )}
                 </div>
               </div>
-              <span className="text-sm font-bold text-primary">${feeAmount.toFixed(2)}</span>
+              <span className="text-sm font-bold text-primary">${reforestationAmount.toFixed(2)}</span>
             </div>
           </div>
         )}
