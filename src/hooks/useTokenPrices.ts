@@ -116,81 +116,98 @@ export const useTokenPrices = (symbols: string[] = []) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPrices = useCallback(async () => {
-    try {
-      // Fast path: use cache immediately to avoid flashing 0s
-      const cached = readCachedPrices();
-      if (cached && Object.keys(cached).length > 0) {
-        setPrices((prev) => ({ ...cached, ...prev }));
-        setLoading(false);
-      }
+  // Stabilize symbols array to prevent infinite re-renders
+  const symbolsKey = symbols.sort().join(',');
 
-      // Get unique CoinGecko IDs
-      const ids = [...new Set(
-        symbols
-          .map(s => TOKEN_COINGECKO_IDS[s.toUpperCase()])
-          .filter(Boolean)
-      )];
+  useEffect(() => {
+    let isMounted = true;
 
-      if (ids.length === 0) {
-        // Fetch popular tokens by default
-        const defaultIds = ['ethereum', 'bitcoin', 'usd-coin', 'tether', 'solana', 'matic-network', 'arbitrum', 'optimism', 'avalanche-2', 'binancecoin'];
-        ids.push(...defaultIds);
-      }
+    const fetchPrices = async () => {
+      try {
+        // Fast path: use cache immediately to avoid flashing 0s
+        const cached = readCachedPrices();
+        if (cached && Object.keys(cached).length > 0 && isMounted) {
+          setPrices(cached);
+          setLoading(false);
+        }
 
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch prices (HTTP ${response.status})`);
-      }
-
-      const data = await response.json();
-      setPrices(data);
-      writeCachedPrices(data);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching prices:', err);
-
-      // If API is temporarily unavailable / rate-limited, avoid showing 0 by keeping
-      // previous values or falling back to realistic defaults.
-      setPrices((prev) => {
-        if (Object.keys(prev).length > 0) return prev;
-
-        const requestedIds = [...new Set(
-          symbols
+        // Get unique CoinGecko IDs from current symbols
+        const currentSymbols = symbolsKey ? symbolsKey.split(',') : [];
+        const ids = [...new Set(
+          currentSymbols
             .map(s => TOKEN_COINGECKO_IDS[s.toUpperCase()])
             .filter(Boolean)
         )];
 
-        const idsToUse = requestedIds.length > 0
-          ? requestedIds
-          : ['ethereum', 'bitcoin', 'usd-coin', 'tether', 'solana', 'matic-network', 'arbitrum', 'optimism', 'avalanche-2', 'binancecoin'];
-
-        const fallback: PriceData = {};
-        for (const id of idsToUse) {
-          fallback[id] = {
-            usd: FALLBACK_USD_BY_ID[id] ?? 100,
-            usd_24h_change: 0,
-          };
+        if (ids.length === 0) {
+          // Fetch popular tokens by default
+          const defaultIds = ['ethereum', 'bitcoin', 'usd-coin', 'tether', 'solana', 'matic-network', 'arbitrum', 'optimism', 'avalanche-2', 'binancecoin'];
+          ids.push(...defaultIds);
         }
-        return fallback;
-      });
 
-      setError('Prix indisponibles (limite API / réseau)');
-    } finally {
-      setLoading(false);
-    }
-  }, [symbols]);
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`
+        );
 
-  useEffect(() => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch prices (HTTP ${response.status})`);
+        }
+
+        const data = await response.json();
+        if (isMounted) {
+          setPrices(data);
+          writeCachedPrices(data);
+          setError(null);
+        }
+      } catch (err) {
+        console.error('Error fetching prices:', err);
+
+        if (isMounted) {
+          // If API is temporarily unavailable / rate-limited, avoid showing 0 by keeping
+          // previous values or falling back to realistic defaults.
+          setPrices((prev) => {
+            if (Object.keys(prev).length > 0) return prev;
+
+            const currentSymbols = symbolsKey ? symbolsKey.split(',') : [];
+            const requestedIds = [...new Set(
+              currentSymbols
+                .map(s => TOKEN_COINGECKO_IDS[s.toUpperCase()])
+                .filter(Boolean)
+            )];
+
+            const idsToUse = requestedIds.length > 0
+              ? requestedIds
+              : ['ethereum', 'bitcoin', 'usd-coin', 'tether', 'solana', 'matic-network', 'arbitrum', 'optimism', 'avalanche-2', 'binancecoin'];
+
+            const fallback: PriceData = {};
+            for (const id of idsToUse) {
+              fallback[id] = {
+                usd: FALLBACK_USD_BY_ID[id] ?? 100,
+                usd_24h_change: 0,
+              };
+            }
+            return fallback;
+          });
+
+          setError('Prix indisponibles (limite API / réseau)');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchPrices();
     
     // Refresh every 60 seconds (reduce rate limiting)
     const interval = setInterval(fetchPrices, REFRESH_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [fetchPrices]);
+    
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [symbolsKey]);
 
   const getPrice = useCallback((symbol: string): number | null => {
     const id = TOKEN_COINGECKO_IDS[symbol.toUpperCase()];
@@ -204,7 +221,7 @@ export const useTokenPrices = (symbols: string[] = []) => {
     return prices[id].usd_24h_change || null;
   }, [prices]);
 
-  return { prices, loading, error, getPrice, get24hChange, refetch: fetchPrices };
+  return { prices, loading, error, getPrice, get24hChange };
 };
 
 export const TOKEN_COINGECKO_MAP = TOKEN_COINGECKO_IDS;
