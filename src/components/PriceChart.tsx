@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
 import { useHistoricalPrices, type Timeframe } from '@/hooks/useHistoricalPrices';
 
@@ -28,6 +28,16 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
     const change = lastPrice - firstPrice;
     const percent = (change / firstPrice) * 100;
     return { value: change, percent };
+  }, [data]);
+
+  // Calculate Y-axis domain to show variations properly
+  const yDomain = useMemo(() => {
+    if (data.length === 0) return [0, 100];
+    const prices = data.map(d => d.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const padding = (maxPrice - minPrice) * 0.1 || maxPrice * 0.02;
+    return [minPrice - padding, maxPrice + padding];
   }, [data]);
 
   const timeframeIsPositive = priceChange.percent >= 0;
@@ -80,6 +90,10 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
               tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
               interval="preserveStartEnd"
               minTickGap={30}
+            />
+            <YAxis 
+              domain={yDomain}
+              hide={true}
             />
             <Tooltip
               contentStyle={{
