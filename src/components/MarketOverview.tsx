@@ -5,7 +5,7 @@ const tokens = [
   { symbol: 'ETH', name: 'Ethereum', id: 'ethereum', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png' },
   { symbol: 'BTC', name: 'Bitcoin', id: 'bitcoin', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png' },
   { symbol: 'SOL', name: 'Solana', id: 'solana', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png' },
-  { symbol: 'STRK', name: 'Starknet', id: 'starknet', logo: 'https://assets.coingecko.com/coins/images/26433/small/starknet.png' },
+  { symbol: 'BNB', name: 'BNB', id: 'binancecoin', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png' },
 ];
 
 const MarketOverview = () => {

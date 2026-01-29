@@ -14,17 +14,16 @@ interface HistoricalData {
   error: string | null;
 }
 
-// CoinGecko IDs
-const COINGECKO_IDS: Record<string, string> = {
-  ETH: 'ethereum',
-  BTC: 'bitcoin',
-  SOL: 'solana',
-  STRK: 'starknet',
-  MATIC: 'matic-network',
-  ARB: 'arbitrum',
-  OP: 'optimism',
-  AVAX: 'avalanche-2',
-  BNB: 'binancecoin',
+// CoinGecko IDs and fallback prices
+const COINGECKO_IDS: Record<string, { id: string; fallbackPrice: number }> = {
+  ETH: { id: 'ethereum', fallbackPrice: 2900 },
+  BTC: { id: 'bitcoin', fallbackPrice: 95000 },
+  SOL: { id: 'solana', fallbackPrice: 120 },
+  BNB: { id: 'binancecoin', fallbackPrice: 650 },
+  MATIC: { id: 'matic-network', fallbackPrice: 0.5 },
+  ARB: { id: 'arbitrum', fallbackPrice: 0.8 },
+  OP: { id: 'optimism', fallbackPrice: 1.5 },
+  AVAX: { id: 'avalanche-2', fallbackPrice: 25 },
 };
 
 // Map timeframe to CoinGecko parameters
@@ -67,13 +66,15 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchHistoricalData = useCallback(async () => {
-    const coinId = COINGECKO_IDS[symbol.toUpperCase()];
+    const tokenConfig = COINGECKO_IDS[symbol.toUpperCase()];
     
-    if (!coinId) {
+    if (!tokenConfig) {
       setError(`Unknown symbol: ${symbol}`);
       setLoading(false);
       return;
     }
+
+    const { id: coinId, fallbackPrice } = tokenConfig;
 
     setLoading(true);
     setError(null);
@@ -118,8 +119,8 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
       console.error('Error fetching historical prices:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
       
-      // Generate fallback data on error
-      const fallbackData = generateFallbackData(timeframe);
+      // Generate fallback data on error with realistic base price
+      const fallbackData = generateFallbackData(timeframe, fallbackPrice);
       setData(fallbackData);
     } finally {
       setLoading(false);
@@ -134,39 +135,45 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
 };
 
 // Fallback data generator when API fails
-const generateFallbackData = (timeframe: Timeframe): PricePoint[] => {
+const generateFallbackData = (timeframe: Timeframe, basePrice: number = 100): PricePoint[] => {
   const now = Date.now();
   const points: PricePoint[] = [];
   
   let intervalMs: number;
   let count: number;
+  let volatility: number;
   
   switch (timeframe) {
     case '1H':
       intervalMs = 5 * 60 * 1000; // 5 minutes
       count = 12;
+      volatility = 0.002; // 0.2% per interval
       break;
     case '1D':
       intervalMs = 60 * 60 * 1000; // 1 hour
       count = 24;
+      volatility = 0.005; // 0.5% per interval
       break;
     case '1W':
       intervalMs = 24 * 60 * 60 * 1000; // 1 day
       count = 7;
+      volatility = 0.02; // 2% per interval
       break;
     case '1M':
       intervalMs = 24 * 60 * 60 * 1000; // 1 day
       count = 30;
+      volatility = 0.03; // 3% per interval
       break;
     default:
       intervalMs = 60 * 60 * 1000;
       count = 24;
+      volatility = 0.005;
   }
   
-  let price = 100;
+  let price = basePrice;
   for (let i = count - 1; i >= 0; i--) {
     const timestamp = now - (i * intervalMs);
-    price = price * (1 + (Math.random() - 0.5) * 0.02);
+    price = price * (1 + (Math.random() - 0.5) * volatility);
     points.push({
       timestamp,
       time: formatTime(timestamp, timeframe),
