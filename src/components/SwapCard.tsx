@@ -109,11 +109,11 @@ const SwapCard = () => {
   
   const sellUsdValue = sellAmount && sellPrice 
     ? (parseFloat(sellAmount) * sellPrice).toFixed(2) 
-    : sellAmount ? (parseFloat(sellAmount) * 2500).toFixed(2) : '0';
+    : null;
   const buyUsdValue = buyAmount && buyPrice 
     ? (parseFloat(buyAmount) * buyPrice).toFixed(2) 
-    : buyAmount ? (parseFloat(buyAmount) * 2500).toFixed(2) : '0';
-  const feeAmount = parseFloat(sellUsdValue) * FEE_PERCENT; // Total 1% fee
+    : null;
+  const feeAmount = sellUsdValue ? parseFloat(sellUsdValue) * FEE_PERCENT : 0;
   const reforestationAmount = feeAmount * 0.40; // 40% of fee goes to NGO
   const treesPlanted = reforestationAmount / 2.5; // $2.50 per tree
 
@@ -199,7 +199,7 @@ const SwapCard = () => {
           <div className="token-input-row">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">You Pay</span>
-              {sellAmount && (
+              {sellAmount && sellUsdValue && (
                 <span className="text-xs font-medium text-muted-foreground">${sellUsdValue}</span>
               )}
             </div>
@@ -245,7 +245,7 @@ const SwapCard = () => {
           <div className="token-input-row bg-primary/5 border border-primary/10">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">You Receive</span>
-              {buyAmount && (
+              {buyAmount && buyUsdValue && (
                 <div className="flex items-center gap-1.5">
                   <TrendingUp className="w-3 h-3 text-primary" />
                   <span className="text-xs font-medium text-primary">${buyUsdValue}</span>
