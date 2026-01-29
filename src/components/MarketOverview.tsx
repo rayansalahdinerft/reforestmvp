@@ -9,22 +9,14 @@ const tokens = [
 ];
 
 const MarketOverview = () => {
-  const { prices, loading } = useTokenPrices(tokens.map(t => t.symbol));
-
-  // Map symbols to CoinGecko IDs for price lookup with fallback values
-  const priceMap: Record<string, { usd: number; usd_24h_change: number }> = {
-    ETH: { usd: prices['ethereum']?.usd ?? 3200, usd_24h_change: prices['ethereum']?.usd_24h_change ?? 2.5 },
-    BTC: { usd: prices['bitcoin']?.usd ?? 95000, usd_24h_change: prices['bitcoin']?.usd_24h_change ?? 1.8 },
-    SOL: { usd: prices['solana']?.usd ?? 180, usd_24h_change: prices['solana']?.usd_24h_change ?? -0.5 },
-    STRK: { usd: prices['starknet']?.usd ?? 0.45, usd_24h_change: prices['starknet']?.usd_24h_change ?? 3.2 },
-  };
+  const { prices } = useTokenPrices(tokens.map(t => t.symbol));
 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-xl font-bold text-foreground">Market Overview</h2>
-          <p className="text-sm text-muted-foreground">Live prices from major tokens</p>
+          <p className="text-sm text-muted-foreground">Live prices with real historical data</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -34,15 +26,19 @@ const MarketOverview = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {tokens.map((token) => {
-          const data = priceMap[token.symbol];
+          const priceData = prices[token.id];
+          const currentPrice = priceData?.usd ?? 0;
+          const change24h = priceData?.usd_24h_change ?? 0;
+          
           return (
             <PriceChart
               key={token.symbol}
               symbol={token.symbol}
               name={token.name}
-              price={data?.usd || 0}
-              change24h={data?.usd_24h_change || 0}
+              currentPrice={currentPrice}
+              change24h={change24h}
               logoUrl={token.logo}
+              coinId={token.id}
             />
           );
         })}

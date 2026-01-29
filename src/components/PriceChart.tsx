@@ -1,42 +1,37 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
-import { TrendingUp, TrendingDown } from 'lucide-react';
-
-// Generate mock price data for demonstration
-const generatePriceData = (basePrice: number, volatility: number, trend: 'up' | 'down' | 'neutral') => {
-  const data = [];
-  let price = basePrice * (trend === 'down' ? 1.1 : trend === 'up' ? 0.9 : 1);
-  
-  for (let i = 0; i < 24; i++) {
-    const change = (Math.random() - 0.5) * volatility;
-    const trendFactor = trend === 'up' ? 0.005 : trend === 'down' ? -0.005 : 0;
-    price = price * (1 + change + trendFactor);
-    
-    data.push({
-      time: `${i}:00`,
-      price: parseFloat(price.toFixed(2)),
-    });
-  }
-  
-  return data;
-};
+import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { useHistoricalPrices, type Timeframe } from '@/hooks/useHistoricalPrices';
 
 interface PriceChartProps {
   symbol: string;
   name: string;
-  price: number;
+  currentPrice: number;
   change24h: number;
   logoUrl?: string;
+  coinId: string;
 }
 
-const PriceChart = ({ symbol, name, price, change24h, logoUrl }: PriceChartProps) => {
-  const [timeframe, setTimeframe] = useState<'1H' | '1D' | '1W' | '1M'>('1D');
+const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: PriceChartProps) => {
+  const [timeframe, setTimeframe] = useState<Timeframe>('1D');
+  
+  const { data, loading, error } = useHistoricalPrices(symbol, timeframe);
   
   const isPositive = change24h >= 0;
-  const trend = change24h > 1 ? 'up' : change24h < -1 ? 'down' : 'neutral';
-  const chartData = generatePriceData(price, 0.02, trend);
-  
   const chartColor = isPositive ? 'hsl(142 76% 52%)' : 'hsl(0 84% 60%)';
+  
+  // Calculate price change for selected timeframe
+  const priceChange = useMemo(() => {
+    if (data.length < 2) return { value: 0, percent: 0 };
+    const firstPrice = data[0].price;
+    const lastPrice = data[data.length - 1].price;
+    const change = lastPrice - firstPrice;
+    const percent = (change / firstPrice) * 100;
+    return { value: change, percent };
+  }, [data]);
+
+  const timeframeIsPositive = priceChange.percent >= 0;
+  const timeframeColor = timeframeIsPositive ? 'hsl(142 76% 52%)' : 'hsl(0 84% 60%)';
   
   return (
     <div className="swap-card p-5 h-full">
@@ -54,25 +49,38 @@ const PriceChart = ({ symbol, name, price, change24h, logoUrl }: PriceChartProps
         
         <div className="text-right">
           <p className="text-lg font-bold text-foreground tabular-nums">
-            ${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-          <div className={`flex items-center justify-end gap-1 text-sm ${isPositive ? 'text-primary' : 'text-destructive'}`}>
-            {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-            <span className="tabular-nums">{isPositive ? '+' : ''}{change24h.toFixed(2)}%</span>
+          <div className={`flex items-center justify-end gap-1 text-sm ${timeframeIsPositive ? 'text-primary' : 'text-destructive'}`}>
+            {timeframeIsPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            <span className="tabular-nums">{timeframeIsPositive ? '+' : ''}{priceChange.percent.toFixed(2)}%</span>
           </div>
         </div>
       </div>
       
       {/* Chart */}
-      <div className="h-32 -mx-2">
+      <div className="h-32 -mx-2 relative">
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-card/50 z-10">
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+          </div>
+        )}
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
+          <AreaChart data={data}>
             <defs>
-              <linearGradient id={`gradient-${symbol}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
-                <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
+              <linearGradient id={`gradient-${symbol}-${timeframe}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={timeframeColor} stopOpacity={0.3} />
+                <stop offset="100%" stopColor={timeframeColor} stopOpacity={0} />
               </linearGradient>
             </defs>
+            <XAxis 
+              dataKey="time" 
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+              interval="preserveStartEnd"
+              minTickGap={30}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
@@ -81,14 +89,15 @@ const PriceChart = ({ symbol, name, price, change24h, logoUrl }: PriceChartProps
                 fontSize: '12px',
               }}
               labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
-              formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}
+              formatter={(value: number) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Price']}
             />
             <Area
               type="monotone"
               dataKey="price"
-              stroke={chartColor}
+              stroke={timeframeColor}
               strokeWidth={2}
-              fill={`url(#gradient-${symbol})`}
+              fill={`url(#gradient-${symbol}-${timeframe})`}
+              isAnimationActive={!loading}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -100,10 +109,11 @@ const PriceChart = ({ symbol, name, price, change24h, logoUrl }: PriceChartProps
           <button
             key={tf}
             onClick={() => setTimeframe(tf)}
+            disabled={loading}
             className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
               timeframe === tf
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-50'
             }`}
           >
             {tf}
