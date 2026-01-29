@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
-import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
+import { useWriteContract, useAccount } from 'wagmi';
 import { parseUnits, formatUnits, createPublicClient, http } from 'viem';
 import { mainnet, polygon, arbitrum, optimism, base, avalanche, bsc } from 'viem/chains';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   REFOREST_FEE_SPLITTER_ABI, 
   ERC20_ABI,
@@ -33,15 +34,8 @@ export const useSwapExecution = () => {
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
-  const { address: userAddress, chainId: walletChainId } = useAccount();
+  const { address: userAddress } = useAccount();
   const { writeContractAsync } = useWriteContract();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash ?? undefined,
-  });
-
-  // For EVM swaps, we use takeFeeAndForward which handles the 1% fee
-  // The contract takes the fee and forwards the rest to the destination
 
   const checkAndApproveToken = async (
     tokenAddress: `0x${string}`,
@@ -63,7 +57,7 @@ export const useSwapExecution = () => {
       transport: http()
     });
 
-    // Check current allowance using call
+    // Check current allowance
     let allowance: bigint = 0n;
     try {
       const result = await publicClient.call({
@@ -127,6 +121,24 @@ export const useSwapExecution = () => {
       const amountInWei = parseUnits(sellAmount, sellToken.decimals);
       const isNativeToken = sellToken.address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase();
 
+      // Get swap data from 0x API via edge function
+      const { data: swapData, error: swapError } = await supabase.functions.invoke('zerox-swap', {
+        body: {
+          chainId,
+          fromToken: sellToken.address,
+          toToken: buyToken.address,
+          amount: amountInWei.toString(),
+          userAddress,
+          slippagePercentage: slippage,
+        },
+      });
+
+      if (swapError || !swapData?.success) {
+        throw new Error(swapData?.error || swapError?.message || 'Failed to get swap data');
+      }
+
+      console.log('Swap data from 0x:', swapData);
+
       // For ERC20 tokens, approve the contract first
       if (!isNativeToken) {
         await checkAndApproveToken(
@@ -139,13 +151,19 @@ export const useSwapExecution = () => {
 
       setStatus('swapping');
 
-      // Execute swap through our contract using takeFeeAndForward
-      // The contract takes 1% fee and forwards the rest to the user
+      // Execute swap through ReforestFeeSplitter contract
+      // The contract takes 1% fee and forwards 99% to 0x router with swapData
       const hash = await writeContractAsync({
         address: contractAddress,
         abi: REFOREST_FEE_SPLITTER_ABI,
-        functionName: 'takeFeeAndForward',
-        args: [userAddress], // Forward remaining funds back to user
+        functionName: 'swap',
+        args: [
+          sellToken.address as `0x${string}`, // srcToken
+          buyToken.address as `0x${string}`,  // dstToken
+          amountInWei,                         // srcAmount (full 100%)
+          BigInt(swapData.minBuyAmount || '0'), // minDstAmount
+          swapData.swapData as `0x${string}`   // 0x swap calldata
+        ],
         value: isNativeToken ? amountInWei : 0n
       } as any);
 
@@ -163,9 +181,9 @@ export const useSwapExecution = () => {
       
       if (receipt?.status === 'success') {
         setStatus('success');
-        // Calculate the amount received (99% of original after 1% fee)
-        const receivedAmount = (amountInWei * 99n) / 100n;
-        return { hash, dstAmount: formatUnits(receivedAmount, buyToken.decimals) };
+        // Use the estimated output from 0x
+        const receivedAmount = formatUnits(BigInt(swapData.toAmount), buyToken.decimals);
+        return { hash, dstAmount: receivedAmount };
       } else {
         throw new Error('Transaction failed');
       }
@@ -189,8 +207,6 @@ export const useSwapExecution = () => {
     status,
     error,
     txHash,
-    isConfirming,
-    isConfirmed,
     executeSwap,
     reset
   };

@@ -26,12 +26,23 @@ export const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F' as con
 export const FEE_BPS = 100;
 
 // ABI for the ReforestFeeSplitter contract
-// Function: takeFeeAndForward(address to) - takes 1% fee, forwards rest to `to`
+// Main function: swap() - takes 1% fee, forwards rest to 0x router with swap calldata
 export const REFOREST_FEE_SPLITTER_ABI = [
   {
     inputs: [
-      { name: 'to', type: 'address' }
+      { name: 'srcToken', type: 'address' },
+      { name: 'dstToken', type: 'address' },
+      { name: 'srcAmount', type: 'uint256' },
+      { name: 'minDstAmount', type: 'uint256' },
+      { name: 'swapData', type: 'bytes' }
     ],
+    name: 'swap',
+    outputs: [{ name: 'dstAmount', type: 'uint256' }],
+    stateMutability: 'payable',
+    type: 'function'
+  },
+  {
+    inputs: [{ name: 'to', type: 'address' }],
     name: 'takeFeeAndForward',
     outputs: [],
     stateMutability: 'payable',
@@ -39,7 +50,7 @@ export const REFOREST_FEE_SPLITTER_ABI = [
   },
   {
     inputs: [],
-    name: 'impactAddress',
+    name: 'feeRecipient',
     outputs: [{ name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function'
@@ -54,13 +65,14 @@ export const REFOREST_FEE_SPLITTER_ABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, name: 'from', type: 'address' },
-      { indexed: true, name: 'to', type: 'address' },
-      { indexed: false, name: 'totalAmount', type: 'uint256' },
+      { indexed: true, name: 'user', type: 'address' },
+      { indexed: true, name: 'srcToken', type: 'address' },
+      { indexed: true, name: 'dstToken', type: 'address' },
+      { indexed: false, name: 'srcAmount', type: 'uint256' },
       { indexed: false, name: 'feeAmount', type: 'uint256' },
-      { indexed: false, name: 'forwardedAmount', type: 'uint256' }
+      { indexed: false, name: 'dstAmount', type: 'uint256' }
     ],
-    name: 'FeeCollected',
+    name: 'Swap',
     type: 'event'
   }
 ] as const;
