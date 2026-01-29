@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export type Timeframe = '1H' | '1D' | '1W' | '1M';
+export type Timeframe = '1H' | '1D' | '1W' | '1M' | '1Y' | 'ALL';
 
 interface PricePoint {
   time: string;
@@ -37,6 +37,10 @@ const getTimeframeParams = (timeframe: Timeframe): { days: string; interval?: st
       return { days: '7' };
     case '1M':
       return { days: '30' };
+    case '1Y':
+      return { days: '365' };
+    case 'ALL':
+      return { days: 'max' };
     default:
       return { days: '1' };
   }
@@ -55,6 +59,10 @@ const formatTime = (timestamp: number, timeframe: Timeframe): string => {
       return date.toLocaleDateString('en-US', { weekday: 'short' });
     case '1M':
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    case '1Y':
+      return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    case 'ALL':
+      return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
     default:
       return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   }
@@ -163,6 +171,16 @@ const generateFallbackData = (timeframe: Timeframe, basePrice: number = 100): Pr
       intervalMs = 24 * 60 * 60 * 1000; // 1 day
       count = 30;
       volatility = 0.03; // 3% per interval
+      break;
+    case '1Y':
+      intervalMs = 7 * 24 * 60 * 60 * 1000; // 1 week
+      count = 52;
+      volatility = 0.05; // 5% per interval
+      break;
+    case 'ALL':
+      intervalMs = 30 * 24 * 60 * 60 * 1000; // 1 month
+      count = 48; // 4 years
+      volatility = 0.08; // 8% per interval
       break;
     default:
       intervalMs = 60 * 60 * 1000;
