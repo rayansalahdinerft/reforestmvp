@@ -6,6 +6,7 @@ import { WalletProvider } from "@/providers/WalletProvider";
 import Index from "./pages/Index";
 import Portfolio from "./pages/Portfolio";
 import Impact from "./pages/Impact";
+import Market from "./pages/Market";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -18,6 +19,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/impact" element={<Impact />} />
+          <Route path="/market" element={<Market />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

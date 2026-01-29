@@ -2,7 +2,6 @@ import Header from "@/components/Header";
 import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
-import MarketOverview from "@/components/MarketOverview";
 
 const Index = () => {
   return (
@@ -42,11 +41,6 @@ const Index = () => {
           <div className="lg:col-span-5 lg:col-start-4">
             <SwapCard />
           </div>
-        </div>
-
-        {/* Market Overview Charts */}
-        <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <MarketOverview />
         </div>
 
         {/* Footer stats */}
