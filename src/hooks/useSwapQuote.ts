@@ -10,7 +10,7 @@ export interface SwapQuote {
   estimatedGas: string;
   protocols: string[];
   priceImpact: string;
-  source: 'oneinch' | 'jupiter' | 'avnu';
+  source: 'oneinch' | 'jupiter' | 'avnu' | 'zerox';
 }
 
 export const useSwapQuote = (
@@ -38,19 +38,22 @@ export const useSwapQuote = (
         const isSolana = chainId === 'solana';
         const isStarknet = chainId === 'starknet';
         
-        let endpoint = 'oneinch-quote';
+        // Use 0x for EVM chains, Jupiter for Solana, Ekubo for Starknet
+        let endpoint = 'zerox-quote';
         if (isSolana) endpoint = 'jupiter-quote';
-        if (isStarknet) endpoint = 'avnu-quote';
+        if (isStarknet) endpoint = 'ekubo-quote';
         
         const { data, error: fnError } = await supabase.functions.invoke(endpoint, {
           body: {
             chainId,
             fromToken: fromToken.address,
             toToken: toToken.address,
-            sellTokenAddress: fromToken.address, // AVNU naming
-            buyTokenAddress: toToken.address,    // AVNU naming
+            sellTokenAddress: fromToken.address, // Ekubo naming
+            buyTokenAddress: toToken.address,    // Ekubo naming
             amount: (parseFloat(amount) * Math.pow(10, fromToken.decimals)).toString(),
-            sellAmount: (parseFloat(amount) * Math.pow(10, fromToken.decimals)).toString(), // AVNU naming
+            sellAmount: (parseFloat(amount) * Math.pow(10, fromToken.decimals)).toString(), // Ekubo naming
+            fromDecimals: fromToken.decimals,
+            toDecimals: toToken.decimals,
           },
         });
 
@@ -61,7 +64,7 @@ export const useSwapQuote = (
             parseFloat(data.toAmount) / Math.pow(10, toToken.decimals)
           ).toFixed(6);
 
-          let source: 'oneinch' | 'jupiter' | 'avnu' = 'oneinch';
+          let source: 'oneinch' | 'jupiter' | 'avnu' | 'zerox' = 'zerox';
           if (isSolana) source = 'jupiter';
           if (isStarknet) source = 'avnu';
 
