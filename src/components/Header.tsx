@@ -8,6 +8,7 @@ const Header = () => {
 
   const navItems = [
     { path: '/', label: 'Swap' },
+    { path: '/market', label: 'Market' },
     { path: '/portfolio', label: 'Portfolio' },
     { path: '/impact', label: 'Impact' },
   ];
