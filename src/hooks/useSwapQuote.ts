@@ -10,7 +10,7 @@ export interface SwapQuote {
   estimatedGas: string;
   protocols: string[];
   priceImpact: string;
-  source: 'oneinch' | 'jupiter';
+  source: 'oneinch' | 'jupiter' | 'avnu';
 }
 
 export const useSwapQuote = (
@@ -36,14 +36,21 @@ export const useSwapQuote = (
       try {
         // Determine which aggregator to use based on chain
         const isSolana = chainId === 'solana';
-        const endpoint = isSolana ? 'jupiter-quote' : 'oneinch-quote';
+        const isStarknet = chainId === 'starknet';
+        
+        let endpoint = 'oneinch-quote';
+        if (isSolana) endpoint = 'jupiter-quote';
+        if (isStarknet) endpoint = 'avnu-quote';
         
         const { data, error: fnError } = await supabase.functions.invoke(endpoint, {
           body: {
             chainId,
             fromToken: fromToken.address,
             toToken: toToken.address,
+            sellTokenAddress: fromToken.address, // AVNU naming
+            buyTokenAddress: toToken.address,    // AVNU naming
             amount: (parseFloat(amount) * Math.pow(10, fromToken.decimals)).toString(),
+            sellAmount: (parseFloat(amount) * Math.pow(10, fromToken.decimals)).toString(), // AVNU naming
           },
         });
 
@@ -54,6 +61,10 @@ export const useSwapQuote = (
             parseFloat(data.toAmount) / Math.pow(10, toToken.decimals)
           ).toFixed(6);
 
+          let source: 'oneinch' | 'jupiter' | 'avnu' = 'oneinch';
+          if (isSolana) source = 'jupiter';
+          if (isStarknet) source = 'avnu';
+
           setQuote({
             fromToken,
             toToken,
@@ -62,7 +73,7 @@ export const useSwapQuote = (
             estimatedGas: data.estimatedGas || '0',
             protocols: data.protocols || [],
             priceImpact: data.priceImpact || '0',
-            source: isSolana ? 'jupiter' : 'oneinch',
+            source,
           });
         }
       } catch (err) {
