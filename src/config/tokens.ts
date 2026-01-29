@@ -35,26 +35,15 @@ export const POPULAR_TOKENS: Record<number | string, Token[]> = {
     { symbol: 'cbETH', name: 'Coinbase ETH', address: '0xBe9895146f7AF43049ca1c1AE358B0541Ea49704', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/27008/small/cbeth.png' },
     { symbol: 'sfrxETH', name: 'Staked Frax ETH', address: '0xac3E018457B222d93114458476f3E3416Abbe38F', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/28285/small/sfrxETH_icon.png' },
     
-    // 🐸 MEMECOINS - The biggest ones
+    // 🐸 MEMECOINS - Only major ones with reliable data
     { symbol: 'PEPE', name: 'Pepe', address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/29850/small/pepe-token.jpeg' },
     { symbol: 'SHIB', name: 'Shiba Inu', address: '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE', decimals: 18, chainId: 1, logoURI: 'https://tokens.1inch.io/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce.png' },
-    { symbol: 'DOGE', name: 'Dogecoin (Wrapped)', address: '0x4206931337dc273a630d328dA6441786BfaD668f', decimals: 8, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png' },
     { symbol: 'FLOKI', name: 'Floki Inu', address: '0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E', decimals: 9, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/16746/small/PNG_image.png' },
     { symbol: 'BONK', name: 'Bonk', address: '0x1151CB3d861920e07a38e03eEAd12C32178567F6', decimals: 5, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/28600/small/bonk.jpg' },
-    { symbol: 'WIF', name: 'dogwifhat', address: '0xA1c5F1d76ecE02eE26F40F7B6e45c8a55E96f7c6', decimals: 6, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/33566/small/dogwifhat.jpg' },
     { symbol: 'MEME', name: 'Memecoin', address: '0xb131f4A55907B10d1F0A50d8ab8FA09EC342cd74', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/32528/small/memecoin.jpg' },
-    { symbol: 'BABYDOGE', name: 'Baby Doge Coin', address: '0xAC57De9C1A09FeC648E93EB98875B212DB0d460B', decimals: 9, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/16125/small/Baby_Doge.png' },
     { symbol: 'ELON', name: 'Dogelon Mars', address: '0x761D38e5ddf6ccf6Cf7c55759d5210750B5D60F3', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/14962/small/6GxcPRo3_400x400.jpg' },
     { symbol: 'TURBO', name: 'Turbo', address: '0xA35923162C49cF95e6BF26623385eb431ad920D3', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/30117/small/turbo.jpg' },
-    { symbol: 'WOJAK', name: 'Wojak', address: '0x5026F006B85729a8b14553FAE6af249aD16c9aaB', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/29856/small/wojak.png' },
-    { symbol: 'LADYS', name: 'Milady Meme Coin', address: '0x12970E6868f88f6557B76120662c1B3E50A646bf', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/30571/small/milady.jpg' },
-    { symbol: 'BOB', name: 'BOB', address: '0x7D8146cf21e8D7cbe46054e01588207b51198729', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/30000/small/bob.jpg' },
-    { symbol: 'MONG', name: 'MongCoin', address: '0x1ce270557C1f68Cfb577b856766310Bf8B47FD9C', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/30151/small/mong.png' },
-    { symbol: 'APU', name: 'Apu Apustaja', address: '0x594DaaD7D77592a2b97b725A7AD59D7E188b5bFa', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/35308/small/apu.jpg' },
-    { symbol: 'NEIRO', name: 'Neiro', address: '0x812Ba41e071C7b7fA4EBcFB62dF5F45f6fA853Ee', decimals: 9, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/39410/small/neiro.jpg' },
     { symbol: 'MOG', name: 'Mog Coin', address: '0xaaeE1A9723aaDB7afA2810263653A34bA2C21C7a', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/31287/small/mog.jpg' },
-    { symbol: 'SPX', name: 'SPX6900', address: '0xE0f63A424a4439cBE457D80E4f4b51aD25b2C56C', decimals: 8, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/31401/small/spx.jpg' },
-    { symbol: 'GIGA', name: 'Giga Chad', address: '0x7f9a7Db853Ca816B9A138AEe3380Ef34c437dEe0', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/34042/small/giga.jpg' },
     
     // DeFi Blue Chips
     { symbol: 'LINK', name: 'Chainlink', address: '0x514910771AF9Ca656af840dff83E8264EcF986CA', decimals: 18, chainId: 1, logoURI: 'https://tokens.1inch.io/0x514910771af9ca656af840dff83e8264ecf986ca.png' },
