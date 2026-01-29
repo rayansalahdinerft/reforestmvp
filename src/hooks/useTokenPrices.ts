@@ -9,13 +9,15 @@ interface PriceData {
 
 // CoinGecko IDs for common tokens
 const TOKEN_COINGECKO_IDS: Record<string, string> = {
+  // Bitcoin
+  BTC: 'bitcoin',
   // Ethereum & ERC20
   ETH: 'ethereum',
   WETH: 'weth',
+  WBTC: 'wrapped-bitcoin',
   USDC: 'usd-coin',
   USDT: 'tether',
   DAI: 'dai',
-  WBTC: 'wrapped-bitcoin',
   stETH: 'staked-ether',
   rETH: 'rocket-pool-eth',
   cbETH: 'coinbase-wrapped-staked-eth',
