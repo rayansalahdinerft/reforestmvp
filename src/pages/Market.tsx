@@ -39,7 +39,9 @@ const Market = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const { prices } = useTokenPrices(ALL_TOKENS.map(t => t.symbol));
+  // Memoize symbols array to prevent infinite re-render loop
+  const tokenSymbols = useMemo(() => ALL_TOKENS.map(t => t.symbol), []);
+  const { prices } = useTokenPrices(tokenSymbols);
 
   const filteredTokens = useMemo(() => {
     return ALL_TOKENS.filter(token => {
