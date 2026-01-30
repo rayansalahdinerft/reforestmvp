@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
-import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { TrendingUp, TrendingDown, Loader2, Wifi, WifiOff, Database, AlertCircle } from 'lucide-react';
 import { useHistoricalPrices, type Timeframe } from '@/hooks/useHistoricalPrices';
+import { Badge } from '@/components/ui/badge';
 
 interface PriceChartProps {
   symbol: string;
@@ -15,10 +16,9 @@ interface PriceChartProps {
 const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: PriceChartProps) => {
   const [timeframe, setTimeframe] = useState<Timeframe>('1D');
   
-  const { data, loading, error } = useHistoricalPrices(symbol, timeframe);
+  const { data, loading, error, isLiveData } = useHistoricalPrices(symbol, timeframe);
   
   const isPositive = change24h >= 0;
-  const chartColor = isPositive ? 'hsl(142 76% 52%)' : 'hsl(0 84% 60%)';
   
   // Calculate price change for selected timeframe
   const priceChange = useMemo(() => {
@@ -42,6 +42,36 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
 
   const timeframeIsPositive = priceChange.percent >= 0;
   const timeframeColor = timeframeIsPositive ? 'hsl(142 76% 52%)' : 'hsl(0 84% 60%)';
+
+  // Determine data source status
+  const getDataSourceBadge = () => {
+    if (loading) return null;
+    
+    if (error) {
+      return (
+        <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 gap-1">
+          <WifiOff className="w-3 h-3" />
+          Fallback
+        </Badge>
+      );
+    }
+    
+    if (isLiveData) {
+      return (
+        <Badge variant="default" className="text-[10px] px-1.5 py-0.5 gap-1 bg-primary/80">
+          <Wifi className="w-3 h-3" />
+          Live
+        </Badge>
+      );
+    }
+    
+    return (
+      <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 gap-1">
+        <Database className="w-3 h-3" />
+        Cached
+      </Badge>
+    );
+  };
   
   return (
     <div className="swap-card p-5 h-full">
@@ -52,7 +82,10 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
             <img src={logoUrl} alt={symbol} className="w-10 h-10 rounded-full" />
           )}
           <div>
-            <h3 className="font-bold text-foreground">{symbol}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-foreground">{symbol}</h3>
+              {getDataSourceBadge()}
+            </div>
             <p className="text-xs text-muted-foreground">{name}</p>
           </div>
         </div>
@@ -67,6 +100,14 @@ const PriceChart = ({ symbol, name, currentPrice, change24h, logoUrl, coinId }: 
           </div>
         </div>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="flex items-center gap-2 mb-2 px-2 py-1.5 rounded-md bg-destructive/10 text-destructive text-xs">
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">Données indisponibles: affichage estimé</span>
+        </div>
+      )}
       
       {/* Chart */}
       <div className="h-32 -mx-2 relative">
