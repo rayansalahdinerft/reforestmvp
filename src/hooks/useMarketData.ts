@@ -28,7 +28,7 @@ const TOKEN_IDS = [
   // Major
   'bitcoin', 'ethereum', 'binancecoin', 'solana',
   // Layer 2
-  'matic-network', 'arbitrum', 'optimism', 'avalanche-2', 'starknet',
+  'arbitrum', 'optimism', 'avalanche-2', 'starknet',
   // DeFi
   'uniswap', 'aave', 'chainlink', 'curve-dao-token',
   // Stablecoins
@@ -43,7 +43,7 @@ export const TOKEN_CATEGORIES: Record<string, string> = {
   ethereum: 'Major',
   binancecoin: 'Major',
   solana: 'Major',
-  'matic-network': 'Layer 2',
+  
   arbitrum: 'Layer 2',
   optimism: 'Layer 2',
   'avalanche-2': 'Layer 2',

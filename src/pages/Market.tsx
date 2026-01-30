@@ -36,10 +36,8 @@ const Market = () => {
     if (price >= 1) {
       return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
-    if (price >= 0.0001) {
-      return price.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 6 });
-    }
-    return price.toExponential(2);
+    // Show full decimals for small prices (up to 10 decimal places)
+    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 10 });
   };
 
   return (
