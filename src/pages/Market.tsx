@@ -58,7 +58,7 @@ const Market = () => {
             <span className="text-primary">Market</span> Overview
           </h1>
           <p className="text-lg text-muted-foreground">
-            Live prices with 7-day sparkline charts
+            Live prices with 1-year sparkline charts
           </p>
         </div>
 
