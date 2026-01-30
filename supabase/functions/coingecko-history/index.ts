@@ -41,11 +41,11 @@ const SYMBOL_TO_ID: Record<string, string> = {
   BONK: "bonk",
 };
 
-// Free CoinGecko API limits - 'max' is limited to last year for free tier
+// Allow 'max' to pass through for full history
 const sanitizeDays = (days: string): string => {
-  if (days === "max") return "365";
+  if (days === "max") return "max";
   const numDays = parseInt(days, 10);
-  if (isNaN(numDays) || numDays > 365) return "365";
+  if (isNaN(numDays) || numDays < 1) return "1";
   return days;
 };
 

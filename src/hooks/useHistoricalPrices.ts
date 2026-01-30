@@ -116,12 +116,12 @@ const getTokenConfig = (symbol: string): TokenConfig | undefined => {
 
 const getTimeframeDays = (timeframe: Timeframe): string => {
   switch (timeframe) {
-    case '1H': return '1';      // Fetch 1 day, filter client-side to last hour
+    case '1H': return '1';      // Fetch 1 day, filter client-side to last 60 min
     case '1D': return '1';      // Full 24 hours
     case '1W': return '7';
     case '1M': return '30';
-    case '1Y': return '365';
-    case 'ALL': return 'max';   // Maximum available (backend caps at 365 for free API)
+    case '1Y': return 'max';    // Maximum available (CoinGecko returns full history)
+    case 'ALL': return 'max';   // Maximum available
     default: return '1';
   }
 };
