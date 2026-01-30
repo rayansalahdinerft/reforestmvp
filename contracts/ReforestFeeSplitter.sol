@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // ReforestWallet Fee Splitter Contract
-// Fee Recipient (ETH/EVM): 0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669
+// Fee Recipient (ETH/EVM): 0x0B9CEd290B0B48dAC1fA3DA88d219adFe6a998B2
 // Fee Recipient (Solana): A2P2damYLutEW74sBVZgcrpoJ1hYAMkfFKJEATa6PpWa
 // Fee: 1% (100 basis points)
 pragma solidity ^0.8.20;
