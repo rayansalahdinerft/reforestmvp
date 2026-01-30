@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X } from 'lucide-react';
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import TokenSelectorModal from './TokenSelectorModal';
@@ -20,6 +20,7 @@ const SwapCard = () => {
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
   const [slippage, setSlippage] = useState(1);
   const [showSlippageSettings, setShowSlippageSettings] = useState(false);
+  const slippageRef = useRef<HTMLDivElement>(null);
 
   const { isConnected, address } = useAppKitAccount();
   const { open } = useAppKit();
@@ -40,6 +41,23 @@ const SwapCard = () => {
     setSellToken(tokens[0] || null); // ETH
     setBuyToken(tokens[2] || null);  // USDC
   }, []);
+
+  // Close slippage panel on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (slippageRef.current && !slippageRef.current.contains(event.target as Node)) {
+        setShowSlippageSettings(false);
+      }
+    };
+
+    if (showSlippageSettings) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSlippageSettings]);
 
   const { quote, loading: quoteLoading } = useSwapQuote(
     sellToken,
@@ -183,17 +201,19 @@ const SwapCard = () => {
           </div>
           
           {/* Slippage Toggle Button */}
-          <button
-            onClick={() => setShowSlippageSettings(!showSlippageSettings)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
-              showSlippageSettings 
-                ? 'bg-primary/20 text-primary' 
-                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
-            }`}
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            <span className="text-xs font-medium">{slippage}%</span>
-          </button>
+          <div ref={slippageRef} className="relative">
+            <button
+              onClick={() => setShowSlippageSettings(!showSlippageSettings)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+                showSlippageSettings 
+                  ? 'bg-primary/20 text-primary' 
+                  : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
+              }`}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="text-xs font-medium">{slippage}%</span>
+            </button>
+          </div>
         </div>
 
         {/* Slippage Settings Panel */}
