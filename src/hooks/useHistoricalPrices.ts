@@ -17,39 +17,39 @@ interface HistoricalDataResult {
   refetch: () => void;
 }
 
-// CoinGecko IDs mapped by symbol
+// CoinCodex symbol mapping
 interface TokenConfig {
-  id: string;
+  symbol: string; // CoinCodex uses uppercase symbols
   fallbackPrice: number;
 }
 
-const COINGECKO_IDS: Record<string, TokenConfig> = {
+const TOKEN_CONFIG: Record<string, TokenConfig> = {
   // Major
-  ETH: { id: 'ethereum', fallbackPrice: 2800 },
-  BTC: { id: 'bitcoin', fallbackPrice: 87000 },
-  SOL: { id: 'solana', fallbackPrice: 135 },
-  BNB: { id: 'binancecoin', fallbackPrice: 620 },
+  ETH: { symbol: 'ETH', fallbackPrice: 2800 },
+  BTC: { symbol: 'BTC', fallbackPrice: 87000 },
+  SOL: { symbol: 'SOL', fallbackPrice: 135 },
+  BNB: { symbol: 'BNB', fallbackPrice: 620 },
   // Layer 2
-  MATIC: { id: 'matic-network', fallbackPrice: 0.42 },
-  POL: { id: 'matic-network', fallbackPrice: 0.42 },
-  ARB: { id: 'arbitrum', fallbackPrice: 0.55 },
-  OP: { id: 'optimism', fallbackPrice: 1.25 },
-  AVAX: { id: 'avalanche-2', fallbackPrice: 22 },
-  STRK: { id: 'starknet', fallbackPrice: 0.38 },
+  MATIC: { symbol: 'MATIC', fallbackPrice: 0.20 },
+  POL: { symbol: 'MATIC', fallbackPrice: 0.20 },
+  ARB: { symbol: 'ARB', fallbackPrice: 0.15 },
+  OP: { symbol: 'OP', fallbackPrice: 0.26 },
+  AVAX: { symbol: 'AVAX', fallbackPrice: 11 },
+  STRK: { symbol: 'STRK', fallbackPrice: 0.14 },
   // DeFi
-  UNI: { id: 'uniswap', fallbackPrice: 7.80 },
-  AAVE: { id: 'aave', fallbackPrice: 185 },
-  LINK: { id: 'chainlink', fallbackPrice: 14.50 },
-  CRV: { id: 'curve-dao-token', fallbackPrice: 0.52 },
+  UNI: { symbol: 'UNI', fallbackPrice: 5.50 },
+  AAVE: { symbol: 'AAVE', fallbackPrice: 165 },
+  LINK: { symbol: 'LINK', fallbackPrice: 13 },
+  CRV: { symbol: 'CRV', fallbackPrice: 0.42 },
   // Stablecoins
-  USDC: { id: 'usd-coin', fallbackPrice: 1 },
-  USDT: { id: 'tether', fallbackPrice: 1 },
-  DAI: { id: 'dai', fallbackPrice: 1 },
+  USDC: { symbol: 'USDC', fallbackPrice: 1 },
+  USDT: { symbol: 'USDT', fallbackPrice: 1 },
+  DAI: { symbol: 'DAI', fallbackPrice: 1 },
   // Memecoins
-  DOGE: { id: 'dogecoin', fallbackPrice: 0.18 },
-  SHIB: { id: 'shiba-inu', fallbackPrice: 0.0000125 },
-  PEPE: { id: 'pepe', fallbackPrice: 0.0000085 },
-  BONK: { id: 'bonk', fallbackPrice: 0.000018 },
+  DOGE: { symbol: 'DOGE', fallbackPrice: 0.18 },
+  SHIB: { symbol: 'SHIB', fallbackPrice: 0.0000125 },
+  PEPE: { symbol: 'PEPE', fallbackPrice: 0.0000085 },
+  BONK: { symbol: 'BONK', fallbackPrice: 0.000018 },
 };
 
 // Local cache for historical data
@@ -95,7 +95,7 @@ const writeLocalCache = (key: string, data: PricePoint[]) => {
 // Helper to find token config by symbol (case-insensitive)
 const getTokenConfig = (symbol: string): TokenConfig | undefined => {
   const upperSymbol = symbol.toUpperCase();
-  return COINGECKO_IDS[upperSymbol];
+  return TOKEN_CONFIG[upperSymbol];
 };
 
 // Map timeframe to CoinGecko days parameter
@@ -148,9 +148,9 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
       return;
     }
 
-    const { id: coinId } = tokenConfig;
+    const { symbol: coinSymbol } = tokenConfig;
     const days = getTimeframeDays(timeframe);
-    const cacheKey = `${coinId}-${days}`;
+    const cacheKey = `coincodex-${coinSymbol}-${days}`;
 
     // Check local cache first
     const cached = readLocalCache(cacheKey);
@@ -165,9 +165,9 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
     setError(null);
 
     try {
-      // Call edge function to avoid rate limiting
-      const { data: result, error: fnError } = await supabase.functions.invoke('coingecko-history', {
-        body: { coinId, days },
+      // Call CoinCodex edge function
+      const { data: result, error: fnError } = await supabase.functions.invoke('coincodex-history', {
+        body: { coinId: coinSymbol, days },
       });
 
       if (fnError) throw fnError;
