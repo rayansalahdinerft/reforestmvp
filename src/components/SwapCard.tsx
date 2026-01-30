@@ -15,6 +15,8 @@ const CHAIN_ID = 1; // Ethereum mainnet only
 
 const SwapCard = () => {
   const [sellAmount, setSellAmount] = useState('');
+  const [buyAmount, setBuyAmount] = useState('');
+  const [activeInput, setActiveInput] = useState<'sell' | 'buy'>('sell');
   const [sellToken, setSellToken] = useState<Token | null>(null);
   const [buyToken, setBuyToken] = useState<Token | null>(null);
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
@@ -59,12 +61,36 @@ const SwapCard = () => {
     };
   }, [showSlippageSettings]);
 
-  const { quote, loading: quoteLoading } = useSwapQuote(
+  // Quote for sell -> buy direction
+  const { quote: sellQuote, loading: sellQuoteLoading } = useSwapQuote(
     sellToken,
     buyToken,
-    sellAmount,
+    activeInput === 'sell' ? sellAmount : '',
     CHAIN_ID
   );
+
+  // Quote for buy -> sell direction (reverse)
+  const { quote: buyQuote, loading: buyQuoteLoading } = useSwapQuote(
+    buyToken,
+    sellToken,
+    activeInput === 'buy' ? buyAmount : '',
+    CHAIN_ID
+  );
+
+  const quoteLoading = sellQuoteLoading || buyQuoteLoading;
+
+  // Update the opposite field when quote is received
+  useEffect(() => {
+    if (activeInput === 'sell' && sellQuote?.toAmount) {
+      setBuyAmount(parseFloat(sellQuote.toAmount).toFixed(6));
+    }
+  }, [sellQuote?.toAmount, activeInput]);
+
+  useEffect(() => {
+    if (activeInput === 'buy' && buyQuote?.toAmount) {
+      setSellAmount(parseFloat(buyQuote.toAmount).toFixed(6));
+    }
+  }, [buyQuote?.toAmount, activeInput]);
 
   // Get live prices
   const { getPrice } = useTokenPrices(
@@ -73,9 +99,12 @@ const SwapCard = () => {
 
   const handleSwapTokens = () => {
     const tempToken = sellToken;
+    const tempAmount = sellAmount;
     setSellToken(buyToken);
     setBuyToken(tempToken);
-    setSellAmount(quote?.toAmount || '');
+    setSellAmount(buyAmount);
+    setBuyAmount(tempAmount);
+    setActiveInput(activeInput === 'sell' ? 'buy' : 'sell');
     resetSwap();
   };
 
@@ -117,11 +146,10 @@ const SwapCard = () => {
         { id: 'swap-progress' }
       );
       setSellAmount('');
+      setBuyAmount('');
     }
   };
 
-  const buyAmount = quote?.toAmount || '';
-  
   // Calculate USD values with live prices
   const sellPrice = sellToken ? getPrice(sellToken.symbol) : null;
   const buyPrice = buyToken ? getPrice(buyToken.symbol) : null;
@@ -286,19 +314,25 @@ const SwapCard = () => {
               )}
             </div>
             <div className="flex items-center justify-between gap-2 sm:gap-4">
-              <input
-                type="text"
-                inputMode="decimal"
-                value={sellAmount}
-                onChange={(e) => {
-                  setSellAmount(e.target.value);
-                  if (swapStatus === 'error' || swapStatus === 'success') {
-                    resetSwap();
-                  }
-                }}
-                placeholder="0.00"
-                className="swap-input flex-1 text-2xl sm:text-3xl"
-              />
+              {quoteLoading && activeInput !== 'sell' ? (
+                <div className="h-8 sm:h-10 w-32 sm:w-40 bg-muted animate-shimmer rounded-xl" />
+              ) : (
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={sellAmount}
+                  onChange={(e) => {
+                    setSellAmount(e.target.value);
+                    setActiveInput('sell');
+                    if (swapStatus === 'error' || swapStatus === 'success') {
+                      resetSwap();
+                    }
+                  }}
+                  onFocus={() => setActiveInput('sell')}
+                  placeholder="0.00"
+                  className="swap-input flex-1 text-2xl sm:text-3xl"
+                />
+              )}
               <button
                 onClick={() => setModalOpen('sell')}
                 className="token-selector-btn shrink-0"
@@ -336,12 +370,24 @@ const SwapCard = () => {
               )}
             </div>
             <div className="flex items-center justify-between gap-2 sm:gap-4">
-              {quoteLoading ? (
+              {quoteLoading && activeInput !== 'buy' ? (
                 <div className="h-8 sm:h-10 w-32 sm:w-40 bg-muted animate-shimmer rounded-xl" />
-              ) : buyAmount ? (
-                <span className="swap-input text-primary text-2xl sm:text-3xl">{parseFloat(buyAmount).toFixed(6)}</span>
               ) : (
-                <span className="text-2xl sm:text-3xl font-semibold text-muted-foreground/50">0.00</span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={buyAmount}
+                  onChange={(e) => {
+                    setBuyAmount(e.target.value);
+                    setActiveInput('buy');
+                    if (swapStatus === 'error' || swapStatus === 'success') {
+                      resetSwap();
+                    }
+                  }}
+                  onFocus={() => setActiveInput('buy')}
+                  placeholder="0.00"
+                  className="swap-input flex-1 text-2xl sm:text-3xl text-primary"
+                />
               )}
               <button
                 onClick={() => setModalOpen('buy')}
