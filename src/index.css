@@ -92,9 +92,8 @@
   }
 
   body {
-    @apply text-foreground antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Space Grotesk', system-ui, sans-serif;
-    background: linear-gradient(130deg, #090C0A 60%, #61B05F 40%);
     min-height: 100vh;
   }
 }
