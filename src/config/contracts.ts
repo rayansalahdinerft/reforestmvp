@@ -20,7 +20,7 @@ export const ONEINCH_ROUTER_V6 = '0x111111125421cA6dc452d289314280a0f8842A65' as
 export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const;
 
 // Impact address (receives 1% of all swaps)
-export const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F' as const;
+export const FEE_RECIPIENT = '0x0B9CEd290B0B48dAC1fA3DA88d219adFe6a998B2' as const;
 
 // Fee in basis points (100 = 1%)
 export const FEE_BPS = 100;

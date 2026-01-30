@@ -6,7 +6,7 @@ const corsHeaders = {
 }
 
 // Fee recipient address (1% fee for reforestation)
-const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F'
+const FEE_RECIPIENT = '0x0B9CEd290B0B48dAC1fA3DA88d219adFe6a998B2'
 const FEE_BPS = '100' // 1% = 100 basis points
 
 serve(async (req) => {
