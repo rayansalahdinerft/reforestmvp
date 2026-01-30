@@ -173,7 +173,7 @@ const Market = () => {
                           </p>
                         </td>
                         <td className="py-4 px-4 text-right">
-                          <div className={`flex items-center justify-end gap-1 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                          <div className={`flex items-center justify-end gap-1 ${isPositive ? 'text-primary' : 'text-destructive'}`}> 
                             {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                             <span className="font-medium tabular-nums">
                               {isPositive ? '+' : ''}{token.price_change_percentage_24h?.toFixed(2) || '0.00'}%
