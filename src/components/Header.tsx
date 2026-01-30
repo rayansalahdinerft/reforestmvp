@@ -48,9 +48,7 @@ const Header = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="hidden md:block">
-            <ConnectButton />
-          </div>
+          <ConnectButton />
           
           {/* Mobile Menu */}
           <Sheet open={open} onOpenChange={setOpen}>
@@ -79,9 +77,6 @@ const Header = () => {
                   </Link>
                 ))}
               </nav>
-              <div className="mt-6">
-                <ConnectButton />
-              </div>
             </SheetContent>
           </Sheet>
         </div>
