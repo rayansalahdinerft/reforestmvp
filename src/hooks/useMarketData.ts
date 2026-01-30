@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface MarketToken {
   id: string;
@@ -19,47 +20,45 @@ interface MarketDataResult {
   refetch: () => void;
 }
 
-const CACHE_KEY = 'market_data_cache_v1';
+const CACHE_KEY = 'market_data_cache_coincodex_v1';
 const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 
-// Token IDs for CoinGecko /coins/markets endpoint
-const COINGECKO_IDS = [
+// Token symbols for CoinCodex API
+const TOKEN_SYMBOLS = [
   // Major
-  'bitcoin', 'ethereum', 'binancecoin', 'solana',
+  'BTC', 'ETH', 'BNB', 'SOL',
   // Layer 2
-  'matic-network', 'arbitrum', 'optimism', 'avalanche-2',
+  'MATIC', 'ARB', 'OP', 'AVAX', 'STRK',
   // DeFi
-  'uniswap', 'aave', 'chainlink', 'curve-dao-token',
+  'UNI', 'AAVE', 'LINK', 'CRV',
   // Stablecoins
-  'usd-coin', 'tether', 'dai',
+  'USDC', 'USDT', 'DAI',
   // Meme
-  'dogecoin', 'shiba-inu', 'pepe', 'bonk',
-  // Starknet
-  'starknet',
+  'DOGE', 'SHIB', 'PEPE', 'BONK',
 ];
 
 // Category mapping
 export const TOKEN_CATEGORIES: Record<string, string> = {
-  bitcoin: 'Major',
-  ethereum: 'Major',
-  binancecoin: 'Major',
-  solana: 'Major',
-  'matic-network': 'Layer 2',
-  arbitrum: 'Layer 2',
-  optimism: 'Layer 2',
-  'avalanche-2': 'Layer 2',
-  uniswap: 'DeFi',
+  btc: 'Major',
+  eth: 'Major',
+  bnb: 'Major',
+  sol: 'Major',
+  matic: 'Layer 2',
+  arb: 'Layer 2',
+  op: 'Layer 2',
+  avax: 'Layer 2',
+  strk: 'Layer 2',
+  uni: 'DeFi',
   aave: 'DeFi',
-  chainlink: 'DeFi',
-  'curve-dao-token': 'DeFi',
-  'usd-coin': 'Stablecoin',
-  tether: 'Stablecoin',
+  link: 'DeFi',
+  crv: 'DeFi',
+  usdc: 'Stablecoin',
+  usdt: 'Stablecoin',
   dai: 'Stablecoin',
-  dogecoin: 'Meme',
-  'shiba-inu': 'Meme',
+  doge: 'Meme',
+  shib: 'Meme',
   pepe: 'Meme',
   bonk: 'Meme',
-  starknet: 'Layer 2',
 };
 
 interface CacheData {
@@ -89,33 +88,28 @@ const writeCache = (tokens: MarketToken[]) => {
   }
 };
 
-// Fallback data when API fails - all tokens
+// Fallback data when API fails
 const FALLBACK_DATA: MarketToken[] = [
-  // Major
-  { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', image: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png', current_price: 87000, price_change_percentage_24h: -2.1, sparkline_in_7d: null, market_cap: 1720000000000, total_volume: 45000000000 },
-  { id: 'ethereum', symbol: 'eth', name: 'Ethereum', image: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png', current_price: 2400, price_change_percentage_24h: -1.8, sparkline_in_7d: null, market_cap: 290000000000, total_volume: 18000000000 },
-  { id: 'binancecoin', symbol: 'bnb', name: 'BNB', image: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png', current_price: 620, price_change_percentage_24h: -1.2, sparkline_in_7d: null, market_cap: 92000000000, total_volume: 1200000000 },
-  { id: 'solana', symbol: 'sol', name: 'Solana', image: 'https://assets.coingecko.com/coins/images/4128/small/solana.png', current_price: 135, price_change_percentage_24h: -3.5, sparkline_in_7d: null, market_cap: 65000000000, total_volume: 4500000000 },
-  // Layer 2
-  { id: 'matic-network', symbol: 'matic', name: 'Polygon', image: 'https://assets.coingecko.com/coins/images/4713/small/polygon.png', current_price: 0.42, price_change_percentage_24h: -2.8, sparkline_in_7d: null, market_cap: 4200000000, total_volume: 280000000 },
-  { id: 'arbitrum', symbol: 'arb', name: 'Arbitrum', image: 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg', current_price: 0.55, price_change_percentage_24h: -4.2, sparkline_in_7d: null, market_cap: 2200000000, total_volume: 320000000 },
-  { id: 'optimism', symbol: 'op', name: 'Optimism', image: 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png', current_price: 1.25, price_change_percentage_24h: -3.1, sparkline_in_7d: null, market_cap: 1500000000, total_volume: 180000000 },
-  { id: 'avalanche-2', symbol: 'avax', name: 'Avalanche', image: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png', current_price: 22, price_change_percentage_24h: -2.5, sparkline_in_7d: null, market_cap: 9000000000, total_volume: 450000000 },
-  { id: 'starknet', symbol: 'strk', name: 'Starknet', image: 'https://assets.coingecko.com/coins/images/26433/small/starknet.png', current_price: 0.38, price_change_percentage_24h: -5.2, sparkline_in_7d: null, market_cap: 780000000, total_volume: 85000000 },
-  // DeFi
-  { id: 'uniswap', symbol: 'uni', name: 'Uniswap', image: 'https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png', current_price: 7.80, price_change_percentage_24h: -2.9, sparkline_in_7d: null, market_cap: 4700000000, total_volume: 220000000 },
-  { id: 'aave', symbol: 'aave', name: 'Aave', image: 'https://assets.coingecko.com/coins/images/12645/small/AAVE.png', current_price: 185, price_change_percentage_24h: -1.5, sparkline_in_7d: null, market_cap: 2800000000, total_volume: 180000000 },
-  { id: 'chainlink', symbol: 'link', name: 'Chainlink', image: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png', current_price: 14.50, price_change_percentage_24h: -2.2, sparkline_in_7d: null, market_cap: 9000000000, total_volume: 520000000 },
-  { id: 'curve-dao-token', symbol: 'crv', name: 'Curve DAO', image: 'https://assets.coingecko.com/coins/images/12124/small/Curve.png', current_price: 0.52, price_change_percentage_24h: -3.8, sparkline_in_7d: null, market_cap: 650000000, total_volume: 85000000 },
-  // Stablecoins
-  { id: 'usd-coin', symbol: 'usdc', name: 'USD Coin', image: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png', current_price: 1.00, price_change_percentage_24h: 0.01, sparkline_in_7d: null, market_cap: 45000000000, total_volume: 8500000000 },
-  { id: 'tether', symbol: 'usdt', name: 'Tether', image: 'https://assets.coingecko.com/coins/images/325/small/Tether.png', current_price: 1.00, price_change_percentage_24h: 0.02, sparkline_in_7d: null, market_cap: 95000000000, total_volume: 65000000000 },
-  { id: 'dai', symbol: 'dai', name: 'Dai', image: 'https://assets.coingecko.com/coins/images/9956/small/4943.png', current_price: 1.00, price_change_percentage_24h: -0.01, sparkline_in_7d: null, market_cap: 5300000000, total_volume: 320000000 },
-  // Meme
-  { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin', image: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png', current_price: 0.18, price_change_percentage_24h: -4.5, sparkline_in_7d: null, market_cap: 27000000000, total_volume: 2200000000 },
-  { id: 'shiba-inu', symbol: 'shib', name: 'Shiba Inu', image: 'https://assets.coingecko.com/coins/images/11939/small/shiba.png', current_price: 0.0000125, price_change_percentage_24h: -5.2, sparkline_in_7d: null, market_cap: 7400000000, total_volume: 420000000 },
-  { id: 'pepe', symbol: 'pepe', name: 'Pepe', image: 'https://assets.coingecko.com/coins/images/29850/small/pepe-token.jpeg', current_price: 0.0000085, price_change_percentage_24h: -6.8, sparkline_in_7d: null, market_cap: 3600000000, total_volume: 850000000 },
-  { id: 'bonk', symbol: 'bonk', name: 'Bonk', image: 'https://assets.coingecko.com/coins/images/28600/small/bonk.jpg', current_price: 0.000018, price_change_percentage_24h: -7.2, sparkline_in_7d: null, market_cap: 1200000000, total_volume: 180000000 },
+  { id: 'btc', symbol: 'btc', name: 'Bitcoin', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/b9469e27-476b-4fc8-0d5e-9a9e51581400/coin64', current_price: 82000, price_change_percentage_24h: -6.2, sparkline_in_7d: null, market_cap: 1620000000000, total_volume: 85000000000 },
+  { id: 'eth', symbol: 'eth', name: 'Ethereum', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/6e6e4e74-e3de-43b5-6b30-ed41e9b95c00/coin64', current_price: 2740, price_change_percentage_24h: -7.4, sparkline_in_7d: null, market_cap: 330000000000, total_volume: 45000000000 },
+  { id: 'bnb', symbol: 'bnb', name: 'BNB', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/bb3c5cc2-f5f8-49f9-4a00-3de50c0a2a00/coin64', current_price: 596, price_change_percentage_24h: -5.8, sparkline_in_7d: null, market_cap: 90000000000, total_volume: 1500000000 },
+  { id: 'sol', symbol: 'sol', name: 'Solana', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/7d7eb3e9-2f2c-4f46-0d00-3e8e96fa8b00/coin64', current_price: 115, price_change_percentage_24h: -6.7, sparkline_in_7d: null, market_cap: 58000000000, total_volume: 5000000000 },
+  { id: 'matic', symbol: 'pol', name: 'Polygon', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/polygon-coin/coin64', current_price: 0.20, price_change_percentage_24h: -8.5, sparkline_in_7d: null, market_cap: 2000000000, total_volume: 200000000 },
+  { id: 'arb', symbol: 'arb', name: 'Arbitrum', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/arbitrum-coin/coin64', current_price: 0.15, price_change_percentage_24h: -7.5, sparkline_in_7d: null, market_cap: 600000000, total_volume: 100000000 },
+  { id: 'op', symbol: 'op', name: 'Optimism', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/optimism-coin/coin64', current_price: 0.26, price_change_percentage_24h: -8.3, sparkline_in_7d: null, market_cap: 300000000, total_volume: 50000000 },
+  { id: 'avax', symbol: 'avax', name: 'Avalanche', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/avalanche-coin/coin64', current_price: 11, price_change_percentage_24h: -7.6, sparkline_in_7d: null, market_cap: 4500000000, total_volume: 300000000 },
+  { id: 'strk', symbol: 'strk', name: 'Starknet', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/starknet-coin/coin64', current_price: 0.14, price_change_percentage_24h: -9.2, sparkline_in_7d: null, market_cap: 300000000, total_volume: 30000000 },
+  { id: 'uni', symbol: 'uni', name: 'Uniswap', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/uniswap-coin/coin64', current_price: 5.50, price_change_percentage_24h: -6.9, sparkline_in_7d: null, market_cap: 3300000000, total_volume: 150000000 },
+  { id: 'aave', symbol: 'aave', name: 'Aave', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/aave-coin/coin64', current_price: 165, price_change_percentage_24h: -5.5, sparkline_in_7d: null, market_cap: 2500000000, total_volume: 150000000 },
+  { id: 'link', symbol: 'link', name: 'Chainlink', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/chainlink-coin/coin64', current_price: 13, price_change_percentage_24h: -6.2, sparkline_in_7d: null, market_cap: 8000000000, total_volume: 400000000 },
+  { id: 'crv', symbol: 'crv', name: 'Curve DAO', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/curve-coin/coin64', current_price: 0.42, price_change_percentage_24h: -7.8, sparkline_in_7d: null, market_cap: 500000000, total_volume: 60000000 },
+  { id: 'usdc', symbol: 'usdc', name: 'USD Coin', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/usdc-coin/coin64', current_price: 1.00, price_change_percentage_24h: 0.01, sparkline_in_7d: null, market_cap: 45000000000, total_volume: 8500000000 },
+  { id: 'usdt', symbol: 'usdt', name: 'Tether', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/tether-coin/coin64', current_price: 1.00, price_change_percentage_24h: 0.02, sparkline_in_7d: null, market_cap: 95000000000, total_volume: 65000000000 },
+  { id: 'dai', symbol: 'dai', name: 'Dai', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/dai-coin/coin64', current_price: 1.00, price_change_percentage_24h: -0.01, sparkline_in_7d: null, market_cap: 5300000000, total_volume: 320000000 },
+  { id: 'doge', symbol: 'doge', name: 'Dogecoin', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/doge-coin/coin64', current_price: 0.16, price_change_percentage_24h: -8.5, sparkline_in_7d: null, market_cap: 24000000000, total_volume: 2000000000 },
+  { id: 'shib', symbol: 'shib', name: 'Shiba Inu', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/shiba-coin/coin64', current_price: 0.0000115, price_change_percentage_24h: -9.2, sparkline_in_7d: null, market_cap: 6800000000, total_volume: 380000000 },
+  { id: 'pepe', symbol: 'pepe', name: 'Pepe', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/pepe-coin/coin64', current_price: 0.0000075, price_change_percentage_24h: -10.8, sparkline_in_7d: null, market_cap: 3100000000, total_volume: 700000000 },
+  { id: 'bonk', symbol: 'bonk', name: 'Bonk', image: 'https://imagedelivery.net/4-5JC1r3VHAXpnrwWHBHRQ/bonk-coin/coin64', current_price: 0.000015, price_change_percentage_24h: -11.2, sparkline_in_7d: null, market_cap: 1000000000, total_volume: 150000000 },
 ];
 
 export const useMarketData = (): MarketDataResult => {
@@ -132,18 +126,32 @@ export const useMarketData = (): MarketDataResult => {
     }
 
     try {
-      const ids = COINGECKO_IDS.join(',');
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=true&price_change_percentage=24h`
-      );
+      // Call CoinCodex edge function
+      const { data: result, error: fnError } = await supabase.functions.invoke('coincodex-markets', {
+        body: { symbols: TOKEN_SYMBOLS },
+      });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+      if (fnError) throw fnError;
+      
+      if (!result.data || !Array.isArray(result.data)) {
+        throw new Error('Invalid data format');
       }
 
-      const data: MarketToken[] = await response.json();
-      setTokens(data);
-      writeCache(data);
+      // Transform to our format and add image URLs
+      const formattedTokens: MarketToken[] = result.data.map((token: any) => ({
+        id: token.id || token.symbol?.toLowerCase(),
+        symbol: token.symbol?.toLowerCase() || token.id,
+        name: token.name,
+        image: token.image || `https://coincodex.com/images/coins/${token.symbol?.toLowerCase()}.png`,
+        current_price: token.current_price || 0,
+        price_change_percentage_24h: token.price_change_percentage_24h || 0,
+        sparkline_in_7d: null, // CoinCodex doesn't include sparkline in market data
+        market_cap: token.market_cap || 0,
+        total_volume: token.total_volume || 0,
+      }));
+
+      setTokens(formattedTokens);
+      writeCache(formattedTokens);
       setError(null);
     } catch (err) {
       console.error('Error fetching market data:', err);
@@ -165,7 +173,7 @@ export const useMarketData = (): MarketDataResult => {
   useEffect(() => {
     fetchData();
     
-    // Refresh every 2 minutes (reduce rate limiting)
+    // Refresh every 2 minutes
     const interval = setInterval(fetchData, 2 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchData]);
