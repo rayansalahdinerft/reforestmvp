@@ -10,11 +10,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { useSwipeGesture } from '@/hooks/useSwipeGesture';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Header = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const [open, setOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  // Swipe from right edge to open menu on mobile
+  useSwipeGesture({
+    onSwipeLeft: () => {
+      if (isMobile) setOpen(true);
+    },
+  });
 
   const navItems = [
     { path: '/', label: 'Swap' },
