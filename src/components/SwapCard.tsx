@@ -10,8 +10,10 @@ import { CHAIN_INFO } from '@/config/chains';
 import { useTokenPrices } from '@/hooks/useTokenPrices';
 import { getContractAddress } from '@/config/contracts';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const FEE_PERCENT = 0.01;
+const REFORESTATION_PERCENT = 0.40; // 40% of fee goes to NGO
 const CHAIN_ID = 1; // Ethereum mainnet only
 
 const SwapCard = () => {
@@ -178,10 +180,35 @@ const SwapCard = () => {
     if (result.error) {
       toast.error(result.error, { id: 'swap-progress' });
     } else if (result.hash) {
+      // Calculate the donation amount (40% of 1% fee)
+      const swapUsdValue = sellPrice ? parseFloat(actualSellAmount) * sellPrice : 0;
+      const totalFee = swapUsdValue * FEE_PERCENT;
+      const donationAmount = totalFee * REFORESTATION_PERCENT;
+
+      // Update tree counter in database
+      if (donationAmount > 0) {
+        try {
+          const { error: updateError } = await supabase.functions.invoke('update-tree-counter', {
+            body: {
+              donationUsd: donationAmount,
+              txHash: result.hash,
+            },
+          });
+          
+          if (updateError) {
+            console.error('Failed to update tree counter:', updateError);
+          } else {
+            console.log(`Tree counter updated: +$${donationAmount.toFixed(2)} donated`);
+          }
+        } catch (err) {
+          console.error('Error calling update-tree-counter:', err);
+        }
+      }
+
       toast.success(
         <div>
           <p>Swap successful! 🌱</p>
-          <p className="text-xs opacity-70">Your fee saves the planet</p>
+          <p className="text-xs opacity-70">+${donationAmount.toFixed(2)} donated to reforestation</p>
         </div>,
         { id: 'swap-progress' }
       );
