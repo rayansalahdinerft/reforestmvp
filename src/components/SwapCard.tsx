@@ -383,7 +383,13 @@ const SwapCard = () => {
                 {maxBalance && isConnected && (
                   <>
                     <span className="text-[10px] sm:text-xs text-muted-foreground">
-                      Bal: {parseFloat(maxBalance).toFixed(4)} {sellToken?.symbol}
+                      {/* Show more decimals for small balances, also show USD value */}
+                      {(() => {
+                        const bal = parseFloat(maxBalance);
+                        const formattedBal = bal < 0.01 ? bal.toFixed(6) : bal.toFixed(4);
+                        const usdValue = sellPrice ? (bal * sellPrice).toFixed(2) : null;
+                        return `Bal: ${formattedBal} ${sellToken?.symbol}${usdValue ? ` ($${usdValue})` : ''}`;
+                      })()}
                     </span>
                     <button
                       onClick={() => {
