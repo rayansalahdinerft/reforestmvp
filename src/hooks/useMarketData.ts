@@ -102,19 +102,42 @@ export const useMarketData = (): MarketDataResult => {
     }
 
     try {
-      // Fetch market data + 7D sparklines from backend proxy
-      const { data: result, error: fnError } = await supabase.functions.invoke('coingecko-markets', {
-        body: { ids: TOKEN_IDS },
-      });
+      let data: any[] | null = null;
 
-      if (fnError) throw fnError;
-      
-      if (!result.data || !Array.isArray(result.data)) {
+      // Try backend proxy first
+      try {
+        const { data: result, error: fnError } = await supabase.functions.invoke('coingecko-markets', {
+          body: { ids: TOKEN_IDS },
+        });
+        if (!fnError && result?.data && Array.isArray(result.data)) {
+          data = result.data;
+        }
+      } catch (proxyErr) {
+        console.warn('Backend proxy failed, trying direct CoinGecko:', proxyErr);
+      }
+
+      // Fallback: direct CoinGecko call (works in most browsers)
+      if (!data) {
+        const url = new URL('https://api.coingecko.com/api/v3/coins/markets');
+        url.searchParams.set('vs_currency', 'usd');
+        url.searchParams.set('ids', TOKEN_IDS.join(','));
+        url.searchParams.set('order', 'market_cap_desc');
+        url.searchParams.set('per_page', '50');
+        url.searchParams.set('page', '1');
+        url.searchParams.set('sparkline', 'true');
+        url.searchParams.set('price_change_percentage', '24h');
+
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error(`CoinGecko ${res.status}`);
+        data = await res.json();
+      }
+
+      if (!data || !Array.isArray(data)) {
         throw new Error('Invalid data format');
       }
 
       // CoinGecko already matches our MarketToken shape closely
-      const formattedTokens: MarketToken[] = result.data.map((token: any) => ({
+      const formattedTokens: MarketToken[] = data.map((token: any) => ({
         id: token.id,
         symbol: token.symbol,
         name: token.name,
