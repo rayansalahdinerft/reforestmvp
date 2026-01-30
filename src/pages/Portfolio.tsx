@@ -4,7 +4,7 @@ import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { Wallet, RefreshCw, ExternalLink } from "lucide-react";
 
 const Portfolio = () => {
-  const { balances, totalValue, loading, isConnected, address, refetch } = useWalletBalance();
+  const { balances, totalValue, loading, isConnected, address, refetch, priceError } = useWalletBalance();
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -55,9 +55,14 @@ const Portfolio = () => {
                   </button>
                 </div>
 
-                <div className="text-xs text-muted-foreground mb-6 flex items-center gap-2">
-                  <span className="font-mono">{address?.slice(0, 8)}...{address?.slice(-6)}</span>
-                  <ExternalLink className="w-3 h-3" />
+                <div className="text-xs text-muted-foreground mb-6 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono">{address?.slice(0, 8)}...{address?.slice(-6)}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </div>
+                  {priceError && (
+                    <p className="text-yellow-500 text-xs">⚠️ Impossible de récupérer le prix actuel, valeur peut être inexacte</p>
+                  )}
                 </div>
 
                 {/* Token Balances */}
