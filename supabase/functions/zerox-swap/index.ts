@@ -5,16 +5,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 }
 
-// 0x API endpoints per chain
-const ZEROX_ENDPOINTS: Record<number, string> = {
-  1: 'https://api.0x.org',
-  137: 'https://polygon.api.0x.org',
-  42161: 'https://arbitrum.api.0x.org',
-  10: 'https://optimism.api.0x.org',
-  8453: 'https://base.api.0x.org',
-  43114: 'https://avalanche.api.0x.org',
-  56: 'https://bsc.api.0x.org',
-}
+// Fee recipient address (1% fee for reforestation)
+const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F'
+const FEE_BPS = '100' // 1% = 100 basis points
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -28,7 +21,7 @@ serve(async (req) => {
       toToken, 
       amount, 
       userAddress,
-      slippagePercentage = 1 
+      slippageBps = 100 // Default 1% slippage
     } = await req.json()
 
     if (!chainId || !fromToken || !toToken || !amount || !userAddress) {
@@ -38,40 +31,41 @@ serve(async (req) => {
       )
     }
 
-    const baseUrl = ZEROX_ENDPOINTS[chainId]
-    if (!baseUrl) {
+    const apiKey = Deno.env.get('ZEROX_API_KEY')
+    if (!apiKey) {
       return new Response(
-        JSON.stringify({ success: false, error: `Chain ${chainId} not supported by 0x` }),
+        JSON.stringify({ success: false, error: 'API_KEY_NOT_CONFIGURED' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Calculate 99% of amount (contract takes 1% fee before forwarding)
-    const amountBigInt = BigInt(amount)
-    const swapAmount = ((amountBigInt * 99n) / 100n).toString()
-
-    // Build 0x swap quote URL - this returns executable calldata
+    // Use 0x API v2 with integrated fee collection
     const params = new URLSearchParams({
+      chainId: chainId.toString(),
       sellToken: fromToken,
       buyToken: toToken,
-      sellAmount: swapAmount, // 99% goes to 0x router
-      takerAddress: userAddress, // User receives the output tokens
-      slippagePercentage: slippagePercentage.toString(),
+      sellAmount: amount,
+      taker: userAddress,
+      slippageBps: slippageBps.toString(),
+      swapFeeRecipient: FEE_RECIPIENT,
+      swapFeeBps: FEE_BPS,
+      swapFeeToken: fromToken, // Take 1% fee from sell token
     })
 
-    const url = `${baseUrl}/swap/v1/quote?${params.toString()}`
-    
-    console.log('Fetching 0x swap data:', url)
+    const url = `https://api.0x.org/swap/allowance-holder/quote?${params.toString()}`
+    console.log('Fetching 0x v2 quote:', url)
     
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
+        '0x-api-key': apiKey,
+        '0x-version': 'v2',
       },
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('0x API error:', errorText)
+      console.error('0x API v2 error:', response.status, errorText)
       return new Response(
         JSON.stringify({ success: false, error: '0x API error: ' + errorText }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -79,29 +73,36 @@ serve(async (req) => {
     }
 
     const data = await response.json()
+    console.log('0x v2 quote response:', JSON.stringify(data, null, 2))
 
-    // Return swap data including calldata for contract execution
+    // 0x v2 returns a ready-to-execute transaction
     return new Response(
       JSON.stringify({
         success: true,
         // Quote info
         toAmount: data.buyAmount,
-        estimatedGas: data.estimatedGas || '0',
-        protocols: data.sources?.filter((s: any) => parseFloat(s.proportion) > 0).map((s: any) => s.name) || [],
-        priceImpact: data.estimatedPriceImpact || '0',
-        // Execution data for contract
-        routerAddress: data.to, // 0x router address
-        swapData: data.data, // Calldata to execute the swap
-        value: data.value || '0', // Value to send with the call
-        minBuyAmount: data.guaranteedPrice 
-          ? (BigInt(data.buyAmount) * 99n / 100n).toString() // 1% slippage protection
-          : data.buyAmount,
+        minBuyAmount: data.minBuyAmount,
+        estimatedGas: data.transaction?.gas || '0',
+        protocols: data.route?.fills?.map((f: any) => f.source) || [],
+        priceImpact: '0',
+        // Fee info - 0x handles the fee automatically
+        fees: data.fees,
+        // Transaction data - can be sent directly to the blockchain
+        transaction: {
+          to: data.transaction?.to,
+          data: data.transaction?.data,
+          value: data.transaction?.value || '0',
+          gas: data.transaction?.gas,
+          gasPrice: data.transaction?.gasPrice,
+        },
+        // Allowance target for ERC20 approvals
+        allowanceTarget: data.allowanceTarget,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    console.error('Swap data error:', errorMessage)
+    console.error('Swap quote error:', errorMessage)
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
