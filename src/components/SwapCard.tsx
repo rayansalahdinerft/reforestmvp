@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X } from 'lucide-react';
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
@@ -19,6 +19,7 @@ const SwapCard = () => {
   const [buyToken, setBuyToken] = useState<Token | null>(null);
   const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
   const [slippage, setSlippage] = useState(1);
+  const [showSlippageSettings, setShowSlippageSettings] = useState(false);
 
   const { isConnected, address } = useAppKitAccount();
   const { open } = useAppKit();
@@ -181,24 +182,47 @@ const SwapCard = () => {
             </div>
           </div>
           
-          {/* Slippage Selector */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Slippage:</span>
-            <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-0.5">
-              {[0.5, 1, 2].map((value) => (
+          {/* Slippage Toggle Button */}
+          <button
+            onClick={() => setShowSlippageSettings(!showSlippageSettings)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+              showSlippageSettings 
+                ? 'bg-primary/20 text-primary' 
+                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
+            }`}
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span className="text-xs font-medium">{slippage}%</span>
+          </button>
+        </div>
+
+        {/* Slippage Settings Panel */}
+        {showSlippageSettings && (
+          <div className="mx-4 mb-3 px-4 py-3 rounded-xl bg-secondary/50 border border-border/50 animate-fade-in">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-foreground">Slippage Tolerance</span>
+              <button
+                onClick={() => setShowSlippageSettings(false)}
+                className="p-1 rounded-lg hover:bg-secondary transition-colors"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              {[0.5, 1, 2, 3].map((value) => (
                 <button
                   key={value}
                   onClick={() => setSlippage(value)}
-                  className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all ${
                     slippage === value
                       ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                      : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
                   }`}
                 >
                   {value}%
                 </button>
               ))}
-              <div className="relative">
+              <div className="relative flex-1">
                 <input
                   type="number"
                   value={slippage}
@@ -208,16 +232,20 @@ const SwapCard = () => {
                       setSlippage(val);
                     }
                   }}
-                  className="w-12 px-1.5 py-1 text-xs font-medium text-center bg-secondary rounded-md border-none outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 text-sm font-medium text-center bg-secondary rounded-lg border-none outline-none focus:ring-2 focus:ring-primary"
                   min="0.1"
                   max="50"
                   step="0.1"
+                  placeholder="Custom"
                 />
-                <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">%</span>
               </div>
             </div>
+            {slippage > 5 && (
+              <p className="mt-2 text-xs text-yellow-500">⚠️ High slippage may result in unfavorable trades</p>
+            )}
           </div>
-        </div>
+        )}
 
         {/* Demo mode indicator */}
         {!isContractDeployed && (
