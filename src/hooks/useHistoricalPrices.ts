@@ -164,7 +164,8 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
 
     const { symbol: coinSymbol } = tokenConfig;
     const days = getTimeframeDays(timeframe);
-    const cacheKey = `coingecko-${coinSymbol}-${days}`;
+    // Include timeframe in cache key since 1H and 1D both use days=1 but process differently
+    const cacheKey = `coingecko-${coinSymbol}-${timeframe}`;
 
     // Check local cache first
     const cached = readLocalCache(cacheKey);
