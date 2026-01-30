@@ -317,84 +317,86 @@ const SwapCard = () => {
       {/* Card */}
       <div className="swap-card p-0.5 sm:p-1.5">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-xs sm:text-sm font-medium text-muted-foreground">Swap on</span>
-            <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-secondary/80 font-semibold text-xs sm:text-sm">
-              {chainInfo?.logoURI && (
-                <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-4 h-4 sm:w-5 sm:h-5 rounded-full" />
-              )}
-              <span>{chainInfo?.name}</span>
-            </div>
-          </div>
-          
-          {/* Slippage Toggle Button */}
-          <div ref={slippageRef} className="relative self-end sm:self-auto">
-            <button
-              onClick={() => setShowSlippageSettings(!showSlippageSettings)}
-              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all text-xs sm:text-sm ${
-                showSlippageSettings 
-                  ? 'bg-primary/20 text-primary' 
-                  : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
-              }`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="font-medium">{slippage}%</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Slippage Settings Panel */}
-        {showSlippageSettings && (
-          <div className="mx-3 sm:mx-4 mb-3 px-3 sm:px-4 py-3 rounded-xl bg-secondary/50 border border-border/50 animate-fade-in">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs sm:text-sm font-medium text-foreground">Slippage Tolerance</span>
-              <button
-                onClick={() => setShowSlippageSettings(false)}
-                className="p-1 rounded-lg hover:bg-secondary transition-colors"
-              >
-                <X className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </div>
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-              {[0.5, 1, 2, 3].map((value) => (
-                <button
-                  key={value}
-                  onClick={() => setSlippage(value)}
-                  className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${
-                    slippage === value
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
-                  }`}
-                >
-                  {value}%
-                </button>
-              ))}
-              <div className="relative">
-                <input
-                  type="number"
-                  value={slippage}
-                  onChange={(e) => {
-                    const val = parseFloat(e.target.value);
-                    if (!isNaN(val) && val >= 0.1 && val <= 50) {
-                      setSlippage(val);
-                    }
-                  }}
-                  className="w-full px-1.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-center bg-secondary rounded-lg border-none outline-none focus:ring-2 focus:ring-primary"
-                  min="0.1"
-                  max="50"
-                  step="0.1"
-                  placeholder="Custom"
-                />
-                <span className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-[10px] sm:text-sm text-muted-foreground pointer-events-none">%</span>
+        <div ref={slippageRef}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground">Swap on</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-secondary/80 font-semibold text-xs sm:text-sm">
+                {chainInfo?.logoURI && (
+                  <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-4 h-4 sm:w-5 sm:h-5 rounded-full" />
+                )}
+                <span>{chainInfo?.name}</span>
               </div>
             </div>
-            {slippage > 5 && (
-              <p className="mt-2 text-[10px] sm:text-xs text-yellow-500">⚠️ High slippage may result in unfavorable trades</p>
-            )}
+            
+            {/* Slippage Toggle Button */}
+            <div className="relative self-end sm:self-auto">
+              <button
+                onClick={() => setShowSlippageSettings(!showSlippageSettings)}
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all text-xs sm:text-sm ${
+                  showSlippageSettings 
+                    ? 'bg-primary/20 text-primary' 
+                    : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="font-medium">{slippage}%</span>
+              </button>
+            </div>
           </div>
-        )}
+
+          {/* Slippage Settings Panel */}
+          {showSlippageSettings && (
+            <div className="mx-3 sm:mx-4 mb-3 px-3 sm:px-4 py-3 rounded-xl bg-secondary/50 border border-border/50 animate-fade-in">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs sm:text-sm font-medium text-foreground">Slippage Tolerance</span>
+                <button
+                  onClick={() => setShowSlippageSettings(false)}
+                  className="p-1 rounded-lg hover:bg-secondary transition-colors"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+              <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                {[0.5, 1, 2, 3].map((value) => (
+                  <button
+                    key={value}
+                    onClick={() => setSlippage(value)}
+                    className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${
+                      slippage === value
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
+                    }`}
+                  >
+                    {value}%
+                  </button>
+                ))}
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={slippage}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (!isNaN(val) && val >= 0.1 && val <= 50) {
+                        setSlippage(val);
+                      }
+                    }}
+                    className="w-full px-1.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-center bg-secondary rounded-lg border-none outline-none focus:ring-2 focus:ring-primary"
+                    min="0.1"
+                    max="50"
+                    step="0.1"
+                    placeholder="Custom"
+                  />
+                  <span className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-[10px] sm:text-sm text-muted-foreground pointer-events-none">%</span>
+                </div>
+              </div>
+              {slippage > 5 && (
+                <p className="mt-2 text-[10px] sm:text-xs text-yellow-500">⚠️ High slippage may result in unfavorable trades</p>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Demo mode indicator */}
         {!isContractDeployed && (
