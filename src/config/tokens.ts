@@ -69,7 +69,7 @@ export const POPULAR_TOKENS: Record<number | string, Token[]> = {
     // L2 Tokens (on Ethereum)
     { symbol: 'ARB', name: 'Arbitrum', address: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1', decimals: 18, chainId: 1, logoURI: 'https://tokens.1inch.io/0xb50721bcf8d664c30412cfbc6cf7a15145234ad1.png' },
     { symbol: 'OP', name: 'Optimism', address: '0x4200000000000000000000000000000000000042', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png' },
-    { symbol: 'MATIC', name: 'Polygon', address: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0', decimals: 18, chainId: 1, logoURI: 'https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png' },
+    
     { symbol: 'STRK', name: 'Starknet', address: '0xCa14007Eff0dB1f8135f4C25B34De49AB0d42766', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/26433/small/starknet.png' },
     { symbol: 'IMX', name: 'Immutable X', address: '0xF57e7e7C23978C3cAEC3C3548E3D615c346e79fF', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/17233/small/immutableX-symbol-BLK-RGB.png' },
     { symbol: 'MANTA', name: 'Manta Network', address: '0x95CeF13441Be50d20cA4558CC0a27B601aC544E5', decimals: 18, chainId: 1, logoURI: 'https://assets.coingecko.com/coins/images/33535/small/manta.jpg' },
