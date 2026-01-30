@@ -21,11 +21,11 @@ const Index = () => {
       
       <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero Section */}
-        <div className="text-center mb-6 sm:mb-10 animate-fade-in">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 sm:mb-4 tracking-tight">
-            Every swap, <span className="text-primary glow-text">save the world</span>
+        <div className="text-center mb-8 sm:mb-10 animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-5 tracking-tight leading-tight">
+            Every swap, <span className="text-primary glow-text animate-neon-flicker">save the world</span>
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg mx-auto px-2">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto px-4">
             First wallet that makes your transactions useful for the planet. DeFi with purpose.
           </p>
         </div>

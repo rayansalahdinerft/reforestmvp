@@ -264,9 +264,9 @@ const SwapCard = () => {
   };
 
   return (
-    <div className="w-full max-w-[460px] mx-auto animate-slide-up px-2 sm:px-0">
+    <div className="w-full max-w-[460px] mx-auto animate-slide-up px-1 sm:px-0">
       {/* Card */}
-      <div className="swap-card p-1 sm:p-1.5">
+      <div className="swap-card p-0.5 sm:p-1.5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4">
           <div className="flex items-center gap-2">
