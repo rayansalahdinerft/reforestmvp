@@ -35,12 +35,9 @@ const Index = () => {
           <TreeCounter />
         </div>
 
-        {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-8 sm:mb-12">
-          {/* Swap Card - centered on larger screens */}
-          <div className="lg:col-span-5 lg:col-start-4">
-            <SwapCard />
-          </div>
+        {/* Swap Card - centered */}
+        <div className="flex justify-center mb-8 sm:mb-12">
+          <SwapCard />
         </div>
 
         {/* Footer stats */}
