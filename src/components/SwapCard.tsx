@@ -181,14 +181,33 @@ const SwapCard = () => {
       toast.error(result.error, { id: 'swap-progress' });
     } else if (result.hash) {
       // Calculate the donation amount (40% of 1% fee)
-      const swapUsdValue = sellPrice ? parseFloat(actualSellAmount) * sellPrice : 0;
+      // Use a fallback price estimate if sellPrice isn't available
+      const estimatedSellPrice = sellPrice || (sellToken?.symbol === 'ETH' ? 2700 : sellToken?.symbol === 'USDC' ? 1 : 0);
+      const swapUsdValue = estimatedSellPrice > 0 ? parseFloat(actualSellAmount) * estimatedSellPrice : 0;
       const totalFee = swapUsdValue * FEE_PERCENT;
       const donationAmount = totalFee * REFORESTATION_PERCENT;
+
+      console.log('Swap success - calculating donation:', {
+        actualSellAmount,
+        sellPrice,
+        estimatedSellPrice,
+        swapUsdValue,
+        totalFee,
+        donationAmount,
+        address,
+        txHash: result.hash
+      });
 
       // Update tree counter in database (requires connected wallet address)
       if (donationAmount > 0 && address) {
         try {
-          const { error: updateError } = await supabase.functions.invoke('update-tree-counter', {
+          console.log('Calling update-tree-counter with:', {
+            donationUsd: donationAmount,
+            txHash: result.hash,
+            walletAddress: address,
+          });
+          
+          const { data: updateData, error: updateError } = await supabase.functions.invoke('update-tree-counter', {
             body: {
               donationUsd: donationAmount,
               txHash: result.hash,
@@ -199,11 +218,13 @@ const SwapCard = () => {
           if (updateError) {
             console.error('Failed to update tree counter:', updateError);
           } else {
-            console.log(`Tree counter updated by ${address}: +$${donationAmount.toFixed(2)} donated`);
+            console.log('Tree counter updated successfully:', updateData);
           }
         } catch (err) {
           console.error('Error calling update-tree-counter:', err);
         }
+      } else {
+        console.warn('Skipping tree counter update:', { donationAmount, hasAddress: !!address });
       }
 
       toast.success(
