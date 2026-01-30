@@ -5,16 +5,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 }
 
-// 0x API endpoints per chain (free tier available)
-const ZEROX_ENDPOINTS: Record<number, string> = {
-  1: 'https://api.0x.org',        // Ethereum
-  137: 'https://polygon.api.0x.org', // Polygon
-  42161: 'https://arbitrum.api.0x.org', // Arbitrum
-  10: 'https://optimism.api.0x.org', // Optimism
-  8453: 'https://base.api.0x.org', // Base
-  43114: 'https://avalanche.api.0x.org', // Avalanche
-  56: 'https://bsc.api.0x.org', // BSC
-}
+// Fee recipient address (1% fee for reforestation)
+const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F'
+const FEE_BPS = '100' // 1% = 100 basis points
 
 // Comprehensive token address to CoinGecko ID mapping
 const TOKEN_TO_COINGECKO: Record<string, string> = {
@@ -42,23 +35,12 @@ const TOKEN_TO_COINGECKO: Record<string, string> = {
   // Memecoins
   '0x6982508145454ce325ddbe47a25d4ec3d2311933': 'pepe',
   '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce': 'shiba-inu',
-  '0x4206931337dc273a630d328da6441786bfad668f': 'dogecoin',
   '0xcf0c122c6b73ff809c693db761e7baebe62b6a2e': 'floki',
   '0x1151cb3d861920e07a38e03eead12c32178567f6': 'bonk',
-  '0xa1c5f1d76ece02ee26f40f7b6e45c8a55e96f7c6': 'dogwifcoin',
   '0xb131f4a55907b10d1f0a50d8ab8fa09ec342cd74': 'memecoin-2',
-  '0xac57de9c1a09fec648e93eb98875b212db0d460b': 'baby-doge-coin',
   '0x761d38e5ddf6ccf6cf7c55759d5210750b5d60f3': 'dogelon-mars',
   '0xa35923162c49cf95e6bf26623385eb431ad920d3': 'turbo',
-  '0x5026f006b85729a8b14553fae6af249ad16c9aab': 'wojak',
-  '0x12970e6868f88f6557b76120662c1b3e50a646bf': 'milady-meme-coin',
-  '0x7d8146cf21e8d7cbe46054e01588207b51198729': 'bob-token',
-  '0x1ce270557c1f68cfb577b856766310bf8b47fd9c': 'mongcoin',
-  '0x594daad7d77592a2b97b725a7ad59d7e188b5bfa': 'apu-apustaja',
-  '0x812ba41e071c7b7fa4ebcfb62df5f45f6fa853ee': 'neiro-on-eth',
   '0xaaee1a9723aadb7afa2810263653a34ba2c21c7a': 'mog-coin',
-  '0xe0f63a424a4439cbe457d80e4f4b51ad25b2c56c': 'spx6900',
-  '0x7f9a7db853ca816b9a138aee3380ef34c437dee0': 'giga-chad-2',
   
   // DeFi
   '0x514910771af9ca656af840dff83e8264ecf986ca': 'chainlink',
@@ -87,8 +69,6 @@ const TOKEN_TO_COINGECKO: Record<string, string> = {
   '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0': 'matic-network',
   '0xca14007eff0db1f8135f4c25b34de49ab0d42766': 'starknet',
   '0xf57e7e7c23978c3caec3c3548e3d615c346e79ff': 'immutable-x',
-  '0x95cef13441be50d20ca4558cc0a27b601ac544e5': 'manta-network',
-  '0x9e32b13ce7f2e80a01932b42553652e053d6ed8e': 'metis-token',
   
   // Gaming & Metaverse
   '0x4d224452801aced8b2f0aebe155379bb5d594381': 'apecoin',
@@ -114,7 +94,7 @@ serve(async (req) => {
   }
 
   try {
-    const { chainId, fromToken, toToken, amount, fromDecimals = 18, toDecimals = 18 } = await req.json()
+    const { chainId, fromToken, toToken, amount, fromDecimals = 18, toDecimals = 18, taker } = await req.json()
 
     if (!chainId || !fromToken || !toToken || !amount) {
       return new Response(
@@ -123,47 +103,61 @@ serve(async (req) => {
       )
     }
 
-    const baseUrl = ZEROX_ENDPOINTS[chainId]
-    if (!baseUrl) {
-      return new Response(
-        JSON.stringify({ success: false, error: `Chain ${chainId} not supported` }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    const apiKey = Deno.env.get('ZEROX_API_KEY')
+    if (!apiKey) {
+      console.log('No 0x API key, falling back to CoinGecko estimates')
+      return await getFallbackQuote(chainId, fromToken, toToken, amount, fromDecimals, toDecimals, corsHeaders)
     }
 
-    // Build 0x quote URL
+    // Use 0x API v2 with fee parameters
     const params = new URLSearchParams({
+      chainId: chainId.toString(),
       sellToken: fromToken,
       buyToken: toToken,
       sellAmount: amount,
+      swapFeeRecipient: FEE_RECIPIENT,
+      swapFeeBps: FEE_BPS,
+      swapFeeToken: fromToken, // Take fee from sell token
     })
 
-    const url = `${baseUrl}/swap/v1/quote?${params.toString()}`
+    // Add taker if provided (for more accurate quotes)
+    if (taker) {
+      params.append('taker', taker)
+    }
+
+    const url = `https://api.0x.org/swap/allowance-holder/price?${params.toString()}`
+    console.log('Fetching 0x v2 price:', url)
     
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
+        '0x-api-key': apiKey,
+        '0x-version': 'v2',
       },
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('0x API error:', errorText)
+      console.error('0x API v2 error:', response.status, errorText)
       
-      // Fallback: use price-based estimation from CoinGecko
+      // Fallback to CoinGecko estimates
       return await getFallbackQuote(chainId, fromToken, toToken, amount, fromDecimals, toDecimals, corsHeaders)
     }
 
     const data = await response.json()
+    console.log('0x v2 response:', JSON.stringify(data, null, 2))
 
     return new Response(
       JSON.stringify({
         success: true,
         toAmount: data.buyAmount,
-        estimatedGas: data.estimatedGas || '0',
-        protocols: data.sources?.filter((s: any) => parseFloat(s.proportion) > 0).map((s: any) => s.name) || [],
-        priceImpact: data.estimatedPriceImpact || '0',
-        source: '0x',
+        minBuyAmount: data.minBuyAmount,
+        estimatedGas: data.gas || '0',
+        protocols: data.route?.fills?.map((f: any) => f.source) || [],
+        priceImpact: '0',
+        source: '0x-v2',
+        fees: data.fees,
+        allowanceTarget: data.allowanceTarget,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
@@ -217,20 +211,22 @@ async function getFallbackQuote(
     }
 
     // Calculate estimated output with proper decimal handling
-    // Formula: toAmount = (amount / 10^fromDecimals) * (fromPrice / toPrice) * 10^toDecimals * 0.997
+    // Apply 1% fee (0.99) and 0.3% slippage (0.997)
     const amountNumber = parseFloat(amount) / Math.pow(10, fromDecimals)
-    const toAmountNumber = amountNumber * (fromPrice / toPrice) * 0.997
+    const toAmountNumber = amountNumber * (fromPrice / toPrice) * 0.99 * 0.997 // 1% fee applied
     const toAmount = Math.floor(toAmountNumber * Math.pow(10, toDecimals))
 
     return new Response(
       JSON.stringify({
         success: true,
         toAmount: toAmount.toString(),
+        minBuyAmount: Math.floor(toAmount * 0.99).toString(), // 1% slippage
         estimatedGas: '200000',
         protocols: ['price-estimate'],
         priceImpact: '0.3',
         source: 'coingecko',
         isEstimate: true,
+        feeApplied: true,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

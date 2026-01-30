@@ -1,14 +1,9 @@
 import { useState, useCallback } from 'react';
-import { useWriteContract, useAccount } from 'wagmi';
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits, formatUnits, createPublicClient, http } from 'viem';
 import { mainnet, polygon, arbitrum, optimism, base, avalanche, bsc } from 'viem/chains';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  REFOREST_FEE_SPLITTER_ABI, 
-  ERC20_ABI,
-  NATIVE_TOKEN_ADDRESS,
-  getContractAddress 
-} from '@/config/contracts';
+import { ERC20_ABI, NATIVE_TOKEN_ADDRESS } from '@/config/contracts';
 import type { Token } from '@/config/tokens';
 
 export type SwapStatus = 'idle' | 'fetching-quote' | 'approving' | 'swapping' | 'success' | 'error';
@@ -35,7 +30,7 @@ export const useSwapExecution = () => {
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
   const { address: userAddress } = useAccount();
-  const { writeContractAsync } = useWriteContract();
+  const { sendTransactionAsync } = useSendTransaction();
 
   const checkAndApproveToken = async (
     tokenAddress: `0x${string}`,
@@ -76,15 +71,16 @@ export const useSwapExecution = () => {
       return;
     }
 
-    console.log('Approving token...');
+    console.log('Approving token to spender:', spenderAddress);
     setStatus('approving');
 
-    const hash = await writeContractAsync({
-      address: tokenAddress,
-      abi: ERC20_ABI,
-      functionName: 'approve',
-      args: [spenderAddress, amount]
-    } as any);
+    // Use sendTransactionAsync for approval
+    const approvalData = `0x095ea7b3${spenderAddress.slice(2).padStart(64, '0')}${'ff'.repeat(32)}` as `0x${string}`;
+    
+    const hash = await sendTransactionAsync({
+      to: tokenAddress,
+      data: approvalData,
+    });
 
     // Wait for approval confirmation
     await publicClient.waitForTransactionReceipt({ hash });
@@ -107,21 +103,13 @@ export const useSwapExecution = () => {
     }
 
     try {
-      // Check if contract is deployed
-      const contractAddress = getContractAddress(chainId);
-      if (!contractAddress) {
-        setError('Smart contract not yet deployed on this chain. Contact team for deployment.');
-        setStatus('error');
-        return { error: 'Contract not deployed on this chain' };
-      }
-
       setStatus('fetching-quote');
 
       // Convert amount to wei
       const amountInWei = parseUnits(sellAmount, sellToken.decimals);
       const isNativeToken = sellToken.address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase();
 
-      // Get swap data from 0x API via edge function
+      // Get swap data from 0x API v2 via edge function
       const { data: swapData, error: swapError } = await supabase.functions.invoke('zerox-swap', {
         body: {
           chainId,
@@ -129,7 +117,7 @@ export const useSwapExecution = () => {
           toToken: buyToken.address,
           amount: amountInWei.toString(),
           userAddress,
-          slippagePercentage: slippage,
+          slippageBps: slippage * 100, // Convert percentage to bps
         },
       });
 
@@ -137,13 +125,13 @@ export const useSwapExecution = () => {
         throw new Error(swapData?.error || swapError?.message || 'Failed to get swap data');
       }
 
-      console.log('Swap data from 0x:', swapData);
+      console.log('Swap data from 0x v2:', swapData);
 
-      // For ERC20 tokens, approve the contract first
-      if (!isNativeToken) {
+      // For ERC20 tokens, approve the 0x allowance target
+      if (!isNativeToken && swapData.allowanceTarget) {
         await checkAndApproveToken(
           sellToken.address as `0x${string}`,
-          contractAddress,
+          swapData.allowanceTarget as `0x${string}`,
           amountInWei,
           chainId
         );
@@ -151,21 +139,14 @@ export const useSwapExecution = () => {
 
       setStatus('swapping');
 
-      // Execute swap through ReforestFeeSplitter contract
-      // The contract takes 1% fee and forwards 99% to 0x router with swapData
-      const hash = await writeContractAsync({
-        address: contractAddress,
-        abi: REFOREST_FEE_SPLITTER_ABI,
-        functionName: 'swap',
-        args: [
-          sellToken.address as `0x${string}`, // srcToken
-          buyToken.address as `0x${string}`,  // dstToken
-          amountInWei,                         // srcAmount (full 100%)
-          BigInt(swapData.minBuyAmount || '0'), // minDstAmount
-          swapData.swapData as `0x${string}`   // 0x swap calldata
-        ],
-        value: isNativeToken ? amountInWei : 0n
-      } as any);
+      // Execute the swap using the transaction data from 0x v2
+      // The 1% fee is automatically collected by 0x and sent to the fee recipient
+      const hash = await sendTransactionAsync({
+        to: swapData.transaction.to as `0x${string}`,
+        data: swapData.transaction.data as `0x${string}`,
+        value: isNativeToken ? amountInWei : BigInt(swapData.transaction.value || '0'),
+        gas: swapData.transaction.gas ? BigInt(swapData.transaction.gas) : undefined,
+      });
 
       setTxHash(hash);
       console.log('Swap transaction submitted:', hash);
@@ -195,7 +176,7 @@ export const useSwapExecution = () => {
       setStatus('error');
       return { error: errorMessage };
     }
-  }, [writeContractAsync, userAddress]);
+  }, [sendTransactionAsync, userAddress]);
 
   const reset = useCallback(() => {
     setStatus('idle');
