@@ -382,7 +382,7 @@ const SwapCard = () => {
                         setSlippage(val);
                       }
                     }}
-                    className="w-full px-1.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-center bg-secondary rounded-lg border-none outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-1.5 sm:px-3 py-2 text-xs sm:text-sm font-medium text-center bg-secondary rounded-lg border-none outline-none focus:ring-2 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     min="0.1"
                     max="50"
                     step="0.1"
