@@ -17,7 +17,7 @@ const Header = () => {
     <header className="w-full py-3 px-6 glass-effect sticky top-0 z-50 border-b border-border/50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <Link to="/" className="hover-glow transition-all">
+          <Link to="/" className="transition-all">
             <Logo />
           </Link>
           <nav className="hidden md:flex items-center gap-1">
