@@ -4,7 +4,7 @@
 // Contract addresses (same on all chains when deployed)
 // TODO: Replace with actual deployed addresses
 export const REFOREST_FEE_SPLITTER_ADDRESSES: Record<number, `0x${string}`> = {
-  1: '0xd9145CCE52D386f254917e481eB44e9943F39138' as `0x${string}`,      // Ethereum Mainnet
+  1: '0x4c725299078FbbaC405625FF5a9d0328b3e23Cce' as `0x${string}`,      // Ethereum Mainnet
   137: '0x0000000000000000000000000000000000000000' as `0x${string}`,    // Polygon
   42161: '0x0000000000000000000000000000000000000000' as `0x${string}`,  // Arbitrum
   10: '0x0000000000000000000000000000000000000000' as `0x${string}`,     // Optimism
