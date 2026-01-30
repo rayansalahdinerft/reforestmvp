@@ -2,7 +2,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface CacheEntry {
@@ -12,21 +14,44 @@ interface CacheEntry {
 
 // In-memory cache with 5-minute TTL
 const cache = new Map<string, CacheEntry>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 5 * 60 * 1000;
+
+// Symbol to CoinGecko ID mapping
+const SYMBOL_TO_ID: Record<string, string> = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+  BNB: "binancecoin",
+  SOL: "solana",
+  MATIC: "matic-network",
+  POL: "matic-network",
+  ARB: "arbitrum",
+  OP: "optimism",
+  AVAX: "avalanche-2",
+  STRK: "starknet",
+  UNI: "uniswap",
+  AAVE: "aave",
+  LINK: "chainlink",
+  CRV: "curve-dao-token",
+  USDC: "usd-coin",
+  USDT: "tether",
+  DAI: "dai",
+  DOGE: "dogecoin",
+  SHIB: "shiba-inu",
+  PEPE: "pepe",
+  BONK: "bonk",
+};
 
 // Free CoinGecko API limits - 'max' is limited to last year for free tier
 const sanitizeDays = (days: string): string => {
-  // Free tier supports: 1, 7, 30, 90, 180, 365
-  // 'max' often returns 401 on free tier, so cap at 365
-  if (days === 'max') return '365';
+  if (days === "max") return "365";
   const numDays = parseInt(days, 10);
-  if (isNaN(numDays) || numDays > 365) return '365';
+  if (isNaN(numDays) || numDays > 365) return "365";
   return days;
 };
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
@@ -39,8 +64,10 @@ serve(async (req) => {
       );
     }
 
+    // Map symbol to CoinGecko ID if needed
+    const geckoId = SYMBOL_TO_ID[coinId.toUpperCase()] || coinId.toLowerCase();
     const days = sanitizeDays(rawDays);
-    const cacheKey = `${coinId}-${days}`;
+    const cacheKey = `${geckoId}-${days}`;
     const cached = cache.get(cacheKey);
 
     // Return cached data if valid
@@ -52,13 +79,13 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Fetching from CoinGecko: ${coinId}, days=${days}`);
+    console.log(`Fetching from CoinGecko: ${geckoId}, days=${days}`);
 
     const response = await fetch(
-      `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`,
+      `https://api.coingecko.com/api/v3/coins/${geckoId}/market_chart?vs_currency=usd&days=${days}`,
       {
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "User-Agent": "Reforest-DEX/1.0",
         },
       }
@@ -66,7 +93,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       console.error(`CoinGecko API error: ${response.status}`);
-      
+
       // Return cached data even if expired
       if (cached) {
         console.log(`Returning stale cache for ${cacheKey}`);
@@ -75,7 +102,7 @@ serve(async (req) => {
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      
+
       throw new Error(`API error: ${response.status}`);
     }
 
