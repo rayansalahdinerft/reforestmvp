@@ -13,48 +13,66 @@ interface HistoricalDataResult {
   data: PricePoint[];
   loading: boolean;
   error: string | null;
-  isLiveData: boolean; // Indicates if data is from API or fallback
+  isLiveData: boolean;
   refetch: () => void;
 }
 
-// CoinCodex symbol mapping
 interface TokenConfig {
-  symbol: string; // CoinCodex uses uppercase symbols
+  symbol: string;
   fallbackPrice: number;
 }
 
 const TOKEN_CONFIG: Record<string, TokenConfig> = {
-  // Major
   ETH: { symbol: 'ETH', fallbackPrice: 2800 },
   BTC: { symbol: 'BTC', fallbackPrice: 87000 },
   SOL: { symbol: 'SOL', fallbackPrice: 135 },
   BNB: { symbol: 'BNB', fallbackPrice: 620 },
-  // Layer 2
   MATIC: { symbol: 'MATIC', fallbackPrice: 0.20 },
   POL: { symbol: 'MATIC', fallbackPrice: 0.20 },
   ARB: { symbol: 'ARB', fallbackPrice: 0.15 },
   OP: { symbol: 'OP', fallbackPrice: 0.26 },
   AVAX: { symbol: 'AVAX', fallbackPrice: 11 },
   STRK: { symbol: 'STRK', fallbackPrice: 0.14 },
-  // DeFi
   UNI: { symbol: 'UNI', fallbackPrice: 5.50 },
   AAVE: { symbol: 'AAVE', fallbackPrice: 165 },
   LINK: { symbol: 'LINK', fallbackPrice: 13 },
   CRV: { symbol: 'CRV', fallbackPrice: 0.42 },
-  // Stablecoins
   USDC: { symbol: 'USDC', fallbackPrice: 1 },
   USDT: { symbol: 'USDT', fallbackPrice: 1 },
   DAI: { symbol: 'DAI', fallbackPrice: 1 },
-  // Memecoins
   DOGE: { symbol: 'DOGE', fallbackPrice: 0.18 },
   SHIB: { symbol: 'SHIB', fallbackPrice: 0.0000125 },
   PEPE: { symbol: 'PEPE', fallbackPrice: 0.0000085 },
   BONK: { symbol: 'BONK', fallbackPrice: 0.000018 },
 };
 
-// Local cache for historical data
-const LOCAL_CACHE_KEY = 'historical_prices_cache_v2';
-const LOCAL_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+// Symbol to CoinGecko ID mapping for direct fallback
+const SYMBOL_TO_GECKO_ID: Record<string, string> = {
+  BTC: 'bitcoin',
+  ETH: 'ethereum',
+  BNB: 'binancecoin',
+  SOL: 'solana',
+  MATIC: 'matic-network',
+  POL: 'matic-network',
+  ARB: 'arbitrum',
+  OP: 'optimism',
+  AVAX: 'avalanche-2',
+  STRK: 'starknet',
+  UNI: 'uniswap',
+  AAVE: 'aave',
+  LINK: 'chainlink',
+  CRV: 'curve-dao-token',
+  USDC: 'usd-coin',
+  USDT: 'tether',
+  DAI: 'dai',
+  DOGE: 'dogecoin',
+  SHIB: 'shiba-inu',
+  PEPE: 'pepe',
+  BONK: 'bonk',
+};
+
+const LOCAL_CACHE_KEY = 'historical_prices_cache_v3';
+const LOCAL_CACHE_TTL = 10 * 60 * 1000;
 
 interface CacheEntry {
   data: PricePoint[];
@@ -80,7 +98,6 @@ const writeLocalCache = (key: string, data: PricePoint[]) => {
     const raw = localStorage.getItem(LOCAL_CACHE_KEY);
     const cache = raw ? JSON.parse(raw) : {};
     cache[key] = { data, timestamp: Date.now() };
-    // Keep only last 50 entries
     const keys = Object.keys(cache);
     if (keys.length > 50) {
       const oldest = keys.sort((a, b) => cache[a].timestamp - cache[b].timestamp).slice(0, 10);
@@ -92,13 +109,11 @@ const writeLocalCache = (key: string, data: PricePoint[]) => {
   }
 };
 
-// Helper to find token config by symbol (case-insensitive)
 const getTokenConfig = (symbol: string): TokenConfig | undefined => {
   const upperSymbol = symbol.toUpperCase();
   return TOKEN_CONFIG[upperSymbol];
 };
 
-// Map timeframe to CoinGecko days parameter
 const getTimeframeDays = (timeframe: Timeframe): string => {
   switch (timeframe) {
     case '1H': return '1';
@@ -111,7 +126,6 @@ const getTimeframeDays = (timeframe: Timeframe): string => {
   }
 };
 
-// Format timestamp based on timeframe
 const formatTime = (timestamp: number, timeframe: Timeframe): string => {
   const date = new Date(timestamp);
   
@@ -150,14 +164,14 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
 
     const { symbol: coinSymbol } = tokenConfig;
     const days = getTimeframeDays(timeframe);
-    const cacheKey = `coincodex-${coinSymbol}-${days}`;
+    const cacheKey = `coingecko-${coinSymbol}-${days}`;
 
     // Check local cache first
     const cached = readLocalCache(cacheKey);
     if (cached && cached.length > 0) {
       setData(cached);
       setLoading(false);
-      setIsLiveData(true); // cached data was originally live
+      setIsLiveData(true);
       return;
     }
 
@@ -165,18 +179,38 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
     setError(null);
 
     try {
-      // Call CoinCodex edge function
-      const { data: result, error: fnError } = await supabase.functions.invoke('coincodex-history', {
-        body: { coinId: coinSymbol, days },
-      });
+      let prices: [number, number][] | null = null;
+      let wasLive = true;
 
-      if (fnError) throw fnError;
-      
-      if (!result.prices || !Array.isArray(result.prices)) {
-        throw new Error('Invalid data format');
+      // Try backend proxy first
+      try {
+        const { data: result, error: fnError } = await supabase.functions.invoke('coingecko-history', {
+          body: { coinId: coinSymbol, days },
+        });
+        if (!fnError && result?.prices && Array.isArray(result.prices)) {
+          prices = result.prices;
+          wasLive = !result.cached || !result.stale;
+        }
+      } catch (proxyErr) {
+        console.warn('Backend proxy failed, trying direct CoinGecko:', proxyErr);
       }
 
-      let prices: [number, number][] = result.prices;
+      // Fallback: direct CoinGecko call
+      if (!prices) {
+        const geckoId = SYMBOL_TO_GECKO_ID[coinSymbol.toUpperCase()] || coinSymbol.toLowerCase();
+        const url = new URL(`https://api.coingecko.com/api/v3/coins/${geckoId}/market_chart`);
+        url.searchParams.set('vs_currency', 'usd');
+        url.searchParams.set('days', days === 'max' ? '365' : days);
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error(`CoinGecko ${res.status}`);
+        const json = await res.json();
+        prices = json.prices;
+        wasLive = true;
+      }
+
+      if (!prices || !Array.isArray(prices)) {
+        throw new Error('Invalid data format');
+      }
 
       // For 1H, filter to last hour
       if (timeframe === '1H') {
@@ -199,14 +233,13 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
       }));
 
       setData(formattedData);
-      setIsLiveData(!result.cached || !result.stale);
+      setIsLiveData(wasLive);
       writeLocalCache(cacheKey, formattedData);
     } catch (err) {
       console.error('Error fetching historical prices:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
       setIsLiveData(false);
       
-      // Generate minimal fallback showing flat line at current price
       const fallbackData = generateMinimalFallback(timeframe, tokenConfig.fallbackPrice);
       setData(fallbackData);
     } finally {
@@ -221,7 +254,6 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
   return { data, loading, error, isLiveData, refetch: fetchHistoricalData };
 };
 
-// Generate minimal fallback (flat line at current price with label)
 const generateMinimalFallback = (timeframe: Timeframe, currentPrice: number): PricePoint[] => {
   const now = Date.now();
   const points: PricePoint[] = [];
@@ -259,7 +291,6 @@ const generateMinimalFallback = (timeframe: Timeframe, currentPrice: number): Pr
       count = 24;
   }
   
-  // Generate flat line at current price - don't fake historical data
   for (let i = 0; i < count; i++) {
     const timestamp = now - ((count - 1 - i) * intervalMs);
     points.push({
