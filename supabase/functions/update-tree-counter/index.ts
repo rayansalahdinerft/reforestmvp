@@ -13,11 +13,26 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { donationUsd, txHash } = await req.json();
+    const { donationUsd, txHash, walletAddress } = await req.json();
+
+    // Validate wallet address is provided
+    if (!walletAddress || typeof walletAddress !== "string" || !walletAddress.startsWith("0x")) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Valid wallet address required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     if (!donationUsd || donationUsd <= 0) {
       return new Response(
         JSON.stringify({ success: false, error: "Invalid donation amount" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!txHash || typeof txHash !== "string" || !txHash.startsWith("0x")) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Valid transaction hash required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -68,13 +83,14 @@ Deno.serve(async (req) => {
       if (updateError) throw updateError;
     }
 
-    console.log(`Updated tree counter: +${treesPlanted} trees, +$${donationUsd} donated, txHash: ${txHash}`);
+    console.log(`Tree counter updated by wallet ${walletAddress}: +${treesPlanted.toFixed(2)} trees, +$${donationUsd.toFixed(2)}, txHash: ${txHash}`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         treesPlanted,
         donationUsd,
+        walletAddress,
         message: `Added ${treesPlanted.toFixed(2)} trees from $${donationUsd.toFixed(2)} donation`
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

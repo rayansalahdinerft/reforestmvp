@@ -185,20 +185,21 @@ const SwapCard = () => {
       const totalFee = swapUsdValue * FEE_PERCENT;
       const donationAmount = totalFee * REFORESTATION_PERCENT;
 
-      // Update tree counter in database
-      if (donationAmount > 0) {
+      // Update tree counter in database (requires connected wallet address)
+      if (donationAmount > 0 && address) {
         try {
           const { error: updateError } = await supabase.functions.invoke('update-tree-counter', {
             body: {
               donationUsd: donationAmount,
               txHash: result.hash,
+              walletAddress: address,
             },
           });
           
           if (updateError) {
             console.error('Failed to update tree counter:', updateError);
           } else {
-            console.log(`Tree counter updated: +$${donationAmount.toFixed(2)} donated`);
+            console.log(`Tree counter updated by ${address}: +$${donationAmount.toFixed(2)} donated`);
           }
         } catch (err) {
           console.error('Error calling update-tree-counter:', err);
