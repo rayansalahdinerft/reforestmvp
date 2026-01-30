@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useId, useMemo } from 'react';
 
 interface SparklineChartProps {
   data: number[];
@@ -8,6 +8,8 @@ interface SparklineChartProps {
 }
 
 const SparklineChart = ({ data, width = 120, height = 40, isPositive = true }: SparklineChartProps) => {
+  const gradientId = useId();
+
   const pathD = useMemo(() => {
     if (!data || data.length < 2) return '';
     
@@ -51,20 +53,19 @@ const SparklineChart = ({ data, width = 120, height = 40, isPositive = true }: S
     );
   }
 
-  const strokeColor = isPositive ? 'hsl(142 76% 52%)' : 'hsl(0 84% 60%)';
-  const fillColor = isPositive ? 'hsl(142 76% 52% / 0.1)' : 'hsl(0 84% 60% / 0.1)';
+  const strokeColor = isPositive ? 'hsl(var(--primary))' : 'hsl(var(--destructive))';
 
   return (
     <svg width={width} height={height} className="overflow-visible">
       <defs>
-        <linearGradient id={`sparkline-gradient-${isPositive}`} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={strokeColor} stopOpacity={0.3} />
           <stop offset="100%" stopColor={strokeColor} stopOpacity={0} />
         </linearGradient>
       </defs>
       <path
         d={areaPathD}
-        fill={`url(#sparkline-gradient-${isPositive})`}
+        fill={`url(#${gradientId})`}
       />
       <path
         d={pathD}
