@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowDown, ChevronDown, Settings, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
@@ -169,20 +169,15 @@ const SwapCard = () => {
       {/* Card */}
       <div className="swap-card p-1.5">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-muted-foreground">Swap on</span>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/80 font-semibold text-sm">
-              {chainInfo?.logoURI && (
-                <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-5 h-5 rounded-full" />
-              )}
-              <span>{chainInfo?.name}</span>
-            </div>
+        <div className="flex items-center gap-2 px-5 py-4">
+          <Sparkles className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-muted-foreground">Swap on</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/80 font-semibold text-sm">
+            {chainInfo?.logoURI && (
+              <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-5 h-5 rounded-full" />
+            )}
+            <span>{chainInfo?.name}</span>
           </div>
-          <button className="p-2.5 hover:bg-secondary rounded-xl transition-all hover:rotate-45 duration-300">
-            <Settings className="w-5 h-5 text-muted-foreground" />
-          </button>
         </div>
 
         {/* Demo mode indicator */}
