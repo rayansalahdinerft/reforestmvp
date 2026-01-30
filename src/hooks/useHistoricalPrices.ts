@@ -121,7 +121,7 @@ const getTimeframeDays = (timeframe: Timeframe): string => {
     case '1W': return '7';
     case '1M': return '30';
     case '1Y': return '365';    // Last 365 days
-    case 'ALL': return 'max';   // Since the beginning (full history)
+    case 'ALL': return '365';   // Max available on free CoinGecko API (365 days)
     default: return '1';
   }
 };
