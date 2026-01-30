@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export type Timeframe = '1H' | '1D' | '1W' | '1M' | '1Y' | 'ALL';
 
@@ -8,51 +9,87 @@ interface PricePoint {
   timestamp: number;
 }
 
-interface HistoricalData {
+interface HistoricalDataResult {
   data: PricePoint[];
   loading: boolean;
   error: string | null;
+  isLiveData: boolean; // Indicates if data is from API or fallback
+  refetch: () => void;
 }
 
-// CoinGecko IDs mapped by both symbol and coingecko id
-// Historical price ranges for realistic fallback data (approximate ranges)
+// CoinGecko IDs mapped by symbol
 interface TokenConfig {
   id: string;
   fallbackPrice: number;
-  // Historical price ranges for more realistic fallback
-  historicalRanges: {
-    '1Y': { min: number; max: number };
-    'ALL': { min: number; max: number; startYear: number };
-  };
 }
 
 const COINGECKO_IDS: Record<string, TokenConfig> = {
   // Major
-  ETH: { id: 'ethereum', fallbackPrice: 2800, historicalRanges: { '1Y': { min: 1500, max: 4000 }, 'ALL': { min: 80, max: 4800, startYear: 2015 } } },
-  BTC: { id: 'bitcoin', fallbackPrice: 87000, historicalRanges: { '1Y': { min: 25000, max: 100000 }, 'ALL': { min: 200, max: 100000, startYear: 2013 } } },
-  SOL: { id: 'solana', fallbackPrice: 135, historicalRanges: { '1Y': { min: 15, max: 260 }, 'ALL': { min: 0.5, max: 260, startYear: 2020 } } },
-  BNB: { id: 'binancecoin', fallbackPrice: 620, historicalRanges: { '1Y': { min: 200, max: 700 }, 'ALL': { min: 10, max: 700, startYear: 2017 } } },
+  ETH: { id: 'ethereum', fallbackPrice: 2800 },
+  BTC: { id: 'bitcoin', fallbackPrice: 87000 },
+  SOL: { id: 'solana', fallbackPrice: 135 },
+  BNB: { id: 'binancecoin', fallbackPrice: 620 },
   // Layer 2
-  MATIC: { id: 'matic-network', fallbackPrice: 0.42, historicalRanges: { '1Y': { min: 0.3, max: 1.2 }, 'ALL': { min: 0.01, max: 2.9, startYear: 2019 } } },
-  POL: { id: 'matic-network', fallbackPrice: 0.42, historicalRanges: { '1Y': { min: 0.3, max: 1.2 }, 'ALL': { min: 0.01, max: 2.9, startYear: 2019 } } },
-  ARB: { id: 'arbitrum', fallbackPrice: 0.55, historicalRanges: { '1Y': { min: 0.4, max: 2.4 }, 'ALL': { min: 0.4, max: 2.4, startYear: 2023 } } },
-  OP: { id: 'optimism', fallbackPrice: 1.25, historicalRanges: { '1Y': { min: 0.8, max: 4.5 }, 'ALL': { min: 0.4, max: 4.5, startYear: 2022 } } },
-  AVAX: { id: 'avalanche-2', fallbackPrice: 22, historicalRanges: { '1Y': { min: 8, max: 50 }, 'ALL': { min: 3, max: 145, startYear: 2020 } } },
-  STRK: { id: 'starknet', fallbackPrice: 0.38, historicalRanges: { '1Y': { min: 0.3, max: 2.5 }, 'ALL': { min: 0.3, max: 2.5, startYear: 2024 } } },
+  MATIC: { id: 'matic-network', fallbackPrice: 0.42 },
+  POL: { id: 'matic-network', fallbackPrice: 0.42 },
+  ARB: { id: 'arbitrum', fallbackPrice: 0.55 },
+  OP: { id: 'optimism', fallbackPrice: 1.25 },
+  AVAX: { id: 'avalanche-2', fallbackPrice: 22 },
+  STRK: { id: 'starknet', fallbackPrice: 0.38 },
   // DeFi
-  UNI: { id: 'uniswap', fallbackPrice: 7.80, historicalRanges: { '1Y': { min: 3, max: 17 }, 'ALL': { min: 1, max: 45, startYear: 2020 } } },
-  AAVE: { id: 'aave', fallbackPrice: 185, historicalRanges: { '1Y': { min: 50, max: 400 }, 'ALL': { min: 25, max: 670, startYear: 2020 } } },
-  LINK: { id: 'chainlink', fallbackPrice: 14.50, historicalRanges: { '1Y': { min: 5, max: 25 }, 'ALL': { min: 0.15, max: 52, startYear: 2017 } } },
-  CRV: { id: 'curve-dao-token', fallbackPrice: 0.52, historicalRanges: { '1Y': { min: 0.2, max: 0.8 }, 'ALL': { min: 0.2, max: 6, startYear: 2020 } } },
+  UNI: { id: 'uniswap', fallbackPrice: 7.80 },
+  AAVE: { id: 'aave', fallbackPrice: 185 },
+  LINK: { id: 'chainlink', fallbackPrice: 14.50 },
+  CRV: { id: 'curve-dao-token', fallbackPrice: 0.52 },
   // Stablecoins
-  USDC: { id: 'usd-coin', fallbackPrice: 1, historicalRanges: { '1Y': { min: 0.99, max: 1.01 }, 'ALL': { min: 0.97, max: 1.03, startYear: 2018 } } },
-  USDT: { id: 'tether', fallbackPrice: 1, historicalRanges: { '1Y': { min: 0.99, max: 1.01 }, 'ALL': { min: 0.95, max: 1.05, startYear: 2015 } } },
-  DAI: { id: 'dai', fallbackPrice: 1, historicalRanges: { '1Y': { min: 0.99, max: 1.01 }, 'ALL': { min: 0.90, max: 1.10, startYear: 2019 } } },
+  USDC: { id: 'usd-coin', fallbackPrice: 1 },
+  USDT: { id: 'tether', fallbackPrice: 1 },
+  DAI: { id: 'dai', fallbackPrice: 1 },
   // Memecoins
-  DOGE: { id: 'dogecoin', fallbackPrice: 0.18, historicalRanges: { '1Y': { min: 0.05, max: 0.20 }, 'ALL': { min: 0.0001, max: 0.74, startYear: 2014 } } },
-  SHIB: { id: 'shiba-inu', fallbackPrice: 0.0000125, historicalRanges: { '1Y': { min: 0.000007, max: 0.00003 }, 'ALL': { min: 0.0000001, max: 0.00009, startYear: 2020 } } },
-  PEPE: { id: 'pepe', fallbackPrice: 0.0000085, historicalRanges: { '1Y': { min: 0.0000005, max: 0.000025 }, 'ALL': { min: 0.0000001, max: 0.000025, startYear: 2023 } } },
-  BONK: { id: 'bonk', fallbackPrice: 0.000018, historicalRanges: { '1Y': { min: 0.000001, max: 0.00005 }, 'ALL': { min: 0.0000001, max: 0.00005, startYear: 2022 } } },
+  DOGE: { id: 'dogecoin', fallbackPrice: 0.18 },
+  SHIB: { id: 'shiba-inu', fallbackPrice: 0.0000125 },
+  PEPE: { id: 'pepe', fallbackPrice: 0.0000085 },
+  BONK: { id: 'bonk', fallbackPrice: 0.000018 },
+};
+
+// Local cache for historical data
+const LOCAL_CACHE_KEY = 'historical_prices_cache_v2';
+const LOCAL_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+interface CacheEntry {
+  data: PricePoint[];
+  timestamp: number;
+}
+
+const readLocalCache = (key: string): PricePoint[] | null => {
+  try {
+    const raw = localStorage.getItem(LOCAL_CACHE_KEY);
+    if (!raw) return null;
+    const cache = JSON.parse(raw) as Record<string, CacheEntry>;
+    const entry = cache[key];
+    if (!entry) return null;
+    if (Date.now() - entry.timestamp > LOCAL_CACHE_TTL) return null;
+    return entry.data;
+  } catch {
+    return null;
+  }
+};
+
+const writeLocalCache = (key: string, data: PricePoint[]) => {
+  try {
+    const raw = localStorage.getItem(LOCAL_CACHE_KEY);
+    const cache = raw ? JSON.parse(raw) : {};
+    cache[key] = { data, timestamp: Date.now() };
+    // Keep only last 50 entries
+    const keys = Object.keys(cache);
+    if (keys.length > 50) {
+      const oldest = keys.sort((a, b) => cache[a].timestamp - cache[b].timestamp).slice(0, 10);
+      oldest.forEach(k => delete cache[k]);
+    }
+    localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // ignore
+  }
 };
 
 // Helper to find token config by symbol (case-insensitive)
@@ -61,23 +98,16 @@ const getTokenConfig = (symbol: string): TokenConfig | undefined => {
   return COINGECKO_IDS[upperSymbol];
 };
 
-// Map timeframe to CoinGecko parameters
-const getTimeframeParams = (timeframe: Timeframe): { days: string; interval?: string } => {
+// Map timeframe to CoinGecko days parameter
+const getTimeframeDays = (timeframe: Timeframe): string => {
   switch (timeframe) {
-    case '1H':
-      return { days: '1' }; // Get 1 day data, we'll filter to last hour
-    case '1D':
-      return { days: '1' };
-    case '1W':
-      return { days: '7' };
-    case '1M':
-      return { days: '30' };
-    case '1Y':
-      return { days: '365' };
-    case 'ALL':
-      return { days: 'max' };
-    default:
-      return { days: '1' };
+    case '1H': return '1';
+    case '1D': return '1';
+    case '1W': return '7';
+    case '1M': return '30';
+    case '1Y': return '365';
+    case 'ALL': return 'max';
+    default: return '1';
   }
 };
 
@@ -87,7 +117,6 @@ const formatTime = (timestamp: number, timeframe: Timeframe): string => {
   
   switch (timeframe) {
     case '1H':
-      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     case '1D':
       return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     case '1W':
@@ -95,7 +124,6 @@ const formatTime = (timestamp: number, timeframe: Timeframe): string => {
     case '1M':
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     case '1Y':
-      return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
     case 'ALL':
       return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
     default:
@@ -103,10 +131,11 @@ const formatTime = (timestamp: number, timeframe: Timeframe): string => {
   }
 };
 
-export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
+export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): HistoricalDataResult => {
   const [data, setData] = useState<PricePoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLiveData, setIsLiveData] = useState(true);
 
   const fetchHistoricalData = useCallback(async () => {
     const tokenConfig = getTokenConfig(symbol);
@@ -115,26 +144,33 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
       console.warn(`Unknown symbol for historical prices: ${symbol}`);
       setError(`Unknown symbol: ${symbol}`);
       setLoading(false);
+      setIsLiveData(false);
       return;
     }
 
-    const { id: coinId, fallbackPrice, historicalRanges } = tokenConfig;
+    const { id: coinId } = tokenConfig;
+    const days = getTimeframeDays(timeframe);
+    const cacheKey = `${coinId}-${days}`;
+
+    // Check local cache first
+    const cached = readLocalCache(cacheKey);
+    if (cached && cached.length > 0) {
+      setData(cached);
+      setLoading(false);
+      setIsLiveData(true); // cached data was originally live
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const { days } = getTimeframeParams(timeframe);
-      
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`
-      );
+      // Call edge function to avoid rate limiting
+      const { data: result, error: fnError } = await supabase.functions.invoke('coingecko-history', {
+        body: { coinId, days },
+      });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const result = await response.json();
+      if (fnError) throw fnError;
       
       if (!result.prices || !Array.isArray(result.prices)) {
         throw new Error('Invalid data format');
@@ -148,11 +184,10 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
         prices = prices.filter(([timestamp]) => timestamp >= oneHourAgo);
       }
 
-      // Adjust sampling based on timeframe for better visualization
-      // More data points for longer timeframes to show full history
+      // Adjust sampling based on timeframe
       let maxPoints = 24;
-      if (timeframe === '1Y') maxPoints = 52; // weekly points
-      if (timeframe === 'ALL') maxPoints = 100; // show more detail for full history
+      if (timeframe === '1Y') maxPoints = 52;
+      if (timeframe === 'ALL') maxPoints = 100;
 
       const step = Math.max(1, Math.floor(prices.length / maxPoints));
       const sampledPrices = prices.filter((_, index) => index % step === 0);
@@ -160,16 +195,19 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
       const formattedData: PricePoint[] = sampledPrices.map(([timestamp, price]) => ({
         timestamp,
         time: formatTime(timestamp, timeframe),
-        price: parseFloat(price.toFixed(2)),
+        price: price < 0.01 ? parseFloat(price.toPrecision(4)) : parseFloat(price.toFixed(2)),
       }));
 
       setData(formattedData);
+      setIsLiveData(!result.cached || !result.stale);
+      writeLocalCache(cacheKey, formattedData);
     } catch (err) {
       console.error('Error fetching historical prices:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      setIsLiveData(false);
       
-      // Generate fallback data on error with realistic historical ranges
-      const fallbackData = generateRealisticFallbackData(timeframe, fallbackPrice, historicalRanges);
+      // Generate minimal fallback showing flat line at current price
+      const fallbackData = generateMinimalFallback(timeframe, tokenConfig.fallbackPrice);
       setData(fallbackData);
     } finally {
       setLoading(false);
@@ -180,85 +218,55 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
     fetchHistoricalData();
   }, [fetchHistoricalData]);
 
-  return { data, loading, error, refetch: fetchHistoricalData };
+  return { data, loading, error, isLiveData, refetch: fetchHistoricalData };
 };
 
-// Generate realistic fallback data based on historical price ranges
-const generateRealisticFallbackData = (
-  timeframe: Timeframe, 
-  currentPrice: number,
-  historicalRanges: TokenConfig['historicalRanges']
-): PricePoint[] => {
+// Generate minimal fallback (flat line at current price with label)
+const generateMinimalFallback = (timeframe: Timeframe, currentPrice: number): PricePoint[] => {
   const now = Date.now();
   const points: PricePoint[] = [];
   
   let intervalMs: number;
   let count: number;
-  let startPrice: number;
-  let endPrice: number = currentPrice;
   
   switch (timeframe) {
     case '1H':
       intervalMs = 5 * 60 * 1000;
       count = 12;
-      // Small variation for 1H
-      startPrice = currentPrice * (0.98 + Math.random() * 0.04);
       break;
     case '1D':
       intervalMs = 60 * 60 * 1000;
       count = 24;
-      startPrice = currentPrice * (0.95 + Math.random() * 0.10);
       break;
     case '1W':
       intervalMs = 24 * 60 * 60 * 1000;
       count = 7;
-      startPrice = currentPrice * (0.85 + Math.random() * 0.30);
       break;
     case '1M':
       intervalMs = 24 * 60 * 60 * 1000;
       count = 30;
-      startPrice = currentPrice * (0.70 + Math.random() * 0.60);
       break;
     case '1Y':
       intervalMs = 7 * 24 * 60 * 60 * 1000;
       count = 52;
-      // Use 1Y historical range
-      const range1Y = historicalRanges['1Y'];
-      startPrice = range1Y.min + Math.random() * (range1Y.max - range1Y.min) * 0.5;
       break;
     case 'ALL':
       intervalMs = 30 * 24 * 60 * 60 * 1000;
       count = 48;
-      // Use ALL historical range - start from near the minimum
-      const rangeAll = historicalRanges['ALL'];
-      startPrice = rangeAll.min + Math.random() * (rangeAll.max - rangeAll.min) * 0.2;
       break;
     default:
       intervalMs = 60 * 60 * 1000;
       count = 24;
-      startPrice = currentPrice * 0.98;
   }
   
-  // Generate smooth price progression from startPrice to endPrice
+  // Generate flat line at current price - don't fake historical data
   for (let i = 0; i < count; i++) {
     const timestamp = now - ((count - 1 - i) * intervalMs);
-    const progress = i / (count - 1);
-    
-    // Interpolate with some noise
-    const basePrice = startPrice + (endPrice - startPrice) * progress;
-    const noise = basePrice * (Math.random() - 0.5) * 0.1; // 10% noise
-    const price = Math.max(0.0000001, basePrice + noise);
-    
     points.push({
       timestamp,
       time: formatTime(timestamp, timeframe),
-      price: price < 0.01 ? parseFloat(price.toPrecision(4)) : parseFloat(price.toFixed(2)),
+      price: currentPrice < 0.01 ? parseFloat(currentPrice.toPrecision(4)) : parseFloat(currentPrice.toFixed(2)),
     });
-  }
-  
-  // Ensure last point matches current price
-  if (points.length > 0) {
-    points[points.length - 1].price = currentPrice;
   }
   
   return points;
