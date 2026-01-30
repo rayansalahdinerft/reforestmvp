@@ -25,8 +25,8 @@ const Index = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 tracking-tight">
             Every swap, <span className="text-primary glow-text">save the world</span>
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
-            Le 1er wallet crypto qui plante des arbres à chaque transaction. Ensemble, reconstruisons les forêts du monde.
+          <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
+            First wallet that makes your transactions useful for the planet. DeFi with purpose.
           </p>
         </div>
 
