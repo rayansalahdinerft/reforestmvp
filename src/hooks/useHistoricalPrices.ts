@@ -116,12 +116,12 @@ const getTokenConfig = (symbol: string): TokenConfig | undefined => {
 
 const getTimeframeDays = (timeframe: Timeframe): string => {
   switch (timeframe) {
-    case '1H': return '1';
-    case '1D': return '1';
+    case '1H': return '1';      // Fetch 1 day, filter client-side to last hour
+    case '1D': return '1';      // Full 24 hours
     case '1W': return '7';
     case '1M': return '30';
     case '1Y': return '365';
-    case 'ALL': return 'max';
+    case 'ALL': return 'max';   // Maximum available (backend caps at 365 for free API)
     default: return '1';
   }
 };
@@ -212,16 +212,25 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe): Histo
         throw new Error('Invalid data format');
       }
 
-      // For 1H, filter to last hour
-      if (timeframe === '1H') {
-        const oneHourAgo = Date.now() - (60 * 60 * 1000);
+      // For 1H, filter to last hour from the fetched data
+      if (timeframe === '1H' && prices.length > 0) {
+        // Use the last timestamp in the data as reference (more reliable than Date.now())
+        const lastTimestamp = prices[prices.length - 1][0];
+        const oneHourAgo = lastTimestamp - (60 * 60 * 1000);
         prices = prices.filter(([timestamp]) => timestamp >= oneHourAgo);
       }
 
-      // Adjust sampling based on timeframe
-      let maxPoints = 24;
-      if (timeframe === '1Y') maxPoints = 52;
-      if (timeframe === 'ALL') maxPoints = 100;
+      // Adjust sampling based on timeframe for optimal chart display
+      let maxPoints: number;
+      switch (timeframe) {
+        case '1H': maxPoints = 12; break;   // ~5 min intervals
+        case '1D': maxPoints = 24; break;   // ~1 hour intervals  
+        case '1W': maxPoints = 28; break;   // ~6 hour intervals
+        case '1M': maxPoints = 30; break;   // ~1 day intervals
+        case '1Y': maxPoints = 52; break;   // ~1 week intervals
+        case 'ALL': maxPoints = 120; break; // More points for full history
+        default: maxPoints = 24;
+      }
 
       const step = Math.max(1, Math.floor(prices.length / maxPoints));
       const sampledPrices = prices.filter((_, index) => index % step === 0);
