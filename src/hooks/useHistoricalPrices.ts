@@ -14,32 +14,51 @@ interface HistoricalData {
   error: string | null;
 }
 
-// CoinGecko IDs and fallback prices
-const COINGECKO_IDS: Record<string, { id: string; fallbackPrice: number }> = {
+// CoinGecko IDs mapped by both symbol and coingecko id
+// Historical price ranges for realistic fallback data (approximate ranges)
+interface TokenConfig {
+  id: string;
+  fallbackPrice: number;
+  // Historical price ranges for more realistic fallback
+  historicalRanges: {
+    '1Y': { min: number; max: number };
+    'ALL': { min: number; max: number; startYear: number };
+  };
+}
+
+const COINGECKO_IDS: Record<string, TokenConfig> = {
   // Major
-  ETH: { id: 'ethereum', fallbackPrice: 2900 },
-  BTC: { id: 'bitcoin', fallbackPrice: 95000 },
-  SOL: { id: 'solana', fallbackPrice: 120 },
-  BNB: { id: 'binancecoin', fallbackPrice: 650 },
+  ETH: { id: 'ethereum', fallbackPrice: 2800, historicalRanges: { '1Y': { min: 1500, max: 4000 }, 'ALL': { min: 80, max: 4800, startYear: 2015 } } },
+  BTC: { id: 'bitcoin', fallbackPrice: 87000, historicalRanges: { '1Y': { min: 25000, max: 100000 }, 'ALL': { min: 200, max: 100000, startYear: 2013 } } },
+  SOL: { id: 'solana', fallbackPrice: 135, historicalRanges: { '1Y': { min: 15, max: 260 }, 'ALL': { min: 0.5, max: 260, startYear: 2020 } } },
+  BNB: { id: 'binancecoin', fallbackPrice: 620, historicalRanges: { '1Y': { min: 200, max: 700 }, 'ALL': { min: 10, max: 700, startYear: 2017 } } },
   // Layer 2
-  MATIC: { id: 'matic-network', fallbackPrice: 0.5 },
-  ARB: { id: 'arbitrum', fallbackPrice: 0.8 },
-  OP: { id: 'optimism', fallbackPrice: 1.5 },
-  AVAX: { id: 'avalanche-2', fallbackPrice: 25 },
+  MATIC: { id: 'matic-network', fallbackPrice: 0.42, historicalRanges: { '1Y': { min: 0.3, max: 1.2 }, 'ALL': { min: 0.01, max: 2.9, startYear: 2019 } } },
+  POL: { id: 'matic-network', fallbackPrice: 0.42, historicalRanges: { '1Y': { min: 0.3, max: 1.2 }, 'ALL': { min: 0.01, max: 2.9, startYear: 2019 } } },
+  ARB: { id: 'arbitrum', fallbackPrice: 0.55, historicalRanges: { '1Y': { min: 0.4, max: 2.4 }, 'ALL': { min: 0.4, max: 2.4, startYear: 2023 } } },
+  OP: { id: 'optimism', fallbackPrice: 1.25, historicalRanges: { '1Y': { min: 0.8, max: 4.5 }, 'ALL': { min: 0.4, max: 4.5, startYear: 2022 } } },
+  AVAX: { id: 'avalanche-2', fallbackPrice: 22, historicalRanges: { '1Y': { min: 8, max: 50 }, 'ALL': { min: 3, max: 145, startYear: 2020 } } },
+  STRK: { id: 'starknet', fallbackPrice: 0.38, historicalRanges: { '1Y': { min: 0.3, max: 2.5 }, 'ALL': { min: 0.3, max: 2.5, startYear: 2024 } } },
   // DeFi
-  UNI: { id: 'uniswap', fallbackPrice: 5 },
-  AAVE: { id: 'aave', fallbackPrice: 150 },
-  LINK: { id: 'chainlink', fallbackPrice: 12 },
-  CRV: { id: 'curve-dao-token', fallbackPrice: 0.35 },
+  UNI: { id: 'uniswap', fallbackPrice: 7.80, historicalRanges: { '1Y': { min: 3, max: 17 }, 'ALL': { min: 1, max: 45, startYear: 2020 } } },
+  AAVE: { id: 'aave', fallbackPrice: 185, historicalRanges: { '1Y': { min: 50, max: 400 }, 'ALL': { min: 25, max: 670, startYear: 2020 } } },
+  LINK: { id: 'chainlink', fallbackPrice: 14.50, historicalRanges: { '1Y': { min: 5, max: 25 }, 'ALL': { min: 0.15, max: 52, startYear: 2017 } } },
+  CRV: { id: 'curve-dao-token', fallbackPrice: 0.52, historicalRanges: { '1Y': { min: 0.2, max: 0.8 }, 'ALL': { min: 0.2, max: 6, startYear: 2020 } } },
   // Stablecoins
-  USDC: { id: 'usd-coin', fallbackPrice: 1 },
-  USDT: { id: 'tether', fallbackPrice: 1 },
-  DAI: { id: 'dai', fallbackPrice: 1 },
+  USDC: { id: 'usd-coin', fallbackPrice: 1, historicalRanges: { '1Y': { min: 0.99, max: 1.01 }, 'ALL': { min: 0.97, max: 1.03, startYear: 2018 } } },
+  USDT: { id: 'tether', fallbackPrice: 1, historicalRanges: { '1Y': { min: 0.99, max: 1.01 }, 'ALL': { min: 0.95, max: 1.05, startYear: 2015 } } },
+  DAI: { id: 'dai', fallbackPrice: 1, historicalRanges: { '1Y': { min: 0.99, max: 1.01 }, 'ALL': { min: 0.90, max: 1.10, startYear: 2019 } } },
   // Memecoins
-  DOGE: { id: 'dogecoin', fallbackPrice: 0.12 },
-  SHIB: { id: 'shiba-inu', fallbackPrice: 0.00001 },
-  PEPE: { id: 'pepe', fallbackPrice: 0.000008 },
-  BONK: { id: 'bonk', fallbackPrice: 0.00002 },
+  DOGE: { id: 'dogecoin', fallbackPrice: 0.18, historicalRanges: { '1Y': { min: 0.05, max: 0.20 }, 'ALL': { min: 0.0001, max: 0.74, startYear: 2014 } } },
+  SHIB: { id: 'shiba-inu', fallbackPrice: 0.0000125, historicalRanges: { '1Y': { min: 0.000007, max: 0.00003 }, 'ALL': { min: 0.0000001, max: 0.00009, startYear: 2020 } } },
+  PEPE: { id: 'pepe', fallbackPrice: 0.0000085, historicalRanges: { '1Y': { min: 0.0000005, max: 0.000025 }, 'ALL': { min: 0.0000001, max: 0.000025, startYear: 2023 } } },
+  BONK: { id: 'bonk', fallbackPrice: 0.000018, historicalRanges: { '1Y': { min: 0.000001, max: 0.00005 }, 'ALL': { min: 0.0000001, max: 0.00005, startYear: 2022 } } },
+};
+
+// Helper to find token config by symbol (case-insensitive)
+const getTokenConfig = (symbol: string): TokenConfig | undefined => {
+  const upperSymbol = symbol.toUpperCase();
+  return COINGECKO_IDS[upperSymbol];
 };
 
 // Map timeframe to CoinGecko parameters
@@ -90,15 +109,16 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchHistoricalData = useCallback(async () => {
-    const tokenConfig = COINGECKO_IDS[symbol.toUpperCase()];
+    const tokenConfig = getTokenConfig(symbol);
     
     if (!tokenConfig) {
+      console.warn(`Unknown symbol for historical prices: ${symbol}`);
       setError(`Unknown symbol: ${symbol}`);
       setLoading(false);
       return;
     }
 
-    const { id: coinId, fallbackPrice } = tokenConfig;
+    const { id: coinId, fallbackPrice, historicalRanges } = tokenConfig;
 
     setLoading(true);
     setError(null);
@@ -148,8 +168,8 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
       console.error('Error fetching historical prices:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
       
-      // Generate fallback data on error with realistic base price
-      const fallbackData = generateFallbackData(timeframe, fallbackPrice);
+      // Generate fallback data on error with realistic historical ranges
+      const fallbackData = generateRealisticFallbackData(timeframe, fallbackPrice, historicalRanges);
       setData(fallbackData);
     } finally {
       setLoading(false);
@@ -163,61 +183,82 @@ export const useHistoricalPrices = (symbol: string, timeframe: Timeframe) => {
   return { data, loading, error, refetch: fetchHistoricalData };
 };
 
-// Fallback data generator when API fails
-const generateFallbackData = (timeframe: Timeframe, basePrice: number = 100): PricePoint[] => {
+// Generate realistic fallback data based on historical price ranges
+const generateRealisticFallbackData = (
+  timeframe: Timeframe, 
+  currentPrice: number,
+  historicalRanges: TokenConfig['historicalRanges']
+): PricePoint[] => {
   const now = Date.now();
   const points: PricePoint[] = [];
   
   let intervalMs: number;
   let count: number;
-  let volatility: number;
+  let startPrice: number;
+  let endPrice: number = currentPrice;
   
   switch (timeframe) {
     case '1H':
-      intervalMs = 5 * 60 * 1000; // 5 minutes
+      intervalMs = 5 * 60 * 1000;
       count = 12;
-      volatility = 0.002; // 0.2% per interval
+      // Small variation for 1H
+      startPrice = currentPrice * (0.98 + Math.random() * 0.04);
       break;
     case '1D':
-      intervalMs = 60 * 60 * 1000; // 1 hour
+      intervalMs = 60 * 60 * 1000;
       count = 24;
-      volatility = 0.005; // 0.5% per interval
+      startPrice = currentPrice * (0.95 + Math.random() * 0.10);
       break;
     case '1W':
-      intervalMs = 24 * 60 * 60 * 1000; // 1 day
+      intervalMs = 24 * 60 * 60 * 1000;
       count = 7;
-      volatility = 0.02; // 2% per interval
+      startPrice = currentPrice * (0.85 + Math.random() * 0.30);
       break;
     case '1M':
-      intervalMs = 24 * 60 * 60 * 1000; // 1 day
+      intervalMs = 24 * 60 * 60 * 1000;
       count = 30;
-      volatility = 0.03; // 3% per interval
+      startPrice = currentPrice * (0.70 + Math.random() * 0.60);
       break;
     case '1Y':
-      intervalMs = 7 * 24 * 60 * 60 * 1000; // 1 week
+      intervalMs = 7 * 24 * 60 * 60 * 1000;
       count = 52;
-      volatility = 0.05; // 5% per interval
+      // Use 1Y historical range
+      const range1Y = historicalRanges['1Y'];
+      startPrice = range1Y.min + Math.random() * (range1Y.max - range1Y.min) * 0.5;
       break;
     case 'ALL':
-      intervalMs = 30 * 24 * 60 * 60 * 1000; // 1 month
-      count = 48; // 4 years
-      volatility = 0.08; // 8% per interval
+      intervalMs = 30 * 24 * 60 * 60 * 1000;
+      count = 48;
+      // Use ALL historical range - start from near the minimum
+      const rangeAll = historicalRanges['ALL'];
+      startPrice = rangeAll.min + Math.random() * (rangeAll.max - rangeAll.min) * 0.2;
       break;
     default:
       intervalMs = 60 * 60 * 1000;
       count = 24;
-      volatility = 0.005;
+      startPrice = currentPrice * 0.98;
   }
   
-  let price = basePrice;
-  for (let i = count - 1; i >= 0; i--) {
-    const timestamp = now - (i * intervalMs);
-    price = price * (1 + (Math.random() - 0.5) * volatility);
+  // Generate smooth price progression from startPrice to endPrice
+  for (let i = 0; i < count; i++) {
+    const timestamp = now - ((count - 1 - i) * intervalMs);
+    const progress = i / (count - 1);
+    
+    // Interpolate with some noise
+    const basePrice = startPrice + (endPrice - startPrice) * progress;
+    const noise = basePrice * (Math.random() - 0.5) * 0.1; // 10% noise
+    const price = Math.max(0.0000001, basePrice + noise);
+    
     points.push({
       timestamp,
       time: formatTime(timestamp, timeframe),
-      price: parseFloat(price.toFixed(2)),
+      price: price < 0.01 ? parseFloat(price.toPrecision(4)) : parseFloat(price.toFixed(2)),
     });
+  }
+  
+  // Ensure last point matches current price
+  if (points.length > 0) {
+    points[points.length - 1].price = currentPrice;
   }
   
   return points;
