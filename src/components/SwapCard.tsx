@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X } from 'lucide-react';
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
+import { useBalance } from 'wagmi';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { useSwapExecution } from '@/hooks/useSwapExecution';
@@ -29,6 +30,17 @@ const SwapCard = () => {
   const { open } = useAppKit();
 
   const chainInfo = CHAIN_INFO[CHAIN_ID];
+
+  // Get native ETH balance for MAX button
+  const { data: nativeBalance } = useBalance({
+    address: address as `0x${string}` | undefined,
+  });
+  
+  // Calculate formatted balance for MAX button (only ETH for now)
+  const isNativeToken = sellToken?.address?.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+  const maxBalance = isNativeToken && nativeBalance 
+    ? (Number(nativeBalance.value) / Math.pow(10, nativeBalance.decimals)).toFixed(6)
+    : null;
 
   const { 
     status: swapStatus, 
@@ -366,16 +378,45 @@ const SwapCard = () => {
                   {inputMode === 'usd' ? '$USD' : 'Token'}
                 </button>
               </div>
-              {/* Show conversion info */}
-              {sellAmount && (
+              {/* Balance and MAX button */}
+              <div className="flex items-center gap-2">
+                {maxBalance && isConnected && (
+                  <>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">
+                      Bal: {parseFloat(maxBalance).toFixed(4)} {sellToken?.symbol}
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (inputMode === 'usd' && sellPrice && maxBalance) {
+                          // Convert max balance to USD
+                          setSellAmount((parseFloat(maxBalance) * sellPrice).toFixed(2));
+                        } else {
+                          setSellAmount(maxBalance);
+                        }
+                        setActiveInput('sell');
+                        if (swapStatus === 'error' || swapStatus === 'success') {
+                          resetSwap();
+                        }
+                      }}
+                      className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-all"
+                    >
+                      MAX
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+            {/* Show conversion info below header */}
+            {sellAmount && (
+              <div className="mb-2">
                 <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                   {inputMode === 'usd' 
                     ? `≈ ${sellTokenDisplay} ${sellToken?.symbol || ''}`
                     : sellDisplayValue ? `$${sellDisplayValue}` : ''
                   }
                 </span>
-              )}
-            </div>
+              </div>
+            )}
             <div className="flex items-center justify-between gap-2 sm:gap-4">
               {quoteLoading && activeInput !== 'sell' ? (
                 <div className="h-8 sm:h-10 w-32 sm:w-40 bg-muted animate-shimmer rounded-xl" />
