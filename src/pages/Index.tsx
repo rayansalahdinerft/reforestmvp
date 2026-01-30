@@ -19,24 +19,24 @@ const Index = () => {
       <Header />
       <NewsTicker />
       
-      <main className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero Section */}
-        <div className="text-center mb-10 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 tracking-tight">
+        <div className="text-center mb-6 sm:mb-10 animate-fade-in">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 sm:mb-4 tracking-tight">
             Every swap, <span className="text-primary glow-text">save the world</span>
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg mx-auto px-2">
             First wallet that makes your transactions useful for the planet. DeFi with purpose.
           </p>
         </div>
 
         {/* Tree Counter */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <TreeCounter />
         </div>
 
         {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* Swap Card - centered on larger screens */}
           <div className="lg:col-span-5 lg:col-start-4">
             <SwapCard />
@@ -44,17 +44,17 @@ const Index = () => {
         </div>
 
         {/* Footer stats */}
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mt-12 text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 text-xs sm:text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
             <span>Multi-chain support</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
             <span>Best rates</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
             <span>Eco-friendly</span>
           </div>
         </div>
