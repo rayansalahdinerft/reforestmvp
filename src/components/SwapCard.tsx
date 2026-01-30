@@ -169,14 +169,53 @@ const SwapCard = () => {
       {/* Card */}
       <div className="swap-card p-1.5">
         {/* Header */}
-        <div className="flex items-center gap-2 px-5 py-4">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium text-muted-foreground">Swap on</span>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/80 font-semibold text-sm">
-            {chainInfo?.logoURI && (
-              <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-5 h-5 rounded-full" />
-            )}
-            <span>{chainInfo?.name}</span>
+        <div className="flex items-center justify-between px-5 py-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-muted-foreground">Swap on</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/80 font-semibold text-sm">
+              {chainInfo?.logoURI && (
+                <img src={chainInfo.logoURI} alt={chainInfo.name} className="w-5 h-5 rounded-full" />
+              )}
+              <span>{chainInfo?.name}</span>
+            </div>
+          </div>
+          
+          {/* Slippage Selector */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Slippage:</span>
+            <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-0.5">
+              {[0.5, 1, 2].map((value) => (
+                <button
+                  key={value}
+                  onClick={() => setSlippage(value)}
+                  className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                    slippage === value
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                  }`}
+                >
+                  {value}%
+                </button>
+              ))}
+              <div className="relative">
+                <input
+                  type="number"
+                  value={slippage}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!isNaN(val) && val >= 0.1 && val <= 50) {
+                      setSlippage(val);
+                    }
+                  }}
+                  className="w-12 px-1.5 py-1 text-xs font-medium text-center bg-secondary rounded-md border-none outline-none focus:ring-1 focus:ring-primary"
+                  min="0.1"
+                  max="50"
+                  step="0.1"
+                />
+                <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
+              </div>
+            </div>
           </div>
         </div>
 
