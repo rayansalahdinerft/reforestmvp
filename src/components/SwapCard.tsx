@@ -181,14 +181,24 @@ const SwapCard = () => {
       toast.error(result.error, { id: 'swap-progress' });
     } else if (result.hash) {
       // Calculate the donation amount (40% of 1% fee)
-      // Use a fallback price estimate if sellPrice isn't available
-      const estimatedSellPrice = sellPrice || (sellToken?.symbol === 'ETH' ? 2700 : sellToken?.symbol === 'USDC' ? 1 : 0);
+      // Use fallback prices for common tokens if live price isn't available
+      const getPriceFallback = (symbol?: string): number => {
+        if (!symbol) return 0;
+        const fallbacks: Record<string, number> = {
+          'ETH': 2700, 'WETH': 2700, 'USDC': 1, 'USDT': 1, 'DAI': 1,
+          'WBTC': 95000, 'LINK': 20, 'UNI': 10, 'AAVE': 200, 'MKR': 2000,
+        };
+        return fallbacks[symbol.toUpperCase()] || 1; // Default to $1 to ensure donation is recorded
+      };
+      
+      const estimatedSellPrice = sellPrice || getPriceFallback(sellToken?.symbol);
       const swapUsdValue = estimatedSellPrice > 0 ? parseFloat(actualSellAmount) * estimatedSellPrice : 0;
       const totalFee = swapUsdValue * FEE_PERCENT;
       const donationAmount = totalFee * REFORESTATION_PERCENT;
 
-      console.log('Swap success - calculating donation:', {
+      console.log('[REFOREST] Swap success - calculating donation:', {
         actualSellAmount,
+        sellTokenSymbol: sellToken?.symbol,
         sellPrice,
         estimatedSellPrice,
         swapUsdValue,
@@ -198,33 +208,29 @@ const SwapCard = () => {
         txHash: result.hash
       });
 
-      // Update tree counter in database (requires connected wallet address)
-      if (donationAmount > 0 && address) {
-        try {
-          console.log('Calling update-tree-counter with:', {
-            donationUsd: donationAmount,
-            txHash: result.hash,
-            walletAddress: address,
-          });
-          
-          const { data: updateData, error: updateError } = await supabase.functions.invoke('update-tree-counter', {
-            body: {
-              donationUsd: donationAmount,
-              txHash: result.hash,
-              walletAddress: address,
-            },
-          });
-          
-          if (updateError) {
-            console.error('Failed to update tree counter:', updateError);
-          } else {
-            console.log('Tree counter updated successfully:', updateData);
-          }
-        } catch (err) {
-          console.error('Error calling update-tree-counter:', err);
+      // ALWAYS try to update tree counter after successful swap
+      console.log('[REFOREST] Attempting to update tree counter...');
+      
+      try {
+        const payload = {
+          donationUsd: donationAmount > 0 ? donationAmount : 0.01, // Minimum $0.01
+          txHash: result.hash,
+          walletAddress: address || '0x0000000000000000000000000000000000000000',
+        };
+        
+        console.log('[REFOREST] Calling update-tree-counter with:', payload);
+        
+        const { data: updateData, error: updateError } = await supabase.functions.invoke('update-tree-counter', {
+          body: payload,
+        });
+        
+        if (updateError) {
+          console.error('[REFOREST] Failed to update tree counter:', updateError);
+        } else {
+          console.log('[REFOREST] Tree counter updated successfully:', updateData);
         }
-      } else {
-        console.warn('Skipping tree counter update:', { donationAmount, hasAddress: !!address });
+      } catch (err) {
+        console.error('[REFOREST] Error calling update-tree-counter:', err);
       }
 
       toast.success(
