@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
-import { useTreeCounter } from "@/hooks/useTreeCounter";
-import { TreePine, DollarSign, Users, Calendar, TrendingUp, Leaf } from "lucide-react";
+import { useWalletStats } from "@/hooks/useWalletStats";
+import { TreePine, DollarSign, Users, Leaf } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 // Generate historical data based on current totals
@@ -31,9 +31,8 @@ const generateHistoricalData = (totalTrees: number, totalDonations: number) => {
 };
 
 const Impact = () => {
-  const { stats, loading } = useTreeCounter();
+  const { stats, loading } = useWalletStats();
 
-  // Calculate impact metrics from real data
   const TREE_COST_USD = 2.5;
   const treesPlanted = stats.totalTrees > 0 ? stats.totalTrees : stats.totalDonationsUsd / TREE_COST_USD;
   const co2Absorbed = treesPlanted * 22; // ~22kg CO2 per tree per year

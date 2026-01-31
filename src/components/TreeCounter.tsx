@@ -1,4 +1,4 @@
-import { TreePine, Users, DollarSign, Wallet } from 'lucide-react';
+import { TreePine, Users, DollarSign } from 'lucide-react';
 import { useWalletStats } from '@/hooks/useWalletStats';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -72,19 +72,7 @@ const TreeCounter = () => {
     );
   }
 
-  // If not connected, show a prompt to connect
-  if (!isConnected) {
-    return (
-      <div className="flex justify-center py-4 animate-fade-in">
-        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border">
-          <Wallet className="w-5 h-5 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
-            Connect your wallet to see your impact
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Display stats (0 when not connected, actual values when connected)
 
   return (
     <div className="flex flex-wrap justify-center gap-4 md:gap-6 animate-fade-in">
