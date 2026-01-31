@@ -180,27 +180,31 @@ const SwapCard = () => {
     if (result.error) {
       toast.error(result.error, { id: 'swap-progress' });
     } else if (result.hash) {
-      // Calculate the donation amount (40% of 1% fee)
-      // Use fallback prices for common tokens if live price isn't available
+      // Calculate the donation amount (40% of 1% fee = 0.4% of transaction)
+      // Use the original sellAmount in USD mode, or calculate USD value from token amount
       const getPriceFallback = (symbol?: string): number => {
         if (!symbol) return 0;
         const fallbacks: Record<string, number> = {
           'ETH': 2700, 'WETH': 2700, 'USDC': 1, 'USDT': 1, 'DAI': 1,
           'WBTC': 95000, 'LINK': 20, 'UNI': 10, 'AAVE': 200, 'MKR': 2000,
         };
-        return fallbacks[symbol.toUpperCase()] || 1; // Default to $1 to ensure donation is recorded
+        return fallbacks[symbol.toUpperCase()] || 1;
       };
       
-      const estimatedSellPrice = sellPrice || getPriceFallback(sellToken?.symbol);
-      const swapUsdValue = estimatedSellPrice > 0 ? parseFloat(actualSellAmount) * estimatedSellPrice : 0;
-      const totalFee = swapUsdValue * FEE_PERCENT;
-      const donationAmount = totalFee * REFORESTATION_PERCENT;
+      // In USD mode, sellAmount is already in USD. In token mode, convert to USD.
+      const swapUsdValue = inputMode === 'usd' 
+        ? parseFloat(sellAmount || '0')
+        : parseFloat(actualSellAmount) * (sellPrice || getPriceFallback(sellToken?.symbol));
+      
+      const totalFee = swapUsdValue * FEE_PERCENT; // 1% of transaction
+      const donationAmount = totalFee * REFORESTATION_PERCENT; // 40% of fee = 0.4% of transaction
 
       console.log('[REFOREST] Swap success - calculating donation:', {
+        inputMode,
+        sellAmount,
         actualSellAmount,
         sellTokenSymbol: sellToken?.symbol,
         sellPrice,
-        estimatedSellPrice,
         swapUsdValue,
         totalFee,
         donationAmount,
