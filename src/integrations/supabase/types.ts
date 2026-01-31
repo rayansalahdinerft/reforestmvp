@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_stats: {
+        Row: {
+          created_at: string
+          id: string
+          total_donations_usd: number
+          total_swaps: number
+          total_trees: number
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          total_donations_usd?: number
+          total_swaps?: number
+          total_trees?: number
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          total_donations_usd?: number
+          total_swaps?: number
+          total_trees?: number
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,5 +1,5 @@
-import { TreePine, Users, DollarSign } from 'lucide-react';
-import { useTreeCounter } from '@/hooks/useTreeCounter';
+import { TreePine, Users, DollarSign, Wallet } from 'lucide-react';
+import { useWalletStats } from '@/hooks/useWalletStats';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +18,6 @@ const AnimatedNumber = ({ value, prefix = '', className }: AnimatedNumberProps) 
     if (value !== previousValue.current) {
       setIsAnimating(true);
       
-      // Animate the number counting up
       const startValue = previousValue.current;
       const endValue = value;
       const duration = 1000;
@@ -29,7 +28,6 @@ const AnimatedNumber = ({ value, prefix = '', className }: AnimatedNumberProps) 
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Easing function for smooth animation
         const easeOutCubic = 1 - Math.pow(1 - progress, 3);
         const currentValue = startValue + (endValue - startValue) * easeOutCubic;
         
@@ -62,7 +60,7 @@ const AnimatedNumber = ({ value, prefix = '', className }: AnimatedNumberProps) 
 };
 
 const TreeCounter = () => {
-  const { stats, loading } = useTreeCounter();
+  const { stats, loading, isConnected } = useWalletStats();
 
   if (loading) {
     return (
@@ -70,6 +68,20 @@ const TreeCounter = () => {
         <div className="h-12 w-32 bg-secondary rounded-xl" />
         <div className="h-12 w-32 bg-secondary rounded-xl" />
         <div className="h-12 w-32 bg-secondary rounded-xl" />
+      </div>
+    );
+  }
+
+  // If not connected, show a prompt to connect
+  if (!isConnected) {
+    return (
+      <div className="flex justify-center py-4 animate-fade-in">
+        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border">
+          <Wallet className="w-5 h-5 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Connect your wallet to see your impact
+          </p>
+        </div>
       </div>
     );
   }
@@ -85,7 +97,7 @@ const TreeCounter = () => {
           <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
             <AnimatedNumber value={stats.totalTrees} />
           </p>
-          <p className="text-xs font-medium text-muted-foreground">Trees Planted</p>
+          <p className="text-xs font-medium text-muted-foreground">Your Trees</p>
         </div>
       </div>
 
@@ -98,7 +110,7 @@ const TreeCounter = () => {
           <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
             <AnimatedNumber value={stats.totalDonationsUsd} prefix="$" />
           </p>
-          <p className="text-xs font-medium text-muted-foreground">Donated</p>
+          <p className="text-xs font-medium text-muted-foreground">Your Donations</p>
         </div>
       </div>
 
@@ -111,7 +123,7 @@ const TreeCounter = () => {
           <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
             <AnimatedNumber value={stats.totalSwaps} />
           </p>
-          <p className="text-xs font-medium text-muted-foreground">Swaps Made</p>
+          <p className="text-xs font-medium text-muted-foreground">Your Swaps</p>
         </div>
       </div>
     </div>
