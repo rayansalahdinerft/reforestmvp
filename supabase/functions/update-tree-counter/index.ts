@@ -39,6 +39,7 @@ Deno.serve(async (req) => {
 
     // Calculate trees: $2.50 per tree
     const treesPlanted = donationUsd / 2.5;
+    const normalizedAddress = walletAddress.toLowerCase();
 
     // Initialize Supabase client with service role for write access
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -46,7 +47,7 @@ Deno.serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get current stats
+    // Update global tree_counter
     const { data: currentStats, error: fetchError } = await supabase
       .from("tree_counter")
       .select("*")
@@ -57,7 +58,6 @@ Deno.serve(async (req) => {
       throw fetchError;
     }
 
-    // If no row exists, insert one
     if (!currentStats) {
       const { error: insertError } = await supabase
         .from("tree_counter")
@@ -69,7 +69,6 @@ Deno.serve(async (req) => {
 
       if (insertError) throw insertError;
     } else {
-      // Update existing row
       const { error: updateError } = await supabase
         .from("tree_counter")
         .update({
@@ -83,14 +82,56 @@ Deno.serve(async (req) => {
       if (updateError) throw updateError;
     }
 
-    console.log(`Tree counter updated by wallet ${walletAddress}: +${treesPlanted.toFixed(2)} trees, +$${donationUsd.toFixed(2)}, txHash: ${txHash}`);
+    // Update per-wallet stats
+    const { data: walletStats, error: walletFetchError } = await supabase
+      .from("wallet_stats")
+      .select("*")
+      .eq("wallet_address", normalizedAddress)
+      .maybeSingle();
+
+    if (walletFetchError) {
+      console.error("Error fetching wallet stats:", walletFetchError);
+    }
+
+    if (!walletStats) {
+      // Create new wallet stats entry
+      const { error: walletInsertError } = await supabase
+        .from("wallet_stats")
+        .insert({
+          wallet_address: normalizedAddress,
+          total_trees: treesPlanted,
+          total_donations_usd: donationUsd,
+          total_swaps: 1,
+        });
+
+      if (walletInsertError) {
+        console.error("Error inserting wallet stats:", walletInsertError);
+      }
+    } else {
+      // Update existing wallet stats
+      const { error: walletUpdateError } = await supabase
+        .from("wallet_stats")
+        .update({
+          total_trees: parseFloat(walletStats.total_trees) + treesPlanted,
+          total_donations_usd: parseFloat(walletStats.total_donations_usd) + donationUsd,
+          total_swaps: walletStats.total_swaps + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", walletStats.id);
+
+      if (walletUpdateError) {
+        console.error("Error updating wallet stats:", walletUpdateError);
+      }
+    }
+
+    console.log(`Stats updated for wallet ${normalizedAddress}: +${treesPlanted.toFixed(2)} trees, +$${donationUsd.toFixed(2)}, txHash: ${txHash}`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         treesPlanted,
         donationUsd,
-        walletAddress,
+        walletAddress: normalizedAddress,
         message: `Added ${treesPlanted.toFixed(2)} trees from $${donationUsd.toFixed(2)} donation`
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
