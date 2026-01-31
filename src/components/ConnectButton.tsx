@@ -25,10 +25,10 @@ const ConnectButton = () => {
   return (
     <button 
       onClick={() => open()}
-      className="connect-wallet-btn flex items-center gap-2"
+      className="connect-wallet-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
     >
-      <Wallet className="w-4 h-4" />
-      <span>Connect Wallet</span>
+      <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+      <span>Connect</span>
     </button>
   );
 };
