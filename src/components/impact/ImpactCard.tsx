@@ -14,6 +14,7 @@ interface ImpactCardProps {
   loading?: boolean;
   index?: number;
   locked?: boolean;
+  displayValue?: string | null;
 }
 
 const ImpactCard = ({
@@ -28,6 +29,7 @@ const ImpactCard = ({
   loading = false,
   index = 0,
   locked = false,
+  displayValue,
 }: ImpactCardProps) => {
   const colorClasses: Record<string, { bg: string; text: string; border: string; glow: string }> = {
     green: {
@@ -92,6 +94,8 @@ const ImpactCard = ({
           <span className="text-muted-foreground">—</span>
         ) : locked ? (
           <span className="text-muted-foreground">🔒</span>
+        ) : displayValue ? (
+          <span className="tabular-nums">{displayValue}</span>
         ) : (
           <AnimatedCounter
             value={value}

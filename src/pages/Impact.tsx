@@ -58,12 +58,13 @@ const Impact = () => {
     },
     {
       icon: Leaf,
-      value: showEnvironmentalImpact ? Math.floor(co2Absorbed) : -1,
-      suffix: showEnvironmentalImpact ? " kg" : "",
+      value: 0,
+      suffix: "",
       label: "CO₂ Absorbed/Year",
       description: showEnvironmentalImpact ? "Environmental impact estimate" : "🔒 Unlock at Lv.1 (10 trees)",
       color: "emerald",
       locked: !showEnvironmentalImpact,
+      displayValue: showEnvironmentalImpact ? `${Math.floor(co2Absorbed).toLocaleString()} kg` : null,
     },
   ];
 
@@ -125,6 +126,8 @@ const Impact = () => {
                 color={card.color}
                 loading={loading}
                 index={index}
+                locked={card.locked}
+                displayValue={card.displayValue}
               />
             ))}
           </div>
