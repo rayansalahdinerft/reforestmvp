@@ -158,29 +158,47 @@ const Impact = () => {
               </div>
             </div>
 
-            {/* Milestone badges */}
+            {/* Milestone Goals */}
             <div className="mt-8 pt-6 border-t border-border">
-              <p className="text-sm text-muted-foreground mb-4">Milestones</p>
-              <div className="flex flex-wrap gap-3">
-                <MilestoneBadge 
+              <p className="text-sm font-medium text-foreground mb-4">🎯 Objectives</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <MilestoneGoal 
                   label="First Swap" 
-                  achieved={stats.totalSwaps >= 1} 
+                  current={stats.totalSwaps}
+                  target={1}
+                  unit="swap"
                 />
-                <MilestoneBadge 
-                  label="$1 Donated" 
-                  achieved={stats.totalDonationsUsd >= 1} 
+                <MilestoneGoal 
+                  label="Donate $1" 
+                  current={stats.totalDonationsUsd}
+                  target={1}
+                  unit="$"
+                  prefix
                 />
-                <MilestoneBadge 
-                  label="1 Tree" 
-                  achieved={treesPlanted >= 1} 
+                <MilestoneGoal 
+                  label="Plant 1 Tree" 
+                  current={treesPlanted}
+                  target={1}
+                  unit="tree"
                 />
-                <MilestoneBadge 
-                  label="5 Swaps" 
-                  achieved={stats.totalSwaps >= 5} 
+                <MilestoneGoal 
+                  label="Complete 5 Swaps" 
+                  current={stats.totalSwaps}
+                  target={5}
+                  unit="swaps"
                 />
-                <MilestoneBadge 
-                  label="$10 Donated" 
-                  achieved={stats.totalDonationsUsd >= 10} 
+                <MilestoneGoal 
+                  label="Donate $10" 
+                  current={stats.totalDonationsUsd}
+                  target={10}
+                  unit="$"
+                  prefix
+                />
+                <MilestoneGoal 
+                  label="Plant 10 Trees" 
+                  current={treesPlanted}
+                  target={10}
+                  unit="trees"
                 />
               </div>
             </div>
@@ -215,17 +233,49 @@ const Impact = () => {
   );
 };
 
-const MilestoneBadge = ({ label, achieved }: { label: string; achieved: boolean }) => (
-  <div 
-    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-      achieved 
-        ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
-        : 'bg-muted/30 text-muted-foreground border border-border'
-    }`}
-  >
-    {achieved && <span className="mr-1">✓</span>}
-    {label}
-  </div>
-);
+interface MilestoneGoalProps {
+  label: string;
+  current: number;
+  target: number;
+  unit: string;
+  prefix?: boolean;
+}
+
+const MilestoneGoal = ({ label, current, target, unit, prefix }: MilestoneGoalProps) => {
+  const achieved = current >= target;
+  const progress = Math.min((current / target) * 100, 100);
+  
+  const formatValue = (val: number) => {
+    const formatted = val.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
+    return prefix ? `$${formatted}` : formatted;
+  };
+
+  return (
+    <div 
+      className={`p-3 rounded-xl border transition-all ${
+        achieved 
+          ? 'bg-green-500/10 border-green-500/30' 
+          : 'bg-card border-border'
+      }`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className={`text-sm font-medium ${achieved ? 'text-green-500' : 'text-foreground'}`}>
+          {achieved && '✓ '}{label}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {formatValue(current)} / {formatValue(target)}
+        </span>
+      </div>
+      <div className="h-1.5 bg-muted/50 rounded-full overflow-hidden">
+        <div 
+          className={`h-full rounded-full transition-all duration-700 ${
+            achieved ? 'bg-green-500' : 'bg-primary/60'
+          }`}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  );
+};
 
 export default Impact;
