@@ -1,4 +1,4 @@
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AnimatedCounter from "./AnimatedCounter";
 
@@ -13,6 +13,7 @@ interface ImpactCardProps {
   color: string;
   loading?: boolean;
   index?: number;
+  locked?: boolean;
 }
 
 const ImpactCard = ({
@@ -26,6 +27,7 @@ const ImpactCard = ({
   color,
   loading = false,
   index = 0,
+  locked = false,
 }: ImpactCardProps) => {
   const colorClasses: Record<string, { bg: string; text: string; border: string; glow: string }> = {
     green: {
@@ -64,7 +66,8 @@ const ImpactCard = ({
         "hover:translate-y-[-4px]",
         colors.border,
         colors.glow,
-        "animate-slide-up"
+        "animate-slide-up",
+        locked && "opacity-70"
       )}
       style={{
         animationDelay: `${index * 0.1}s`,
@@ -76,13 +79,19 @@ const ImpactCard = ({
       
       {/* Icon */}
       <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110", colors.bg)}>
-        <Icon className={cn("w-7 h-7 animate-glow-pulse", colors.text)} />
+        {locked ? (
+          <Lock className="w-7 h-7 text-muted-foreground" />
+        ) : (
+          <Icon className={cn("w-7 h-7 animate-glow-pulse", colors.text)} />
+        )}
       </div>
       
       {/* Value */}
       <p className="text-3xl font-bold text-foreground mb-1">
         {loading ? (
           <span className="text-muted-foreground">—</span>
+        ) : locked ? (
+          <span className="text-muted-foreground">🔒</span>
         ) : (
           <AnimatedCounter
             value={value}
