@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { TreePine, DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
-import LevelBadge from "@/components/impact/LevelBadge";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
 import TreeLevel from "@/components/impact/TreeLevel";
@@ -83,14 +82,8 @@ const Impact = () => {
       <NewsTicker />
 
       <main className="max-w-5xl mx-auto px-4 py-12 relative z-10">
-        {/* Hero with Level Badge */}
+        {/* Hero */}
         <div className="text-center mb-12 animate-fade-in">
-          {isConnected && (
-            <div className="flex justify-center mb-8">
-              <LevelBadge treesPlanted={treesPlanted} />
-            </div>
-          )}
-
           <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm border border-green-500/20">
             <Sprout className="w-10 h-10 text-green-500 animate-glow-pulse" />
           </div>

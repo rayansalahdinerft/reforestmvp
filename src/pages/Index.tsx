@@ -2,10 +2,14 @@ import Header from "@/components/Header";
 import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
+import FloatingLeaves from "@/components/impact/FloatingLeaves";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Floating leaves animation */}
+      <FloatingLeaves />
+      
       {/* Animated gradient background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Primary glow orb - top right */}
