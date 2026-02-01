@@ -1,8 +1,13 @@
+import { useCallback } from "react";
+import confetti from "canvas-confetti";
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { TreePine, DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
-
+import LevelBadge from "@/components/impact/LevelBadge";
+import FloatingLeaves from "@/components/impact/FloatingLeaves";
+import ImpactCard from "@/components/impact/ImpactCard";
+import TreeLevel from "@/components/impact/TreeLevel";
 
 const TREE_COST_USD = 2.5;
 
@@ -16,65 +21,81 @@ const Impact = () => {
   const co2Absorbed = treesPlanted * 22; // kg per year
   const oxygenProduced = treesPlanted * 100; // kg per year
 
+  const triggerConfetti = useCallback(() => {
+    const colors = ["#22c55e", "#10b981", "#34d399", "#6ee7b7"];
+    
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors,
+    });
+  }, []);
 
   const impactCards = [
     {
       icon: TreePine,
-      value: treesPlanted.toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
-      label: 'Trees Planted',
-      description: 'Based on $2.50 per tree',
-      color: 'text-green-500',
-      bgColor: 'bg-green-500/10',
-      borderColor: 'border-green-500/20',
+      value: treesPlanted,
+      decimals: 2,
+      label: "Trees Planted",
+      description: "Based on $2.50 per tree",
+      color: "green",
     },
     {
       icon: DollarSign,
-      value: `$${stats.totalDonationsUsd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}`,
-      label: 'Total Donated',
-      description: '40% of all fees collected',
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
-      borderColor: 'border-primary/20',
+      value: stats.totalDonationsUsd,
+      prefix: "$",
+      decimals: 2,
+      label: "Total Donated",
+      description: "40% of all fees collected",
+      color: "primary",
     },
     {
       icon: Users,
-      value: stats.totalSwaps.toLocaleString(),
-      label: 'Swaps Completed',
-      description: 'Each swap plants trees',
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-500/10',
-      borderColor: 'border-blue-500/20',
+      value: stats.totalSwaps,
+      label: "Swaps Completed",
+      description: "Each swap plants trees",
+      color: "blue",
     },
     {
       icon: Leaf,
-      value: showEnvironmentalImpact ? `${Math.floor(co2Absorbed).toLocaleString()} kg` : '—',
-      label: 'CO₂ Absorbed/Year',
-      description: showEnvironmentalImpact ? 'Environmental impact estimate' : 'Plant 1+ tree to unlock',
-      color: 'text-emerald-500',
-      bgColor: 'bg-emerald-500/10',
-      borderColor: 'border-emerald-500/20',
+      value: showEnvironmentalImpact ? Math.floor(co2Absorbed) : 0,
+      suffix: showEnvironmentalImpact ? " kg" : "",
+      label: "CO₂ Absorbed/Year",
+      description: showEnvironmentalImpact ? "Environmental impact estimate" : "Plant 1+ tree to unlock",
+      color: "emerald",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background relative">
-      {/* Background effects */}
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Floating leaves animation */}
+      <FloatingLeaves />
+
+      {/* Background effects - organic nature style */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-green-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/3 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-green-500/8 to-emerald-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-lime-500/5 to-green-500/8 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-radial from-primary/3 to-transparent rounded-full" />
       </div>
 
       <Header />
       <NewsTicker />
 
-      <main className="max-w-4xl mx-auto px-4 py-12 relative z-10">
-        {/* Hero */}
+      <main className="max-w-5xl mx-auto px-4 py-12 relative z-10">
+        {/* Hero with Level Badge */}
         <div className="text-center mb-12 animate-fade-in">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-green-500/20 to-primary/20 flex items-center justify-center">
-            <Sprout className="w-10 h-10 text-green-500" />
+          {isConnected && (
+            <div className="flex justify-center mb-8">
+              <LevelBadge treesPlanted={treesPlanted} />
+            </div>
+          )}
+
+          <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm border border-green-500/20">
+            <Sprout className="w-10 h-10 text-green-500 animate-glow-pulse" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
-            Your <span className="text-primary">Impact</span>
+            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">Impact</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-lg mx-auto">
             Every swap you make contributes to global reforestation.
@@ -83,7 +104,7 @@ const Impact = () => {
 
         {/* Connect Wallet CTA when not connected */}
         {!isConnected && (
-          <div className="swap-card p-8 text-center mb-12 animate-slide-up">
+          <div className="swap-card p-8 text-center mb-12 animate-slide-up backdrop-blur-sm">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted/50 flex items-center justify-center">
               <Globe className="w-8 h-8 text-muted-foreground" />
             </div>
@@ -96,31 +117,30 @@ const Impact = () => {
 
         {/* Impact Stats Cards */}
         {isConnected && (
-          <div className="grid grid-cols-2 gap-4 mb-12 animate-slide-up">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
             {impactCards.map((card, index) => (
-              <div
+              <ImpactCard
                 key={card.label}
-                className={`swap-card p-6 border ${card.borderColor} hover:border-opacity-50 transition-all`}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className={`w-12 h-12 rounded-2xl ${card.bgColor} flex items-center justify-center mb-4`}>
-                  <card.icon className={`w-6 h-6 ${card.color}`} />
-                </div>
-                <p className="text-3xl font-bold text-foreground mb-1 tabular-nums">
-                  {loading ? '—' : card.value}
-                </p>
-                <p className="text-sm font-semibold text-foreground mb-1">{card.label}</p>
-                <p className="text-xs text-muted-foreground">{card.description}</p>
-              </div>
+                icon={card.icon}
+                value={card.value}
+                prefix={card.prefix}
+                suffix={card.suffix}
+                decimals={card.decimals}
+                label={card.label}
+                description={card.description}
+                color={card.color}
+                loading={loading}
+                index={index}
+              />
             ))}
           </div>
         )}
 
-        {/* Tree Levels */}
+        {/* Reforestation Levels */}
         {isConnected && (
-          <div className="swap-card p-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+          <div className="swap-card p-8 animate-slide-up backdrop-blur-sm" style={{ animationDelay: "0.3s" }}>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 flex items-center justify-center">
                 <TreePine className="w-6 h-6 text-green-500" />
               </div>
               <div>
@@ -130,78 +150,43 @@ const Impact = () => {
             </div>
 
             <div className="space-y-3">
-              <TreeLevel level={1} label="Seedling" target={10} current={treesPlanted} />
-              <TreeLevel level={2} label="Sapling" target={100} current={treesPlanted} />
-              <TreeLevel level={3} label="Grove" target={1000} current={treesPlanted} />
-              <TreeLevel level={4} label="Forest" target={10000} current={treesPlanted} />
+              <TreeLevel level={1} label="Seedling" target={10} current={treesPlanted} onAchieve={triggerConfetti} />
+              <TreeLevel level={2} label="Sapling" target={100} current={treesPlanted} onAchieve={triggerConfetti} />
+              <TreeLevel level={3} label="Grove" target={1000} current={treesPlanted} onAchieve={triggerConfetti} />
+              <TreeLevel level={4} label="Forest" target={10000} current={treesPlanted} onAchieve={triggerConfetti} />
             </div>
           </div>
         )}
 
-        {/* Environmental Impact Summary - only show when meaningful */}
+        {/* Environmental Impact Summary */}
         {isConnected && showEnvironmentalImpact && (
-          <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-green-500/5 to-emerald-500/5 border border-green-500/10 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-            <div className="flex items-center gap-3 mb-4">
-              <Globe className="w-5 h-5 text-green-500" />
-              <span className="font-semibold text-foreground">Environmental Impact</span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <p className="text-xl font-bold text-green-500">{Math.floor(co2Absorbed).toLocaleString()} kg</p>
-                <p className="text-xs text-muted-foreground">CO₂ absorbed/year</p>
+          <div 
+            className="mt-8 p-6 rounded-3xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-lime-500/10 border border-green-500/20 backdrop-blur-sm animate-slide-up"
+            style={{ animationDelay: "0.4s" }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-green-400" />
               </div>
-              <div>
-                <p className="text-xl font-bold text-blue-500">{Math.floor(oxygenProduced).toLocaleString()} kg</p>
-                <p className="text-xs text-muted-foreground">O₂ produced/year</p>
+              <span className="font-semibold text-foreground text-lg">Environmental Impact</span>
+            </div>
+            <div className="grid grid-cols-2 gap-6 text-center">
+              <div className="p-4 rounded-2xl bg-card/50 border border-green-500/10">
+                <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
+                  {Math.floor(co2Absorbed).toLocaleString()} kg
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">CO₂ absorbed/year</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-card/50 border border-blue-500/10">
+                <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                  {Math.floor(oxygenProduced).toLocaleString()} kg
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">O₂ produced/year</p>
               </div>
             </div>
           </div>
         )}
       </main>
-    </div>
-  );
-};
-
-interface TreeLevelProps {
-  level: number;
-  label: string;
-  target: number;
-  current: number;
-}
-
-const TreeLevel = ({ level, label, target, current }: TreeLevelProps) => {
-  const achieved = current >= target;
-  const progress = Math.min((current / target) * 100, 100);
-  
-  return (
-    <div 
-      className={`p-4 rounded-xl border transition-all ${
-        achieved 
-          ? 'bg-green-500/10 border-green-500/30' 
-          : 'bg-card border-border'
-      }`}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-3">
-          <span className={`text-sm font-bold ${achieved ? 'text-green-500' : 'text-muted-foreground'}`}>
-            Lv.{level}
-          </span>
-          <span className={`text-sm font-medium ${achieved ? 'text-green-500' : 'text-foreground'}`}>
-            {achieved && '✓ '}{label}
-          </span>
-        </div>
-        <span className="text-sm font-semibold text-foreground">
-          {target.toLocaleString()} 🌳
-        </span>
-      </div>
-      <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
-        <div 
-          className={`h-full rounded-full transition-all duration-700 ${
-            achieved ? 'bg-green-500' : 'bg-primary/60'
-          }`}
-          style={{ width: `${progress}%` }}
-        />
-      </div>
     </div>
   );
 };
