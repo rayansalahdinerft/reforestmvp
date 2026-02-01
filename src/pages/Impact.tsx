@@ -61,7 +61,7 @@ const Impact = () => {
       value: 0,
       suffix: "",
       label: "CO₂ Absorbed/Year",
-      description: showEnvironmentalImpact ? "Environmental impact estimate" : "🔒 Unlock at Lv.1 (10 trees)",
+      description: showEnvironmentalImpact ? "Environmental impact estimate" : "Unlock at Lv.1 (10 trees)",
       color: "emerald",
       locked: !showEnvironmentalImpact,
       displayValue: showEnvironmentalImpact ? `${Math.floor(co2Absorbed).toLocaleString()} kg` : null,

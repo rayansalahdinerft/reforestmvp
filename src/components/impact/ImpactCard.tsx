@@ -93,7 +93,7 @@ const ImpactCard = ({
         {loading ? (
           <span className="text-muted-foreground">—</span>
         ) : locked ? (
-          <span className="text-muted-foreground">🔒</span>
+          <span className="text-muted-foreground">...</span>
         ) : displayValue ? (
           <span className="tabular-nums">{displayValue}</span>
         ) : (
