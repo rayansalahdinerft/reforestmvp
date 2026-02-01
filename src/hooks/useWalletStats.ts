@@ -15,7 +15,8 @@ export const useWalletStats = () => {
     totalDonationsUsd: 0,
     totalSwaps: 0,
   });
-  const [loading, setLoading] = useState(true);
+  // Important UX: we keep showing 0s when disconnected/loading, then update when data arrives.
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isConnected || !address) {
@@ -23,6 +24,10 @@ export const useWalletStats = () => {
       setLoading(false);
       return;
     }
+
+    // Reset to 0 while fetching to avoid showing someone else's previous values.
+    setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0 });
+    setLoading(true);
 
     const fetchStats = async () => {
       try {
@@ -70,6 +75,13 @@ export const useWalletStats = () => {
         (payload) => {
           const newData = payload.new as any;
           if (newData) {
+            // Extra safety: never apply an update for another wallet.
+            if (
+              typeof newData.wallet_address === 'string' &&
+              newData.wallet_address.toLowerCase() !== normalizedAddress
+            ) {
+              return;
+            }
             setStats({
               totalTrees: parseFloat(newData.total_trees) || 0,
               totalDonationsUsd: parseFloat(newData.total_donations_usd) || 0,

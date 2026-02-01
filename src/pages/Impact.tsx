@@ -4,34 +4,37 @@ import { useWalletStats } from "@/hooks/useWalletStats";
 import { TreePine, DollarSign, Users, Leaf } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
-// Generate historical data based on current totals
-const generateHistoricalData = (totalTrees: number, totalDonations: number) => {
-  const data = [];
+// We don't store month-by-month history yet.
+// To avoid misleading "fake" trends, we show the current cumulative totals across the last 12 months.
+const generateCumulativeSeries = (totalTrees: number, totalDonations: number) => {
+  const data = [] as Array<{
+    month: string;
+    year: number;
+    trees: number;
+    donations: number;
+  }>;
   const now = new Date();
-  
-  // Distribute totals over 12 months with realistic growth curve
+
+  const safeTrees = Math.max(0, Math.floor(totalTrees));
+  const safeDonations = Math.max(0, Number(totalDonations.toFixed(2)));
+
   for (let i = 11; i >= 0; i--) {
     const date = new Date(now);
     date.setMonth(date.getMonth() - i);
-    
-    // Exponential growth simulation - more trees planted recently
-    const growthFactor = Math.pow((12 - i) / 12, 1.5);
-    const cumulativeTrees = Math.floor(totalTrees * growthFactor);
-    const cumulativeDonations = totalDonations * growthFactor;
-    
+
     data.push({
-      month: date.toLocaleDateString('en-US', { month: 'short' }),
+      month: date.toLocaleDateString('fr-FR', { month: 'short' }),
       year: date.getFullYear(),
-      trees: cumulativeTrees,
-      donations: parseFloat(cumulativeDonations.toFixed(2)),
+      trees: safeTrees,
+      donations: safeDonations,
     });
   }
-  
+
   return data;
 };
 
 const Impact = () => {
-  const { stats, loading } = useWalletStats();
+  const { stats, isConnected } = useWalletStats();
 
   const TREE_COST_USD = 2.5;
   const treesPlanted = stats.totalTrees > 0 ? stats.totalTrees : stats.totalDonationsUsd / TREE_COST_USD;
@@ -39,7 +42,7 @@ const Impact = () => {
   const oxygenProduced = treesPlanted * 100; // ~100kg O2 per tree per year
   
   // Generate chart data from real totals
-  const chartData = generateHistoricalData(treesPlanted, stats.totalDonationsUsd);
+  const chartData = generateCumulativeSeries(treesPlanted, stats.totalDonationsUsd);
 
   const impactCards = [
     {
@@ -52,7 +55,7 @@ const Impact = () => {
     },
     {
       icon: DollarSign,
-      value: `$${stats.totalDonationsUsd.toLocaleString()}`,
+      value: `$${stats.totalDonationsUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
       label: 'Total Donated',
       description: '40% of all fees collected',
       color: 'text-primary',
@@ -96,6 +99,11 @@ const Impact = () => {
           <p className="text-lg text-muted-foreground max-w-lg mx-auto">
             Every swap you make contributes to global reforestation. See the difference we're making together.
           </p>
+          {!isConnected && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Connecte ton wallet pour voir tes chiffres. (Sinon tout reste à 0.)
+            </p>
+          )}
         </div>
 
         {/* Impact Stats Cards */}
@@ -110,7 +118,7 @@ const Impact = () => {
                 <card.icon className={`w-6 h-6 ${card.color}`} />
               </div>
               <p className="text-3xl font-bold text-foreground mb-1">
-                {loading ? '...' : card.value}
+                {card.value}
               </p>
               <p className="text-sm font-semibold text-foreground mb-1">{card.label}</p>
               <p className="text-xs text-muted-foreground">{card.description}</p>
@@ -128,7 +136,7 @@ const Impact = () => {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Trees Planted Over Time</h3>
-                <p className="text-xs text-muted-foreground">Monthly cumulative growth</p>
+                <p className="text-xs text-muted-foreground">Cumul actuel (pas d'historique)</p>
               </div>
             </div>
             <div className="h-64">
@@ -180,7 +188,7 @@ const Impact = () => {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Donations Over Time</h3>
-                <p className="text-xs text-muted-foreground">Monthly contribution totals</p>
+                <p className="text-xs text-muted-foreground">Cumul actuel (pas d'historique)</p>
               </div>
             </div>
             <div className="h-64">
