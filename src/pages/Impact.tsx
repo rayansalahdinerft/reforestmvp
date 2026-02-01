@@ -15,8 +15,8 @@ const Impact = () => {
 
   const treesPlanted = stats.totalTrees;
   
-  // Calculate meaningful environmental impact only for >= 1 tree
-  const showEnvironmentalImpact = treesPlanted >= 1;
+  // Calculate meaningful environmental impact only for >= 10 trees (Level 1 Seedling)
+  const showEnvironmentalImpact = treesPlanted >= 10;
   const co2Absorbed = treesPlanted * 22; // kg per year
   const oxygenProduced = treesPlanted * 100; // kg per year
 
@@ -58,11 +58,12 @@ const Impact = () => {
     },
     {
       icon: Leaf,
-      value: showEnvironmentalImpact ? Math.floor(co2Absorbed) : 0,
+      value: showEnvironmentalImpact ? Math.floor(co2Absorbed) : -1,
       suffix: showEnvironmentalImpact ? " kg" : "",
       label: "CO₂ Absorbed/Year",
-      description: showEnvironmentalImpact ? "Environmental impact estimate" : "Plant 1+ tree to unlock",
+      description: showEnvironmentalImpact ? "Environmental impact estimate" : "🔒 Unlock at Lv.1 (10 trees)",
       color: "emerald",
+      locked: !showEnvironmentalImpact,
     },
   ];
 
