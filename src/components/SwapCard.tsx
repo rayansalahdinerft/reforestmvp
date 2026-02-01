@@ -216,22 +216,26 @@ const SwapCard = () => {
       console.log('[REFOREST] Attempting to update tree counter...');
       
       try {
-        const payload = {
-          donationUsd: donationAmount > 0 ? donationAmount : 0.01, // Minimum $0.01
-          txHash: result.hash,
-          walletAddress: address || '0x0000000000000000000000000000000000000000',
-        };
-        
-        console.log('[REFOREST] Calling update-tree-counter with:', payload);
-        
-        const { data: updateData, error: updateError } = await supabase.functions.invoke('update-tree-counter', {
-          body: payload,
-        });
-        
-        if (updateError) {
-          console.error('[REFOREST] Failed to update tree counter:', updateError);
+        if (!address) {
+          console.error('[REFOREST] Missing wallet address after swap success; skipping impact update.');
         } else {
-          console.log('[REFOREST] Tree counter updated successfully:', updateData);
+          const payload = {
+            donationUsd: donationAmount > 0 ? donationAmount : 0.01, // Minimum $0.01
+            txHash: result.hash,
+            walletAddress: address,
+          };
+
+          console.log('[REFOREST] Calling update-tree-counter with:', payload);
+
+          const { data: updateData, error: updateError } = await supabase.functions.invoke('update-tree-counter', {
+            body: payload,
+          });
+
+          if (updateError) {
+            console.error('[REFOREST] Failed to update tree counter:', updateError);
+          } else {
+            console.log('[REFOREST] Tree counter updated successfully:', updateData);
+          }
         }
       } catch (err) {
         console.error('[REFOREST] Error calling update-tree-counter:', err);

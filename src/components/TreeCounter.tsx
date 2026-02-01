@@ -60,19 +60,12 @@ const AnimatedNumber = ({ value, prefix = '', className }: AnimatedNumberProps) 
 };
 
 const TreeCounter = () => {
-  const { stats, loading, isConnected } = useWalletStats();
+  const { stats, loading } = useWalletStats();
 
-  if (loading) {
-    return (
-      <div className="flex justify-center gap-8 py-4 animate-pulse">
-        <div className="h-12 w-32 bg-secondary rounded-xl" />
-        <div className="h-12 w-32 bg-secondary rounded-xl" />
-        <div className="h-12 w-32 bg-secondary rounded-xl" />
-      </div>
-    );
-  }
-
-  // Display stats (0 when not connected, actual values when connected)
+  // Always render the 3 boxes; show 0 while disconnected/loading, then update live.
+  const treesValue = loading ? 0 : stats.totalTrees;
+  const donationsValue = loading ? 0 : stats.totalDonationsUsd;
+  const swapsValue = loading ? 0 : stats.totalSwaps;
 
   return (
     <div className="flex flex-wrap justify-center gap-4 md:gap-6 animate-fade-in">
@@ -83,7 +76,7 @@ const TreeCounter = () => {
         </div>
         <div>
           <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
-            <AnimatedNumber value={stats.totalTrees} />
+            <AnimatedNumber value={treesValue} />
           </p>
           <p className="text-xs font-medium text-muted-foreground">Your Trees</p>
         </div>
@@ -96,7 +89,7 @@ const TreeCounter = () => {
         </div>
         <div>
           <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
-            <AnimatedNumber value={stats.totalDonationsUsd} prefix="$" />
+            <AnimatedNumber value={donationsValue} prefix="$" />
           </p>
           <p className="text-xs font-medium text-muted-foreground">Your Donations</p>
         </div>
@@ -109,7 +102,7 @@ const TreeCounter = () => {
         </div>
         <div>
           <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
-            <AnimatedNumber value={stats.totalSwaps} />
+            <AnimatedNumber value={swapsValue} />
           </p>
           <p className="text-xs font-medium text-muted-foreground">Your Swaps</p>
         </div>
