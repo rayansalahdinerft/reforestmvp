@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import SparklineChart from "@/components/SparklineChart";
 import TokenDetailModal from "@/components/TokenDetailModal";
+import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import { useMarketData, TOKEN_CATEGORIES, type MarketToken } from "@/hooks/useMarketData";
 import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -41,7 +42,10 @@ const Market = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Floating leaves animation */}
+      <FloatingLeaves />
+      
       {/* Background effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
