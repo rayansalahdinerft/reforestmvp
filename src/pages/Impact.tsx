@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { TreePine, DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
-import { useMemo } from "react";
+
 
 const TREE_COST_USD = 2.5;
 
@@ -16,14 +16,6 @@ const Impact = () => {
   const co2Absorbed = treesPlanted * 22; // kg per year
   const oxygenProduced = treesPlanted * 100; // kg per year
 
-  // Dynamic tier system
-  const tiers = useMemo(() => {
-    const swapTier = stats.totalSwaps >= 100 ? 1000 : 100;
-    const donationTier = stats.totalDonationsUsd >= 100 ? 1000 : 100;
-    const treeTier = treesPlanted >= 40 ? 400 : 40; // 100$ / 2.5 = 40 trees, 1000$ = 400 trees
-    
-    return { swapTier, donationTier, treeTier };
-  }, [stats.totalSwaps, stats.totalDonationsUsd, treesPlanted]);
 
   const impactCards = [
     {
@@ -124,40 +116,24 @@ const Impact = () => {
           </div>
         )}
 
-        {/* Objectives Section */}
+        {/* Tree Levels */}
         {isConnected && (
           <div className="swap-card p-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <span className="text-2xl">🎯</span>
+              <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center">
+                <TreePine className="w-6 h-6 text-green-500" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Objectives</h3>
-                <p className="text-sm text-muted-foreground">
-                  {tiers.swapTier === 1000 ? 'Tier 2 - Expert Reforester' : 'Tier 1 - Getting Started'}
-                </p>
+                <h3 className="text-lg font-bold text-foreground">Reforestation Levels</h3>
+                <p className="text-sm text-muted-foreground">Plant trees to unlock new levels</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <MilestoneGoal 
-                label={`${tiers.swapTier} Swaps`}
-                current={stats.totalSwaps}
-                target={tiers.swapTier}
-                icon="🔄"
-              />
-              <MilestoneGoal 
-                label={`$${tiers.donationTier} Donated`}
-                current={stats.totalDonationsUsd}
-                target={tiers.donationTier}
-                prefix="$"
-              />
-              <MilestoneGoal 
-                label={`${tiers.treeTier} Trees`}
-                current={treesPlanted}
-                target={tiers.treeTier}
-                icon="🌳"
-              />
+            <div className="space-y-3">
+              <TreeLevel level={1} label="Seedling" target={10} current={treesPlanted} />
+              <TreeLevel level={2} label="Sapling" target={100} current={treesPlanted} />
+              <TreeLevel level={3} label="Grove" target={1000} current={treesPlanted} />
+              <TreeLevel level={4} label="Forest" target={10000} current={treesPlanted} />
             </div>
           </div>
         )}
@@ -186,22 +162,17 @@ const Impact = () => {
   );
 };
 
-interface MilestoneGoalProps {
+interface TreeLevelProps {
+  level: number;
   label: string;
-  current: number;
   target: number;
-  prefix?: string;
-  icon?: string;
+  current: number;
 }
 
-const MilestoneGoal = ({ label, current, target, prefix = '', icon }: MilestoneGoalProps) => {
+const TreeLevel = ({ level, label, target, current }: TreeLevelProps) => {
   const achieved = current >= target;
   const progress = Math.min((current / target) * 100, 100);
   
-  const formatValue = (val: number) => {
-    return prefix + val.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
-  };
-
   return (
     <div 
       className={`p-4 rounded-xl border transition-all ${
@@ -210,14 +181,18 @@ const MilestoneGoal = ({ label, current, target, prefix = '', icon }: MilestoneG
           : 'bg-card border-border'
       }`}
     >
-      <div className="flex items-center gap-2 mb-3">
-        {icon && <span className="text-lg">{icon}</span>}
-        <span className={`text-sm font-medium ${achieved ? 'text-green-500' : 'text-foreground'}`}>
-          {achieved && '✓ '}{label}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-3">
+          <span className={`text-sm font-bold ${achieved ? 'text-green-500' : 'text-muted-foreground'}`}>
+            Lv.{level}
+          </span>
+          <span className={`text-sm font-medium ${achieved ? 'text-green-500' : 'text-foreground'}`}>
+            {achieved && '✓ '}{label}
+          </span>
+        </div>
+        <span className="text-sm font-semibold text-foreground">
+          {target.toLocaleString()} 🌳
         </span>
-      </div>
-      <div className="text-xs text-muted-foreground mb-2">
-        {formatValue(current)} / {formatValue(target)}
       </div>
       <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
         <div 
@@ -226,9 +201,6 @@ const MilestoneGoal = ({ label, current, target, prefix = '', icon }: MilestoneG
           }`}
           style={{ width: `${progress}%` }}
         />
-      </div>
-      <div className="text-right text-xs text-muted-foreground mt-1">
-        {progress.toFixed(1)}%
       </div>
     </div>
   );
