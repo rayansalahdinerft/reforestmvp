@@ -2,16 +2,28 @@ import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { TreePine, DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useMemo } from "react";
+
+const TREE_COST_USD = 2.5;
 
 const Impact = () => {
   const { stats, loading, isConnected } = useWalletStats();
 
-  const TREE_COST_USD = 2.5;
   const treesPlanted = stats.totalTrees;
-  const co2Absorbed = treesPlanted * 22;
-  const oxygenProduced = treesPlanted * 100;
+  
+  // Calculate meaningful environmental impact only for >= 1 tree
+  const showEnvironmentalImpact = treesPlanted >= 1;
+  const co2Absorbed = treesPlanted * 22; // kg per year
+  const oxygenProduced = treesPlanted * 100; // kg per year
+
+  // Dynamic tier system
+  const tiers = useMemo(() => {
+    const swapTier = stats.totalSwaps >= 100 ? 1000 : 100;
+    const donationTier = stats.totalDonationsUsd >= 100 ? 1000 : 100;
+    const treeTier = treesPlanted >= 40 ? 400 : 40; // 100$ / 2.5 = 40 trees, 1000$ = 400 trees
+    
+    return { swapTier, donationTier, treeTier };
+  }, [stats.totalSwaps, stats.totalDonationsUsd, treesPlanted]);
 
   const impactCards = [
     {
@@ -43,9 +55,9 @@ const Impact = () => {
     },
     {
       icon: Leaf,
-      value: `${co2Absorbed.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} kg`,
+      value: showEnvironmentalImpact ? `${Math.floor(co2Absorbed).toLocaleString()} kg` : '—',
       label: 'CO₂ Absorbed/Year',
-      description: 'Environmental impact estimate',
+      description: showEnvironmentalImpact ? 'Environmental impact estimate' : 'Plant 1+ tree to unlock',
       color: 'text-emerald-500',
       bgColor: 'bg-emerald-500/10',
       borderColor: 'border-emerald-500/20',
@@ -112,118 +124,59 @@ const Impact = () => {
           </div>
         )}
 
-        {/* Simple Progress Visual - only when connected */}
+        {/* Objectives Section */}
         {isConnected && (
           <div className="swap-card p-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center">
-                <TreePine className="w-6 h-6 text-green-500" />
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl">🎯</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Your Forest Progress</h3>
-                <p className="text-sm text-muted-foreground">Growing with every swap</p>
+                <h3 className="text-lg font-bold text-foreground">Objectives</h3>
+                <p className="text-sm text-muted-foreground">
+                  {tiers.swapTier === 1000 ? 'Tier 2 - Expert Reforester' : 'Tier 1 - Getting Started'}
+                </p>
               </div>
             </div>
 
-            {/* Tree Progress Bar */}
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Trees planted</span>
-                  <span className="font-semibold text-foreground">
-                    {treesPlanted.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} / 10
-                  </span>
-                </div>
-                <div className="h-3 bg-muted/50 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-1000"
-                    style={{ width: `${Math.min((treesPlanted / 10) * 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Donations</span>
-                  <span className="font-semibold text-foreground">
-                    ${stats.totalDonationsUsd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} / $25
-                  </span>
-                </div>
-                <div className="h-3 bg-muted/50 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-1000"
-                    style={{ width: `${Math.min((stats.totalDonationsUsd / 25) * 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Milestone Goals */}
-            <div className="mt-8 pt-6 border-t border-border">
-              <p className="text-sm font-medium text-foreground mb-4">🎯 Objectives</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <MilestoneGoal 
-                  label="First Swap" 
-                  current={stats.totalSwaps}
-                  target={1}
-                  unit="swap"
-                />
-                <MilestoneGoal 
-                  label="Donate $1" 
-                  current={stats.totalDonationsUsd}
-                  target={1}
-                  unit="$"
-                  prefix
-                />
-                <MilestoneGoal 
-                  label="Plant 1 Tree" 
-                  current={treesPlanted}
-                  target={1}
-                  unit="tree"
-                />
-                <MilestoneGoal 
-                  label="Complete 5 Swaps" 
-                  current={stats.totalSwaps}
-                  target={5}
-                  unit="swaps"
-                />
-                <MilestoneGoal 
-                  label="Donate $10" 
-                  current={stats.totalDonationsUsd}
-                  target={10}
-                  unit="$"
-                  prefix
-                />
-                <MilestoneGoal 
-                  label="Plant 10 Trees" 
-                  current={treesPlanted}
-                  target={10}
-                  unit="trees"
-                />
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <MilestoneGoal 
+                label={`${tiers.swapTier} Swaps`}
+                current={stats.totalSwaps}
+                target={tiers.swapTier}
+                icon="🔄"
+              />
+              <MilestoneGoal 
+                label={`$${tiers.donationTier} Donated`}
+                current={stats.totalDonationsUsd}
+                target={tiers.donationTier}
+                prefix="$"
+              />
+              <MilestoneGoal 
+                label={`${tiers.treeTier} Trees`}
+                current={treesPlanted}
+                target={tiers.treeTier}
+                icon="🌳"
+              />
             </div>
           </div>
         )}
 
-        {/* Environmental Impact Summary */}
-        {isConnected && treesPlanted > 0 && (
+        {/* Environmental Impact Summary - only show when meaningful */}
+        {isConnected && showEnvironmentalImpact && (
           <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-green-500/5 to-emerald-500/5 border border-green-500/10 animate-slide-up" style={{ animationDelay: '0.4s' }}>
             <div className="flex items-center gap-3 mb-4">
               <Globe className="w-5 h-5 text-green-500" />
               <span className="font-semibold text-foreground">Environmental Impact</span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-2 gap-4 text-center">
               <div>
-                <p className="text-xl font-bold text-green-500">{co2Absorbed.toFixed(1)} kg</p>
+                <p className="text-xl font-bold text-green-500">{Math.floor(co2Absorbed).toLocaleString()} kg</p>
                 <p className="text-xs text-muted-foreground">CO₂ absorbed/year</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-blue-500">{oxygenProduced.toFixed(0)} kg</p>
+                <p className="text-xl font-bold text-blue-500">{Math.floor(oxygenProduced).toLocaleString()} kg</p>
                 <p className="text-xs text-muted-foreground">O₂ produced/year</p>
-              </div>
-              <div className="col-span-2 md:col-span-1">
-                <p className="text-xl font-bold text-primary">{(treesPlanted / 10).toFixed(2)} ha</p>
-                <p className="text-xs text-muted-foreground">Forest restored (est.)</p>
               </div>
             </div>
           </div>
@@ -237,42 +190,45 @@ interface MilestoneGoalProps {
   label: string;
   current: number;
   target: number;
-  unit: string;
-  prefix?: boolean;
+  prefix?: string;
+  icon?: string;
 }
 
-const MilestoneGoal = ({ label, current, target, unit, prefix }: MilestoneGoalProps) => {
+const MilestoneGoal = ({ label, current, target, prefix = '', icon }: MilestoneGoalProps) => {
   const achieved = current >= target;
   const progress = Math.min((current / target) * 100, 100);
   
   const formatValue = (val: number) => {
-    const formatted = val.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
-    return prefix ? `$${formatted}` : formatted;
+    return prefix + val.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
   };
 
   return (
     <div 
-      className={`p-3 rounded-xl border transition-all ${
+      className={`p-4 rounded-xl border transition-all ${
         achieved 
           ? 'bg-green-500/10 border-green-500/30' 
           : 'bg-card border-border'
       }`}
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center gap-2 mb-3">
+        {icon && <span className="text-lg">{icon}</span>}
         <span className={`text-sm font-medium ${achieved ? 'text-green-500' : 'text-foreground'}`}>
           {achieved && '✓ '}{label}
         </span>
-        <span className="text-xs text-muted-foreground">
-          {formatValue(current)} / {formatValue(target)}
-        </span>
       </div>
-      <div className="h-1.5 bg-muted/50 rounded-full overflow-hidden">
+      <div className="text-xs text-muted-foreground mb-2">
+        {formatValue(current)} / {formatValue(target)}
+      </div>
+      <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
         <div 
           className={`h-full rounded-full transition-all duration-700 ${
             achieved ? 'bg-green-500' : 'bg-primary/60'
           }`}
           style={{ width: `${progress}%` }}
         />
+      </div>
+      <div className="text-right text-xs text-muted-foreground mt-1">
+        {progress.toFixed(1)}%
       </div>
     </div>
   );
