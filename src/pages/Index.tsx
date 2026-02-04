@@ -27,8 +27,8 @@ const Index = () => {
         {/* Hero Section */}
         <div className="text-center mb-8 sm:mb-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-5 tracking-tight leading-tight animate-hero-reveal">
-            <span className="block sm:inline">Every swap,</span>{' '}
-            <span className="block sm:inline text-primary glow-text animate-glow-reveal">save the world</span>
+            <span className="block sm:inline">Every swap</span>{' '}
+            <span className="block sm:inline text-primary glow-text animate-glow-reveal">saves the world</span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto px-4 animate-fade-in" style={{ animationDelay: '0.6s', opacity: 0, animationFillMode: 'forwards' }}>
             First wallet that makes your transactions useful for the planet. DeFi with purpose.
