@@ -14,9 +14,10 @@ interface CacheEntry {
   timestamp: number;
 }
 
-// In-memory cache with 60s TTL (protects CoinGecko + keeps UI responsive)
+// In-memory cache with 2-minute TTL (protects CoinGecko rate limits)
 const cache = new Map<string, CacheEntry>();
-const CACHE_TTL = 60 * 1000;
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+const STALE_TTL = 10 * 60 * 1000; // 10 minutes for stale-while-revalidate
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -53,12 +54,17 @@ serve(async (req) => {
 
     const cacheKey = `coingecko-markets-${normalizedIds.slice().sort().join(",")}`;
     const cached = cache.get(cacheKey);
+    const now = Date.now();
 
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    // Return fresh cache if available
+    if (cached && now - cached.timestamp < CACHE_TTL) {
       return new Response(JSON.stringify({ data: cached.data, cached: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Return stale cache while we try to refresh (stale-while-revalidate pattern)
+    const hasStaleCache = cached && now - cached.timestamp < STALE_TTL;
 
     const url = new URL("https://api.coingecko.com/api/v3/coins/markets");
     url.searchParams.set("vs_currency", "usd");
@@ -77,9 +83,12 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      // Return stale cache if we have one
-      if (cached) {
-        return new Response(JSON.stringify({ data: cached.data, cached: true, stale: true }), {
+      console.warn(`CoinGecko API error: ${response.status}`);
+      
+      // Return stale cache if we have one (for any error including 429)
+      if (hasStaleCache) {
+        console.log("Returning stale cache due to API error");
+        return new Response(JSON.stringify({ data: cached!.data, cached: true, stale: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -93,7 +102,7 @@ serve(async (req) => {
 
     const data = await response.json();
 
-    cache.set(cacheKey, { data, timestamp: Date.now() });
+    cache.set(cacheKey, { data, timestamp: now });
     return new Response(JSON.stringify({ data, cached: false }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
