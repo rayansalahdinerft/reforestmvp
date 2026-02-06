@@ -18,6 +18,8 @@ interface MarketDataResult {
   loading: boolean;
   error: string | null;
   refetch: () => void;
+  isStale: boolean;
+  isRateLimited: boolean;
 }
 
 const CACHE_KEY = 'market_data_cache_coingecko_v1';
@@ -92,6 +94,8 @@ export const useMarketData = (): MarketDataResult => {
   const [tokens, setTokens] = useState<MarketToken[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isStale, setIsStale] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
 
   const fetchData = useCallback(async () => {
     // Use cache first to avoid blank state
@@ -103,6 +107,8 @@ export const useMarketData = (): MarketDataResult => {
 
     try {
       let data: any[] | null = null;
+      let stale = false;
+      let rateLimited = false;
 
       // Try backend proxy first
       try {
@@ -110,8 +116,13 @@ export const useMarketData = (): MarketDataResult => {
           body: { ids: TOKEN_IDS },
         });
 
-        if (!fnError && Array.isArray(result?.data) && result.data.length > 0) {
-          data = result.data;
+        if (!fnError && result) {
+          stale = result.stale === true;
+          rateLimited = result.rate_limited === true;
+
+          if (Array.isArray(result.data) && result.data.length > 0) {
+            data = result.data;
+          }
         }
       } catch (proxyErr) {
         console.warn('Backend proxy failed, trying direct CoinGecko:', proxyErr);
@@ -131,6 +142,8 @@ export const useMarketData = (): MarketDataResult => {
         const res = await fetch(url.toString());
         if (!res.ok) throw new Error(`CoinGecko ${res.status}`);
         data = await res.json();
+        stale = false;
+        rateLimited = false;
       }
 
       if (!data || !Array.isArray(data)) {
@@ -153,6 +166,8 @@ export const useMarketData = (): MarketDataResult => {
       setTokens(formattedTokens);
       writeCache(formattedTokens);
       setError(null);
+      setIsStale(stale);
+      setIsRateLimited(rateLimited);
     } catch (err) {
       console.error('Error fetching market data:', err);
       
@@ -165,6 +180,8 @@ export const useMarketData = (): MarketDataResult => {
       });
       
       setError('Market data temporarily unavailable');
+      setIsStale(true);
+      setIsRateLimited(false);
     } finally {
       setLoading(false);
     }
@@ -178,7 +195,7 @@ export const useMarketData = (): MarketDataResult => {
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  return { tokens, loading, error, refetch: fetchData };
+  return { tokens, loading, error, refetch: fetchData, isStale, isRateLimited };
 };
 
 export default useMarketData;
