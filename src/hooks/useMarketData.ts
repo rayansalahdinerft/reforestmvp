@@ -109,7 +109,8 @@ export const useMarketData = (): MarketDataResult => {
         const { data: result, error: fnError } = await supabase.functions.invoke('coingecko-markets', {
           body: { ids: TOKEN_IDS },
         });
-        if (!fnError && result?.data && Array.isArray(result.data)) {
+
+        if (!fnError && Array.isArray(result?.data) && result.data.length > 0) {
           data = result.data;
         }
       } catch (proxyErr) {
