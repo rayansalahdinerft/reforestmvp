@@ -105,7 +105,7 @@ export const useWalletBalance = () => {
         body: { ids }
       });
 
-      if (!error && data?.data) {
+      if (!error && Array.isArray(data?.data) && data.data.length > 0) {
         const prices: Record<string, number> = {};
         for (const coin of data.data) {
           prices[coin.id] = coin.current_price;

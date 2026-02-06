@@ -84,18 +84,42 @@ serve(async (req) => {
 
     if (!response.ok) {
       console.warn(`CoinGecko API error: ${response.status}`);
-      
+
       // Return stale cache if we have one (for any error including 429)
       if (hasStaleCache) {
         console.log("Returning stale cache due to API error");
-        return new Response(JSON.stringify({ data: cached!.data, cached: true, stale: true }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({ data: cached!.data, cached: true, stale: true }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       }
 
+      // IMPORTANT: avoid returning non-2xx for 429 so the client doesn't surface a hard runtime error.
+      // Instead, return an empty dataset and let the frontend keep its existing/local cache.
+      const retryAfter = response.headers.get("retry-after");
       const text = await response.text().catch(() => "");
+
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({
+            data: [],
+            cached: false,
+            rate_limited: true,
+            retry_after: retryAfter ? Number(retryAfter) : null,
+            error: "CoinGecko rate limit exceeded",
+            details: text.slice(0, 500),
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
       return new Response(
-        JSON.stringify({ error: `CoinGecko API error: ${response.status}`, details: text.slice(0, 500) }),
+        JSON.stringify({
+          error: `CoinGecko API error: ${response.status}`,
+          details: text.slice(0, 500),
+        }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
