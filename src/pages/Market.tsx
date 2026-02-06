@@ -4,7 +4,7 @@ import SparklineChart from "@/components/SparklineChart";
 import TokenDetailModal from "@/components/TokenDetailModal";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import { useMarketData, TOKEN_CATEGORIES, type MarketToken } from "@/hooks/useMarketData";
-import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2 } from "lucide-react";
+import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2, Database, AlertTriangle } from "lucide-react";
 import { useState, useMemo } from "react";
 
 const CATEGORIES = ['All', 'Major', 'Layer 2', 'DeFi', 'Stablecoin', 'Meme'];
@@ -15,7 +15,7 @@ const Market = () => {
   const [selectedToken, setSelectedToken] = useState<MarketToken | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { tokens, loading, error, refetch } = useMarketData();
+  const { tokens, loading, error, refetch, isStale, isRateLimited } = useMarketData();
 
   const handleTokenClick = (token: MarketToken) => {
     setSelectedToken(token);
@@ -108,13 +108,29 @@ const Market = () => {
           </button>
         </div>
 
-        {/* Results count & error */}
+        {/* Results count & status badges */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-muted-foreground">
-            Showing {filteredTokens.length} tokens
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              Showing {filteredTokens.length} tokens
+            </p>
+            {/* Stale data badge */}
+            {isStale && !isRateLimited && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/50 text-accent-foreground text-xs font-medium border border-border">
+                <Database className="w-3 h-3" />
+                Données en cache
+              </span>
+            )}
+            {/* Rate limited badge */}
+            {isRateLimited && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/10 text-destructive text-xs font-medium border border-destructive/20">
+                <AlertTriangle className="w-3 h-3" />
+                Rate-limited
+              </span>
+            )}
+          </div>
           {error && (
-            <p className="text-sm text-yellow-500">{error}</p>
+            <p className="text-sm text-destructive">{error}</p>
           )}
         </div>
 
