@@ -161,12 +161,12 @@ const NftCertificate = ({
 
           {/* Card content */}
           <div className="relative h-full flex flex-col items-center justify-between p-4 py-5">
-            {/* Label at top */}
+            {/* Rarity name at top */}
             <h4 className={cn(
-              "font-extrabold text-sm tracking-tight",
+              "font-extrabold text-sm tracking-tight capitalize",
               unlocked ? config.accent : "text-muted-foreground/50"
             )}>
-              {label}
+              {rarity}
             </h4>
 
             {/* Center icon */}
