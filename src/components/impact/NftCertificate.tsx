@@ -13,58 +13,58 @@ interface NftCertificateProps {
 
 const rarityConfig = {
   common: {
-    accent: "text-emerald-400",
-    border: "border-emerald-400/40",
-    bg: "from-emerald-500/20 via-emerald-600/10 to-green-900/20",
-    shimmer: "from-emerald-300/0 via-emerald-300/20 to-emerald-300/0",
-    glow: "shadow-emerald-500/25",
-    icon: "text-emerald-400",
-    ring: "ring-emerald-400/20",
+    accent: "text-emerald-300",
+    border: "border-emerald-400/50",
+    bg: "from-emerald-500/30 via-emerald-600/15 to-green-800/25",
+    shimmer: "from-emerald-200/0 via-emerald-200/30 to-emerald-200/0",
+    glow: "shadow-emerald-400/30",
+    icon: "text-emerald-300",
+    ring: "ring-emerald-400/30",
   },
   uncommon: {
-    accent: "text-blue-400",
-    border: "border-blue-400/40",
-    bg: "from-blue-500/20 via-blue-600/10 to-indigo-900/20",
-    shimmer: "from-blue-300/0 via-blue-300/20 to-blue-300/0",
-    glow: "shadow-blue-500/25",
-    icon: "text-blue-400",
-    ring: "ring-blue-400/20",
+    accent: "text-blue-300",
+    border: "border-blue-400/50",
+    bg: "from-blue-500/30 via-blue-600/15 to-indigo-800/25",
+    shimmer: "from-blue-200/0 via-blue-200/30 to-blue-200/0",
+    glow: "shadow-blue-400/30",
+    icon: "text-blue-300",
+    ring: "ring-blue-400/30",
   },
   rare: {
-    accent: "text-purple-400",
-    border: "border-purple-400/40",
-    bg: "from-purple-500/20 via-purple-600/10 to-violet-900/20",
-    shimmer: "from-purple-300/0 via-purple-300/25 to-purple-300/0",
-    glow: "shadow-purple-500/25",
-    icon: "text-purple-400",
-    ring: "ring-purple-400/20",
+    accent: "text-purple-300",
+    border: "border-purple-400/50",
+    bg: "from-purple-500/30 via-purple-600/15 to-violet-800/25",
+    shimmer: "from-purple-200/0 via-purple-200/35 to-purple-200/0",
+    glow: "shadow-purple-400/30",
+    icon: "text-purple-300",
+    ring: "ring-purple-400/30",
   },
   epic: {
-    accent: "text-orange-400",
-    border: "border-orange-400/40",
-    bg: "from-orange-500/20 via-amber-600/10 to-orange-900/20",
-    shimmer: "from-orange-300/0 via-orange-300/25 to-orange-300/0",
-    glow: "shadow-orange-500/30",
-    icon: "text-orange-400",
-    ring: "ring-orange-400/20",
+    accent: "text-orange-300",
+    border: "border-orange-400/50",
+    bg: "from-orange-500/30 via-amber-600/15 to-orange-800/25",
+    shimmer: "from-orange-200/0 via-orange-200/35 to-orange-200/0",
+    glow: "shadow-orange-400/35",
+    icon: "text-orange-300",
+    ring: "ring-orange-400/30",
   },
   legendary: {
-    accent: "text-yellow-400",
-    border: "border-yellow-400/50",
-    bg: "from-yellow-500/25 via-amber-500/15 to-yellow-900/20",
-    shimmer: "from-yellow-200/0 via-yellow-200/30 to-yellow-200/0",
-    glow: "shadow-yellow-500/30",
-    icon: "text-yellow-400",
-    ring: "ring-yellow-400/25",
+    accent: "text-yellow-300",
+    border: "border-yellow-400/60",
+    bg: "from-yellow-500/35 via-amber-500/20 to-yellow-800/25",
+    shimmer: "from-yellow-100/0 via-yellow-100/40 to-yellow-100/0",
+    glow: "shadow-yellow-400/40",
+    icon: "text-yellow-300",
+    ring: "ring-yellow-400/35",
   },
   mythic: {
-    accent: "text-red-400",
-    border: "border-red-400/50",
-    bg: "from-red-500/25 via-rose-500/15 to-red-900/20",
-    shimmer: "from-red-200/0 via-red-200/30 to-red-200/0",
-    glow: "shadow-red-500/30",
-    icon: "text-red-400",
-    ring: "ring-red-400/25",
+    accent: "text-red-300",
+    border: "border-red-400/60",
+    bg: "from-red-500/35 via-rose-500/20 to-red-800/25",
+    shimmer: "from-red-100/0 via-red-100/40 to-red-100/0",
+    glow: "shadow-red-400/40",
+    icon: "text-red-300",
+    ring: "ring-red-400/35",
   },
 };
 
@@ -134,36 +134,27 @@ const NftCertificate = ({
 
           {/* Card content */}
           <div className="relative h-full flex flex-col items-center justify-between p-4 py-5">
-            {/* Rarity tag */}
-            <span className={cn(
-              "text-[7px] font-black uppercase tracking-[0.2em]",
-              unlocked ? config.accent : "text-muted-foreground/40"
+            {/* Label at top */}
+            <h4 className={cn(
+              "font-extrabold text-sm tracking-tight",
+              unlocked ? config.accent : "text-muted-foreground/50"
             )}>
-              {rarity}
-            </span>
+              {label}
+            </h4>
 
-            {/* Center icon area */}
-            <div className="flex flex-col items-center gap-2">
-              <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center border",
-                unlocked ? `bg-gradient-to-br ${config.bg} ${config.border}` : "bg-muted/20 border-border/10"
-              )}>
-                <TreePine className={cn("w-6 h-6", unlocked ? config.icon : "text-muted-foreground/30")} />
-              </div>
-
-              <h4 className={cn(
-                "font-extrabold text-base tracking-tight",
-                unlocked ? "text-foreground" : "text-muted-foreground/60"
-              )}>
-                {label}
-              </h4>
+            {/* Center icon */}
+            <div className={cn(
+              "w-14 h-14 rounded-xl flex items-center justify-center border",
+              unlocked ? `bg-gradient-to-br ${config.bg} ${config.border}` : "bg-muted/15 border-border/10"
+            )}>
+              <TreePine className={cn("w-7 h-7", unlocked ? config.icon : "text-muted-foreground/20")} />
             </div>
 
-            {/* Bottom stats */}
+            {/* Bottom: milestone + status */}
             <div className="flex flex-col items-center gap-1">
               <p className={cn(
                 "text-[10px] font-bold tabular-nums",
-                unlocked ? config.accent : "text-muted-foreground/40"
+                unlocked ? config.accent : "text-muted-foreground/35"
               )}>
                 {milestone.toLocaleString()} 🌳
               </p>
