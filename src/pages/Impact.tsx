@@ -5,7 +5,7 @@ import { DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
-import NftGallery from "@/components/impact/NftGallery";
+
 import NftCertificate from "@/components/impact/NftCertificate";
 
 
@@ -147,8 +147,6 @@ const Impact = () => {
               </div>
             </div>
 
-            {/* NFT reveal overlay */}
-            <NftGallery treesPlanted={treesPlanted} />
 
             {/* Environmental summary */}
             {showEnvironmentalImpact && (
