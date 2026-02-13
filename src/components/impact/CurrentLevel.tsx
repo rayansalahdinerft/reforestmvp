@@ -9,13 +9,14 @@ interface Level {
 }
 
 const LEVELS: Level[] = [
+  { level: 0, label: "Explorateur", emoji: "🌰", target: 0 },
   { level: 1, label: "Graine", emoji: "🌱", target: 10 },
   { level: 2, label: "Pousse", emoji: "🌿", target: 100 },
   { level: 3, label: "Racines", emoji: "🌾", target: 1_000 },
   { level: 4, label: "Canopée", emoji: "🌳", target: 10_000 },
   { level: 5, label: "Forêt", emoji: "🌲", target: 100_000 },
-  { level: 6, label: "Biosphère", emoji: "🌍", target: 1_000_000 },
-  { level: 7, label: "Légende", emoji: "⭐", target: 10_000_000 },
+  { level: 6, label: "Légende", emoji: "🌍", target: 1_000_000 },
+  { level: 7, label: "Infinity", emoji: "♾️", target: 10_000_000 },
 ];
 
 interface CurrentLevelProps {
@@ -23,55 +24,44 @@ interface CurrentLevelProps {
 }
 
 const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
-  const currentLevelIndex = LEVELS.findIndex((l) => treesPlanted < l.target);
-  const currentLevel =
-    currentLevelIndex === -1
-      ? LEVELS[LEVELS.length - 1]
-      : currentLevelIndex === 0
-        ? null
-        : LEVELS[currentLevelIndex - 1];
-  const nextLevel =
-    currentLevelIndex === -1 ? null : LEVELS[currentLevelIndex];
+  // Find current level: last level whose target we've reached
+  const currentLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target) ?? LEVELS[0];
+  const currentIdx = LEVELS.indexOf(currentLevel);
+  const nextLevel = currentIdx < LEVELS.length - 1 ? LEVELS[currentIdx + 1] : null;
 
   const progress = nextLevel
     ? Math.min(
-        ((treesPlanted - (currentLevel?.target ?? 0)) /
-          (nextLevel.target - (currentLevel?.target ?? 0))) *
+        ((treesPlanted - currentLevel.target) /
+          (nextLevel.target - currentLevel.target)) *
           100,
         100
       )
     : 100;
 
-  const allMaxed = currentLevelIndex === -1;
-
-  const displayLevel = currentLevel ?? (allMaxed ? LEVELS[LEVELS.length - 1] : null);
+  const allMaxed = !nextLevel;
 
   return (
     <div className="swap-card p-6 animate-slide-up backdrop-blur-sm">
       {/* Hero level display */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          {/* Big emoji badge */}
+          {/* Big avatar */}
           <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
-              <span className="text-3xl">
-                {displayLevel?.emoji ?? "🌰"}
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+              <span className="text-4xl">
+                {currentLevel.emoji}
               </span>
             </div>
-            {displayLevel && (
-              <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground shadow-lg">
-                {displayLevel.level}
-              </div>
-            )}
+            <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground shadow-lg">
+              {currentLevel.level}
+            </div>
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
               Niveau actuel
             </p>
             <h3 className="text-xl font-bold text-foreground">
-              {displayLevel
-                ? displayLevel.label
-                : "Explorateur"}
+              {currentLevel.label}
             </h3>
           </div>
         </div>
@@ -112,7 +102,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         <div className="mb-6 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-center">
           <p className="text-sm text-primary font-medium flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" />
-            Niveau maximum atteint — Statut Légendaire !
+            Statut Infinity atteint — ♾️
           </p>
         </div>
       )}
