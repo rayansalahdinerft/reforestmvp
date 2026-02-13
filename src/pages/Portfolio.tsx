@@ -2,16 +2,17 @@ import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
+import CurrentLevel from "@/components/impact/CurrentLevel";
+import NftGallery from "@/components/impact/NftGallery";
 import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Wallet, RefreshCw, ExternalLink, Edit2, Check, X,
+  Wallet, RefreshCw, Edit2, Check, X,
   DollarSign, Users, Leaf, Globe, Camera, Upload,
 } from "lucide-react";
 import { toast } from "sonner";
-import NftGallery from "@/components/impact/NftGallery";
 
 import explorerAvatar from "@/assets/levels/explorer.png";
 import seedAvatar from "@/assets/levels/seed.png";
@@ -259,6 +260,9 @@ const Portfolio = () => {
               )}
             </div>
 
+            {/* Level progression */}
+            <CurrentLevel treesPlanted={treesPlanted} />
+
             {/* Environmental detail */}
             {showEnv && (
               <div className="swap-card p-5 animate-slide-up backdrop-blur-sm" style={{ animationDelay: "0.2s" }}>
@@ -279,7 +283,7 @@ const Portfolio = () => {
               </div>
             )}
 
-            {/* NFT Collection */}
+            {/* NFT unlock reveal only (no visible card) */}
             <NftGallery treesPlanted={treesPlanted} />
           </div>
         )}
