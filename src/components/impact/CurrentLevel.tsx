@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sparkles, ChevronDown, ChevronUp, Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Level {
   level: number;
@@ -10,17 +11,19 @@ interface Level {
   rarity: string;
   color: string;
   glow: string;
+  nftName: string;
+  nftDesc: string;
 }
 
 const LEVELS: Level[] = [
-  { level: 1, label: "Explorer", emoji: "🧭", target: 1, rarity: "Starter", color: "text-stone-400", glow: "from-stone-500/15 to-stone-600/5" },
-  { level: 2, label: "Seed", emoji: "🌰", target: 100, rarity: "Common", color: "text-emerald-400", glow: "from-emerald-500/15 to-emerald-600/5" },
-  { level: 3, label: "Sprout", emoji: "🌱", target: 1_000, rarity: "Uncommon", color: "text-green-400", glow: "from-green-500/15 to-green-600/5" },
-  { level: 4, label: "Roots", emoji: "🌿", target: 10_000, rarity: "Rare", color: "text-blue-400", glow: "from-blue-500/15 to-blue-600/5" },
-  { level: 5, label: "Canopy", emoji: "🌳", target: 100_000, rarity: "Epic", color: "text-purple-400", glow: "from-purple-500/15 to-purple-600/5" },
-  { level: 6, label: "Forest", emoji: "🏔️", target: 1_000_000, rarity: "Legendary", color: "text-orange-400", glow: "from-orange-500/15 to-orange-600/5" },
-  { level: 7, label: "Legend", emoji: "⭐", target: 10_000_000, rarity: "Mythic", color: "text-yellow-400", glow: "from-yellow-500/15 to-yellow-600/5" },
-  { level: 8, label: "Infinity", emoji: "♾️", target: 100_000_000, rarity: "∞", color: "text-cyan-400", glow: "from-cyan-500/15 to-cyan-600/5" },
+  { level: 1, label: "Explorer", emoji: "🧭", target: 1, rarity: "Starter", color: "text-stone-400", glow: "from-stone-500/15 to-stone-600/5", nftName: "First Steps", nftDesc: "Your journey begins — proof you planted your very first tree." },
+  { level: 2, label: "Seed", emoji: "🌰", target: 100, rarity: "Common", color: "text-emerald-400", glow: "from-emerald-500/15 to-emerald-600/5", nftName: "Seed Bearer", nftDesc: "100 trees funded. You carry the seeds of change." },
+  { level: 3, label: "Sprout", emoji: "🌱", target: 1_000, rarity: "Uncommon", color: "text-green-400", glow: "from-green-500/15 to-green-600/5", nftName: "Green Sprout", nftDesc: "1,000 trees — your impact is visibly growing." },
+  { level: 4, label: "Roots", emoji: "🌿", target: 10_000, rarity: "Rare", color: "text-blue-400", glow: "from-blue-500/15 to-blue-600/5", nftName: "Deep Roots", nftDesc: "10K trees planted. Your roots run deep in the ecosystem." },
+  { level: 5, label: "Canopy", emoji: "🌳", target: 100_000, rarity: "Epic", color: "text-purple-400", glow: "from-purple-500/15 to-purple-600/5", nftName: "Canopy Guardian", nftDesc: "100K trees — you shelter entire ecosystems." },
+  { level: 6, label: "Forest", emoji: "🏔️", target: 1_000_000, rarity: "Legendary", color: "text-orange-400", glow: "from-orange-500/15 to-orange-600/5", nftName: "Forest Keeper", nftDesc: "1M trees. You've created an entire forest." },
+  { level: 7, label: "Legend", emoji: "⭐", target: 10_000_000, rarity: "Mythic", color: "text-yellow-400", glow: "from-yellow-500/15 to-yellow-600/5", nftName: "Living Legend", nftDesc: "10M trees — your name echoes through the canopy." },
+  { level: 8, label: "Infinity", emoji: "♾️", target: 100_000_000, rarity: "∞", color: "text-cyan-400", glow: "from-cyan-500/15 to-cyan-600/5", nftName: "Infinite Impact", nftDesc: "100M trees. Beyond legendary — eternal impact." },
 ];
 
 interface CurrentLevelProps {
@@ -136,64 +139,76 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
       {/* Expanded levels roadmap */}
       {expanded && (
         <div className="mt-3 space-y-1.5 animate-fade-in">
+        <TooltipProvider delayDuration={200}>
           {LEVELS.map((lvl) => {
             const achieved = treesPlanted >= lvl.target;
             const isCurrent = achievedLevel?.level === lvl.level;
 
             return (
-              <div
-                key={lvl.level}
-                className={cn(
-                  "flex items-center justify-between px-3.5 py-3 rounded-xl transition-all group",
-                  isCurrent
-                    ? `bg-gradient-to-r ${lvl.glow} border border-primary/25 shadow-sm`
-                    : achieved
-                      ? "bg-secondary/30 border border-transparent hover:border-border/30"
-                      : "border border-transparent opacity-40 hover:opacity-60"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all",
-                    isCurrent ? "bg-primary/15 shadow-sm" : achieved ? "bg-secondary/50" : "bg-muted/20"
-                  )}>
-                    {lvl.emoji}
-                  </div>
-                  <div>
+              <Tooltip key={lvl.level}>
+                <TooltipTrigger asChild>
+                  <div
+                    className={cn(
+                      "flex items-center justify-between px-3.5 py-3 rounded-xl transition-all group cursor-pointer",
+                      isCurrent
+                        ? `bg-gradient-to-r ${lvl.glow} border border-primary/25 shadow-sm`
+                        : achieved
+                          ? "bg-secondary/30 border border-transparent hover:border-border/30"
+                          : "border border-transparent opacity-40 hover:opacity-60"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all",
+                        isCurrent ? "bg-primary/15 shadow-sm" : achieved ? "bg-secondary/50" : "bg-muted/20"
+                      )}>
+                        {lvl.emoji}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className={cn(
+                            "text-sm font-bold",
+                            isCurrent ? "text-foreground" : achieved ? "text-foreground" : "text-muted-foreground"
+                          )}>
+                            {lvl.label}
+                          </p>
+                          <span className={cn(
+                            "text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full border border-current/15",
+                            lvl.color
+                          )}>
+                            {lvl.rarity}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          Lv.{lvl.level} — {lvl.target.toLocaleString()} {lvl.target === 1 ? "tree" : "trees"}
+                        </p>
+                      </div>
+                    </div>
                     <div className="flex items-center gap-2">
-                      <p className={cn(
-                        "text-sm font-bold",
-                        isCurrent ? "text-foreground" : achieved ? "text-foreground" : "text-muted-foreground"
-                      )}>
-                        {lvl.label}
-                      </p>
-                      <span className={cn(
-                        "text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full border border-current/15",
-                        lvl.color
-                      )}>
-                        {lvl.rarity}
-                      </span>
+                      <span className="text-[9px] text-muted-foreground/60 hidden sm:inline">🏆 NFT</span>
+                      {achieved ? (
+                        <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                          <Check className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                      ) : (
+                        <div className="w-7 h-7 rounded-lg bg-muted/20 flex items-center justify-center">
+                          <Lock className="w-3 h-3 text-muted-foreground/40" />
+                        </div>
+                      )}
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Lv.{lvl.level} — {lvl.target.toLocaleString()} {lvl.target === 1 ? "tree" : "trees"}
-                    </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] text-muted-foreground/60 hidden sm:inline">🏆 NFT</span>
-                  {achieved ? (
-                    <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                  ) : (
-                    <div className="w-7 h-7 rounded-lg bg-muted/20 flex items-center justify-center">
-                      <Lock className="w-3 h-3 text-muted-foreground/40" />
-                    </div>
-                  )}
-                </div>
-              </div>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-[220px] p-3">
+                  <p className="font-bold text-sm mb-1">🏆 {lvl.nftName}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{lvl.nftDesc}</p>
+                  <p className={cn("text-[10px] font-bold uppercase mt-2", achieved ? "text-primary" : "text-muted-foreground/50")}>
+                    {achieved ? "✅ Unlocked" : "🔒 Locked"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             );
           })}
+        </TooltipProvider>
         </div>
       )}
     </div>
