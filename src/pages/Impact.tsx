@@ -136,8 +136,8 @@ const Impact = () => {
                 <div
                   className="relative mx-auto"
                   style={{
-                    height: "170px",
-                    width: `${220 + (NFT_CERTS.length - 1) * 48}px`,
+                    height: "155px",
+                    width: `${210 + (NFT_CERTS.length - 1) * 52}px`,
                   }}
                 >
                   {NFT_CERTS.map((cert, i) => (
