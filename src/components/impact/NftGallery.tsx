@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Lock, Award, X, ChevronRight } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 
@@ -100,7 +100,7 @@ const NftGallery = ({ treesPlanted }: NftGalleryProps) => {
                 <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 animate-shimmer" />
               </div>
               <div className="relative flex flex-col items-center text-center gap-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Certificate Unlocked</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">NFT Unlocked</p>
                 <div className="animate-float">
                   <img src={revealedCert.avatar} alt={revealedCert.label} className="w-24 h-24 rounded-2xl object-cover shadow-lg" />
                 </div>
@@ -124,98 +124,6 @@ const NftGallery = ({ treesPlanted }: NftGalleryProps) => {
           </div>
         </div>
       )}
-
-      <div className="swap-card p-6 animate-slide-up backdrop-blur-sm" style={{ animationDelay: "0.15s" }}>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 flex items-center justify-center">
-            <Award className="w-6 h-6 text-purple-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-foreground">Proof-of-Impact</h3>
-            <p className="text-sm text-muted-foreground">
-              {unlocked.length}/{CERTIFICATES.length} certificates unlocked
-            </p>
-          </div>
-        </div>
-
-        {/* Current quest — next NFT to unlock */}
-        {nextCert && (
-          <div className="mb-5">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-3">Current Quest</p>
-            <div className={cn(
-              "relative p-4 rounded-2xl border border-border/40 bg-card/50 overflow-hidden"
-            )}>
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <img
-                    src={nextCert.avatar}
-                    alt={nextCert.label}
-                    className="w-16 h-16 rounded-xl object-cover opacity-60 grayscale"
-                  />
-                  <Lock className="absolute inset-0 m-auto w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-sm font-bold text-foreground">{nextCert.label}</h4>
-                    <span className={cn("text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border", nextCert.badgeBg)}>
-                      {nextCert.rarity}
-                    </span>
-                  </div>
-                  <div className="h-2 bg-muted/40 rounded-full overflow-hidden mb-1">
-                    <div
-                      className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700", nextCert.gradient)}
-                      style={{ width: `${progressToNext}%` }}
-                    />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground">
-                    {treesPlanted.toLocaleString()} / {nextCert.milestone.toLocaleString()} trees
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {allMaxed && (
-          <div className="mb-5 p-3 rounded-xl bg-gradient-to-r from-violet-500/10 to-cyan-500/10 border border-violet-500/20 text-center">
-            <p className="text-sm text-violet-400 font-medium">All certificates collected — Infinity status ♾️</p>
-          </div>
-        )}
-
-        {/* Compact arrow timeline for all NFTs */}
-        <div className="flex items-center gap-0.5 overflow-x-auto pb-1 scrollbar-none">
-          {CERTIFICATES.map((cert, i) => {
-            const achieved = treesPlanted >= cert.milestone;
-            const isNext = nextCert?.milestone === cert.milestone;
-
-            return (
-              <div key={cert.milestone} className="flex items-center">
-                <div
-                  className={cn(
-                    "flex items-center gap-1.5 px-1.5 py-1 rounded-full transition-all cursor-pointer",
-                    isNext ? "bg-primary/20 border border-primary/40" : ""
-                  )}
-                  onClick={() => achieved && setRevealedCert(cert)}
-                >
-                  <img
-                    src={cert.avatar}
-                    alt={cert.label}
-                    className={cn(
-                      "w-6 h-6 rounded-full object-cover",
-                      !achieved && !isNext && "opacity-20 grayscale",
-                      !achieved && isNext && "opacity-50 grayscale"
-                    )}
-                  />
-                  {isNext && <span className="text-xs font-semibold text-foreground pr-1">{cert.label}</span>}
-                </div>
-                {i < CERTIFICATES.length - 1 && (
-                  <ChevronRight className={cn("w-3 h-3 shrink-0 mx-0.5", achieved ? "text-primary/40" : "text-muted-foreground/20")} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
     </>
   );
 };

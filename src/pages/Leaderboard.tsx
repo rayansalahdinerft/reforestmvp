@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award, Flame, CalendarDays } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award } from 'lucide-react';
 import { useAppKitAccount } from '@reown/appkit/react';
 import Header from '@/components/Header';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
@@ -75,8 +75,17 @@ const Leaderboard = () => {
     setLoading(false);
   };
 
+  const hasShownContestToast = useRef(false);
+
   useEffect(() => {
     fetchLeaderboard();
+    if (!hasShownContestToast.current) {
+      hasShownContestToast.current = true;
+      toast("🔥 Monthly Contest — Coming Soon!", {
+        description: "Who plants the most trees each month wins a surprise reward 🎁",
+        duration: 5000,
+      });
+    }
   }, []);
 
   const myEntry = entries.find(
@@ -129,24 +138,6 @@ const Leaderboard = () => {
           </p>
         </div>
 
-        {/* Monthly Contest Teaser */}
-        <div className="mb-6 p-5 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 border border-primary/20 animate-fade-in">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Flame className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                Monthly Contest
-                <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">Coming Soon</span>
-              </h3>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <CalendarDays className="w-3 h-3" />
-                Who plants the most trees each month wins a surprise reward 🎁
-              </p>
-            </div>
-          </div>
-        </div>
         {/* My rank card */}
         {isConnected && myEntry && (
           <div className="mb-6 p-4 rounded-2xl bg-primary/5 border border-primary/20 animate-fade-in">
