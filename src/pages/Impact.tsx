@@ -10,7 +10,7 @@ const Impact = () => {
   const { stats, loading, isConnected } = useWalletStats();
 
   const treesPlanted = stats.totalTrees;
-  const showEnvironmentalImpact = treesPlanted >= 10;
+  const showEnvironmentalImpact = treesPlanted >= 1;
   const co2Absorbed = treesPlanted * 22;
   const oxygenProduced = treesPlanted * 100;
 

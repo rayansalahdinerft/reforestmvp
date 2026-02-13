@@ -10,7 +10,7 @@ interface Level {
 }
 
 const LEVELS: Level[] = [
-  { level: 1, label: "Explorer", emoji: "🧭", target: 10 },
+  { level: 1, label: "Explorer", emoji: "🧭", target: 1 },
   { level: 2, label: "Seed", emoji: "🌰", target: 100 },
   { level: 3, label: "Sprout", emoji: "🌱", target: 1_000 },
   { level: 4, label: "Roots", emoji: "🌿", target: 10_000 },
@@ -102,10 +102,18 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       )}
 
+      {/* NFT info */}
+      <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-xl bg-accent/5 border border-accent/10">
+        <span className="text-base">🏆</span>
+        <p className="text-[11px] text-muted-foreground">
+          Each level-up unlocks a unique <span className="text-foreground font-semibold">Proof of Impact NFT</span>
+        </p>
+      </div>
+
       {/* Explore button */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="mt-4 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-secondary/60 hover:bg-secondary text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
+        className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-secondary/60 hover:bg-secondary text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
       >
         Explore all levels
         {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -136,7 +144,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
                     <p className={cn("text-sm font-semibold", isCurrent ? "text-primary" : "text-foreground")}>
                       {lvl.label}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">Lv.{lvl.level} — {lvl.target.toLocaleString()} trees</p>
+                    <p className="text-[10px] text-muted-foreground">Lv.{lvl.level} — {lvl.target.toLocaleString()} {lvl.target === 1 ? "tree" : "trees"} · 🏆 NFT</p>
                   </div>
                 </div>
                 <div className="text-sm">
