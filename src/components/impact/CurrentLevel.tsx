@@ -23,8 +23,14 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
     ? (currentIdx < LEVELS.length - 1 ? LEVELS[currentIdx + 1] : null)
     : LEVELS[0];
 
-  const allMaxed = !nextLevel;
   const currentLvlNum = achievedLevel ? currentLevel.level : 0;
+
+  // Progress calculation
+  const prevTarget = achievedLevel ? currentLevel.target : 0;
+  const nextTarget = nextLevel ? nextLevel.target : currentLevel.target;
+  const progress = nextLevel
+    ? Math.min(((treesPlanted - prevTarget) / (nextTarget - prevTarget)) * 100, 100)
+    : 100;
 
   return (
     <div className="swap-card p-5 animate-slide-up backdrop-blur-sm">
@@ -41,11 +47,25 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       </div>
 
-      {/* Objective for next level */}
+      {/* Objective + progress bar */}
       {nextLevel ? (
-        <p className="mt-3 text-xs text-muted-foreground">
-          Objective: <span className="text-foreground font-semibold">{nextLevel.target.toLocaleString()} trees</span> to reach Level {nextLevel.level}
-        </p>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              Objective: <span className="text-foreground font-semibold">{nextLevel.target.toLocaleString()} trees</span>
+            </p>
+            <span className="text-[10px] text-muted-foreground tabular-nums">Lv.{nextLevel.level}</span>
+          </div>
+          <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-700 ease-out"
+              style={{ width: `${Math.max(progress, 2)}%` }}
+            />
+          </div>
+          <p className="text-[10px] text-muted-foreground text-right tabular-nums">
+            {Math.floor(progress)}%
+          </p>
+        </div>
       ) : (
         <div className="mt-3 p-3 rounded-xl bg-secondary/50 border border-border/30 text-center">
           <p className="text-sm text-foreground font-medium flex items-center justify-center gap-2">
