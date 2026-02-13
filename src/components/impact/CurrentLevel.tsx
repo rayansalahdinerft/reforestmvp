@@ -33,18 +33,23 @@ interface CurrentLevelProps {
 }
 
 const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
-  const currentLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target) ?? LEVELS[0];
+  const achievedLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target) ?? null;
+  const currentLevel = achievedLevel ?? LEVELS[0];
   const currentIdx = LEVELS.indexOf(currentLevel);
-  const nextLevel = currentIdx < LEVELS.length - 1 ? LEVELS[currentIdx + 1] : null;
+  const nextLevel = achievedLevel
+    ? (currentIdx < LEVELS.length - 1 ? LEVELS[currentIdx + 1] : null)
+    : LEVELS[0]; // not yet reached first level → next is Explorer
 
-  const progress = nextLevel
-    ? Math.min(
-        ((treesPlanted - currentLevel.target) /
-          (nextLevel.target - currentLevel.target)) *
-          100,
-        100
-      )
-    : 100;
+  const progress = !achievedLevel
+    ? Math.min((treesPlanted / LEVELS[0].target) * 100, 100)
+    : nextLevel
+      ? Math.min(
+          ((treesPlanted - currentLevel.target) /
+            (nextLevel.target - currentLevel.target)) *
+            100,
+          100
+        )
+      : 100;
 
   const allMaxed = !nextLevel;
 
@@ -62,11 +67,11 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
-              Current Level
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
+              {achievedLevel ? "Current Level" : "No Level Yet"}
             </p>
             <h3 className="text-xl font-bold text-foreground">
-              {currentLevel.label}
+              {achievedLevel ? currentLevel.label : "—"}
             </h3>
           </div>
         </div>
@@ -83,10 +88,10 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         <div className="mb-6">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-muted-foreground">
-              Next: <span className="text-foreground font-semibold">{nextLevel.label}</span>
+              {achievedLevel ? "Next" : "First level"}: <span className="text-foreground font-semibold">{nextLevel.label}</span>
             </span>
             <span className="text-muted-foreground font-mono text-xs">
-              {treesPlanted.toLocaleString()} / {nextLevel.target.toLocaleString()}
+              {treesPlanted.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} / {nextLevel.target.toLocaleString()}
             </span>
           </div>
           <div className="h-3 bg-muted/60 rounded-full overflow-hidden">
