@@ -79,6 +79,7 @@ const NftCertificate = ({
   const unlocked = current >= milestone;
   const config = rarityConfig[rarity];
   const [flipped, setFlipped] = useState(false);
+  const isMythic = rarity === "mythic";
 
   return (
     <div
@@ -104,17 +105,43 @@ const NftCertificate = ({
             unlocked ? config.border : "border-border/20",
             unlocked ? config.ring : "ring-transparent",
             unlocked && `shadow-xl ${config.glow}`,
-            !unlocked && "opacity-50 grayscale-[30%]"
+            !unlocked && "opacity-50 grayscale-[30%]",
+            isMythic && unlocked && "border-transparent"
           )}
           style={{ backfaceVisibility: "hidden" }}
         >
           {/* Card background */}
           <div className={cn("absolute inset-0 bg-gradient-to-b", unlocked ? config.bg : "from-muted/15 to-muted/5")} />
 
+          {/* Holographic rainbow overlay for mythic */}
+          {isMythic && unlocked && (
+            <div
+              className="absolute inset-0 opacity-30 mix-blend-screen"
+              style={{
+                background: "linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088, #ff0000)",
+                backgroundSize: "400% 400%",
+                animation: "holo-shift 4s ease infinite",
+              }}
+            />
+          )}
+
+          {/* Mythic rainbow border glow */}
+          {isMythic && unlocked && (
+            <div
+              className="absolute -inset-[1px] rounded-2xl -z-10"
+              style={{
+                background: "linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088, #ff0000)",
+                backgroundSize: "300% 300%",
+                animation: "holo-shift 3s ease infinite",
+                filter: "blur(4px)",
+              }}
+            />
+          )}
+
           {/* Inner border frame */}
           <div className={cn(
             "absolute inset-2 rounded-xl border",
-            unlocked ? config.border : "border-border/10"
+            isMythic && unlocked ? "border-white/10" : unlocked ? config.border : "border-border/10"
           )} />
 
           {/* Shimmer effect */}
@@ -123,10 +150,10 @@ const NftCertificate = ({
               <div
                 className={cn(
                   "absolute -inset-full bg-gradient-to-r w-[200%]",
-                  config.shimmer
+                  isMythic ? "from-white/0 via-white/25 to-white/0" : config.shimmer
                 )}
                 style={{
-                  animation: "card-shimmer 3s ease-in-out infinite",
+                  animation: isMythic ? "card-shimmer 2s ease-in-out infinite" : "card-shimmer 3s ease-in-out infinite",
                 }}
               />
             </div>
