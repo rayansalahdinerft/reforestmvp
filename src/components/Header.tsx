@@ -29,6 +29,7 @@ const Header = () => {
   const navItems = [
     { path: '/', label: 'Swap' },
     { path: '/market', label: 'Market' },
+    { path: '/leaderboard', label: '🏆 Leaderboard' },
     { path: '/portfolio', label: 'Portfolio' },
     { path: '/impact', label: 'Impact' },
   ];
