@@ -1,18 +1,20 @@
-import { TreePine, ChevronRight } from "lucide-react";
+import { TreePine, ChevronRight, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Level {
   level: number;
   label: string;
+  emoji: string;
   target: number;
 }
 
 const LEVELS: Level[] = [
-  { level: 1, label: "Seedling", target: 10 },
-  { level: 2, label: "Sapling", target: 100 },
-  { level: 3, label: "Grove", target: 1_000 },
-  { level: 4, label: "Forest", target: 10_000 },
-  { level: 5, label: "Ecosystem", target: 100_000 },
-  { level: 6, label: "Biome", target: 1_000_000 },
+  { level: 1, label: "Pousse", emoji: "🌱", target: 10 },
+  { level: 2, label: "Racine", emoji: "🌿", target: 100 },
+  { level: 3, label: "Canopée", emoji: "🌳", target: 1_000 },
+  { level: 4, label: "Forêt", emoji: "🏔️", target: 10_000 },
+  { level: 5, label: "Biosphère", emoji: "🌍", target: 100_000 },
+  { level: 6, label: "Légende", emoji: "✨", target: 1_000_000 },
 ];
 
 interface CurrentLevelProps {
@@ -20,7 +22,6 @@ interface CurrentLevelProps {
 }
 
 const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
-  // Find current level
   const currentLevelIndex = LEVELS.findIndex((l) => treesPlanted < l.target);
   const currentLevel =
     currentLevelIndex === -1
@@ -42,32 +43,42 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
 
   const allMaxed = currentLevelIndex === -1;
 
+  const displayLevel = currentLevel ?? (allMaxed ? LEVELS[LEVELS.length - 1] : null);
+
   return (
     <div className="swap-card p-6 animate-slide-up backdrop-blur-sm">
-      {/* Current level header */}
+      {/* Hero level display */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 flex items-center justify-center">
-            <TreePine className="w-6 h-6 text-green-500" />
+        <div className="flex items-center gap-4">
+          {/* Big emoji badge */}
+          <div className="relative">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+              <span className="text-3xl">
+                {displayLevel?.emoji ?? "🌰"}
+              </span>
+            </div>
+            {displayLevel && (
+              <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground shadow-lg">
+                {displayLevel.level}
+              </div>
+            )}
           </div>
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-              Current Level
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
+              Niveau actuel
             </p>
             <h3 className="text-xl font-bold text-foreground">
-              {currentLevel
-                ? `Lv.${currentLevel.level} ${currentLevel.label}`
-                : allMaxed
-                  ? `Lv.${LEVELS[LEVELS.length - 1].level} ${LEVELS[LEVELS.length - 1].label}`
-                  : "Lv.0 Starter"}
+              {displayLevel
+                ? displayLevel.label
+                : "Explorateur"}
             </h3>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
+          <p className="text-2xl font-bold gradient-text tabular-nums">
             {treesPlanted.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
-          <p className="text-xs text-muted-foreground">trees planted</p>
+          <p className="text-xs text-muted-foreground">arbres plantés</p>
         </div>
       </div>
 
@@ -76,31 +87,37 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         <div className="mb-6">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-muted-foreground">
-              Next: <span className="text-foreground font-semibold">Lv.{nextLevel.level} {nextLevel.label}</span>
+              Prochain : <span className="text-foreground font-semibold">{nextLevel.emoji} {nextLevel.label}</span>
             </span>
             <span className="text-muted-foreground font-mono text-xs">
-              {nextLevel.target.toLocaleString()} trees
+              {treesPlanted.toLocaleString()} / {nextLevel.target.toLocaleString()}
             </span>
           </div>
           <div className="h-3 bg-muted/60 rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-1000 ease-out"
+              className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 ease-out relative"
               style={{ width: `${progress}%` }}
-            />
+            >
+              <div className="absolute inset-0 animate-shimmer rounded-full" />
+            </div>
           </div>
-        </div>
-      )}
-
-      {allMaxed && (
-        <div className="mb-6 p-3 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 text-center">
-          <p className="text-sm text-green-400 font-medium">
-            🌍 Maximum level reached — legendary status!
+          <p className="text-[10px] text-muted-foreground mt-1.5 text-right">
+            {Math.round(progress)}% complété
           </p>
         </div>
       )}
 
-      {/* Level roadmap — compact horizontal */}
-      <div className="flex items-center gap-1 overflow-x-auto pb-1">
+      {allMaxed && (
+        <div className="mb-6 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-center">
+          <p className="text-sm text-primary font-medium flex items-center justify-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            Niveau maximum atteint — Statut Légendaire !
+          </p>
+        </div>
+      )}
+
+      {/* Level roadmap */}
+      <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
         {LEVELS.map((lvl, i) => {
           const achieved = treesPlanted >= lvl.target;
           const isCurrent =
@@ -110,24 +127,27 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
           return (
             <div key={lvl.level} className="flex items-center">
               <div
-                className={`flex flex-col items-center min-w-[64px] px-2 py-2 rounded-xl transition-all ${
+                className={cn(
+                  "flex flex-col items-center min-w-[60px] px-2 py-2 rounded-xl transition-all",
                   isCurrent
-                    ? "bg-green-500/15 border border-green-500/30"
+                    ? "bg-primary/15 border border-primary/30 scale-105"
                     : achieved
-                      ? "opacity-60"
+                      ? "opacity-70"
                       : "opacity-30"
-                }`}
+                )}
               >
+                <span className="text-lg mb-0.5">{lvl.emoji}</span>
                 <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold mb-1 ${
+                  className={cn(
+                    "w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold mb-0.5",
                     achieved
-                      ? "bg-green-500 text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
-                  }`}
+                  )}
                 >
                   {lvl.level}
                 </div>
-                <span className="text-[10px] text-muted-foreground font-medium whitespace-nowrap">
+                <span className="text-[9px] text-muted-foreground font-medium whitespace-nowrap">
                   {lvl.label}
                 </span>
               </div>
@@ -138,14 +158,15 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
           );
         })}
 
-        {/* Secret levels hint */}
+        {/* Secret level hint */}
         <div className="flex items-center">
           <ChevronRight className="w-3 h-3 text-muted-foreground/30 shrink-0" />
-          <div className="flex flex-col items-center min-w-[64px] px-2 py-2 rounded-xl opacity-30">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold mb-1 bg-purple-500/20 text-purple-400">
+          <div className="flex flex-col items-center min-w-[60px] px-2 py-2 rounded-xl opacity-25">
+            <span className="text-lg mb-0.5">🔮</span>
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold mb-0.5 bg-purple-500/20 text-purple-400">
               ?
             </div>
-            <span className="text-[10px] text-purple-400/60 font-medium">Secret</span>
+            <span className="text-[9px] text-purple-400/60 font-medium">Secret</span>
           </div>
         </div>
       </div>
