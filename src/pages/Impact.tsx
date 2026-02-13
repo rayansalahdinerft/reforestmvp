@@ -10,8 +10,6 @@ import NftCertificate from "@/components/impact/NftCertificate";
 
 
 const NFT_CERTS = [
-  { milestone: 1, label: "Explorer", description: "Planted your first tree", rarity: "common" as const },
-  { milestone: 100, label: "Seed", description: "100 trees funded", rarity: "common" as const },
   { milestone: 1_000, label: "Grove", description: "1,000 trees planted", rarity: "uncommon" as const },
   { milestone: 10_000, label: "Forest", description: "10,000 trees planted", rarity: "rare" as const },
   { milestone: 100_000, label: "Jungle", description: "100K trees planted", rarity: "epic" as const },
