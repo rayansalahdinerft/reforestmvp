@@ -132,7 +132,7 @@ const Impact = () => {
             {/* NFT Certificates */}
             <div>
               <h2 className="text-lg font-bold text-foreground mb-4">Proof of Impact NFTs</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
                 {NFT_CERTS.map((cert, i) => (
                   <NftCertificate
                     key={cert.milestone}
