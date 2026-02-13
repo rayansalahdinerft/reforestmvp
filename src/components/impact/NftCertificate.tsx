@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, Check, TreePine } from "lucide-react";
+import { Lock, Check, TreePine, Trees, Leaf } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NftCertificateProps {
@@ -8,72 +8,94 @@ interface NftCertificateProps {
   description: string;
   current: number;
   index: number;
+  total: number;
   rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic" | "infinity";
 }
 
 const rarityConfig = {
   common: {
-    accent: "text-emerald-200",
-    border: "border-emerald-300/60",
-    bg: "from-emerald-400/45 via-emerald-500/25 to-green-700/35",
-    shimmer: "from-emerald-100/0 via-emerald-100/40 to-emerald-100/0",
-    glow: "shadow-emerald-300/40",
-    icon: "text-emerald-200",
-    ring: "ring-emerald-300/40",
+    accent: "text-emerald-300",
+    border: "border-emerald-400/50",
+    bg: "from-emerald-900/80 to-emerald-950/90",
+    shimmer: "from-emerald-100/0 via-emerald-100/20 to-emerald-100/0",
+    glow: "shadow-emerald-500/15",
+    icon: "text-emerald-300",
+    ring: "ring-emerald-400/30",
+    cardBg: "bg-gradient-to-br from-emerald-950 to-green-950",
+    tierLabel: "Basique",
+    tierColor: "text-emerald-400",
   },
   uncommon: {
-    accent: "text-blue-200",
-    border: "border-blue-300/60",
-    bg: "from-blue-400/45 via-blue-500/25 to-indigo-700/35",
-    shimmer: "from-blue-100/0 via-blue-100/40 to-blue-100/0",
-    glow: "shadow-blue-300/40",
-    icon: "text-blue-200",
-    ring: "ring-blue-300/40",
+    accent: "text-blue-300",
+    border: "border-blue-400/50",
+    bg: "from-blue-900/80 to-indigo-950/90",
+    shimmer: "from-blue-100/0 via-blue-100/25 to-blue-100/0",
+    glow: "shadow-blue-500/20",
+    icon: "text-blue-300",
+    ring: "ring-blue-400/30",
+    cardBg: "bg-gradient-to-br from-blue-950 to-indigo-950",
+    tierLabel: "Bronze",
+    tierColor: "text-blue-400",
   },
   rare: {
-    accent: "text-purple-200",
-    border: "border-purple-300/60",
-    bg: "from-purple-400/45 via-purple-500/25 to-violet-700/35",
-    shimmer: "from-purple-100/0 via-purple-100/45 to-purple-100/0",
-    glow: "shadow-purple-300/40",
-    icon: "text-purple-200",
-    ring: "ring-purple-300/40",
+    accent: "text-purple-300",
+    border: "border-purple-400/50",
+    bg: "from-purple-900/80 to-violet-950/90",
+    shimmer: "from-purple-100/0 via-purple-100/30 to-purple-100/0",
+    glow: "shadow-purple-500/25",
+    icon: "text-purple-300",
+    ring: "ring-purple-400/35",
+    cardBg: "bg-gradient-to-br from-purple-950 to-violet-950",
+    tierLabel: "Argent",
+    tierColor: "text-purple-400",
   },
   epic: {
-    accent: "text-orange-200",
-    border: "border-orange-300/60",
-    bg: "from-orange-400/45 via-amber-500/25 to-orange-700/35",
-    shimmer: "from-orange-100/0 via-orange-100/45 to-orange-100/0",
-    glow: "shadow-orange-300/45",
-    icon: "text-orange-200",
-    ring: "ring-orange-300/40",
+    accent: "text-orange-300",
+    border: "border-orange-400/60",
+    bg: "from-orange-900/80 to-amber-950/90",
+    shimmer: "from-orange-100/0 via-orange-100/35 to-orange-100/0",
+    glow: "shadow-orange-500/30",
+    icon: "text-orange-300",
+    ring: "ring-orange-400/40",
+    cardBg: "bg-gradient-to-br from-orange-950 to-amber-950",
+    tierLabel: "Or",
+    tierColor: "text-orange-400",
   },
   legendary: {
     accent: "text-yellow-200",
-    border: "border-yellow-300/70",
-    bg: "from-yellow-400/50 via-amber-400/30 to-yellow-700/35",
-    shimmer: "from-yellow-50/0 via-yellow-50/50 to-yellow-50/0",
-    glow: "shadow-yellow-300/50",
+    border: "border-yellow-400/70",
+    bg: "from-yellow-800/80 to-amber-900/90",
+    shimmer: "from-yellow-50/0 via-yellow-50/40 to-yellow-50/0",
+    glow: "shadow-yellow-500/35",
     icon: "text-yellow-200",
-    ring: "ring-yellow-300/45",
+    ring: "ring-yellow-400/50",
+    cardBg: "bg-gradient-to-br from-yellow-950 to-amber-950",
+    tierLabel: "Platine",
+    tierColor: "text-yellow-300",
   },
   mythic: {
     accent: "text-red-200",
-    border: "border-red-300/70",
-    bg: "from-red-400/50 via-rose-400/30 to-red-700/35",
-    shimmer: "from-red-50/0 via-red-50/50 to-red-50/0",
-    glow: "shadow-red-300/50",
+    border: "border-red-400/70",
+    bg: "from-red-800/80 to-rose-900/90",
+    shimmer: "from-red-50/0 via-red-50/40 to-red-50/0",
+    glow: "shadow-red-500/40",
     icon: "text-red-200",
-    ring: "ring-red-300/45",
+    ring: "ring-red-400/50",
+    cardBg: "bg-gradient-to-br from-red-950 to-rose-950",
+    tierLabel: "Diamant",
+    tierColor: "text-red-300",
   },
   infinity: {
     accent: "text-violet-200",
-    border: "border-violet-300/70",
-    bg: "from-violet-400/50 via-fuchsia-400/30 to-cyan-600/35",
-    shimmer: "from-white/0 via-white/40 to-white/0",
-    glow: "shadow-violet-300/50",
+    border: "border-violet-400/70",
+    bg: "from-violet-800/70 via-fuchsia-800/60 to-cyan-800/70",
+    shimmer: "from-white/0 via-white/30 to-white/0",
+    glow: "shadow-violet-500/50",
     icon: "text-violet-200",
-    ring: "ring-violet-300/45",
+    ring: "ring-violet-400/50",
+    cardBg: "bg-gradient-to-br from-violet-950 via-fuchsia-950 to-cyan-950",
+    tierLabel: "Éternel",
+    tierColor: "text-violet-300",
   },
 };
 
@@ -83,6 +105,7 @@ const NftCertificate = ({
   description,
   current,
   index,
+  total,
   rarity,
 }: NftCertificateProps) => {
   const unlocked = current >= milestone;
@@ -91,12 +114,23 @@ const NftCertificate = ({
   const isMythic = rarity === "mythic" || rarity === "infinity";
   const isInfinity = rarity === "infinity";
 
+  // Stacked offset: cards fan out from left, each shifted right and slightly rotated
+  const offsetX = index * 42;
+  const rotation = (index - (total - 1) / 2) * 2.5; // slight fan rotation
+
   return (
     <div
-      className="animate-slide-up aspect-[2.5/3.5]"
+      className="absolute top-0 left-0 w-[160px] sm:w-[180px] aspect-[2.5/3.5] transition-all duration-300 ease-out hover:z-30"
       style={{
+        transform: `translateX(${offsetX}px) rotate(${rotation}deg)`,
+        zIndex: flipped ? 30 : 10 + index,
         perspective: "900px",
-        animationDelay: `${index * 0.07}s`,
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.transform = `translateX(${offsetX}px) rotate(0deg) translateY(-16px) scale(1.08)`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.transform = `translateX(${offsetX}px) rotate(${rotation}deg)`;
       }}
     >
       <div
@@ -115,20 +149,20 @@ const NftCertificate = ({
             unlocked ? config.border : "border-border/20",
             unlocked ? config.ring : "ring-transparent",
             unlocked && `shadow-xl ${config.glow}`,
-            !unlocked && "opacity-50 grayscale-[30%]",
+            !unlocked && "opacity-40 grayscale-[50%]",
             isMythic && unlocked && "border-transparent"
           )}
           style={{ backfaceVisibility: "hidden" }}
         >
-          {/* Solid dark base */}
-          <div className="absolute inset-0 bg-black/80" />
-          {/* Card color gradient on top */}
+          {/* Dark base */}
+          <div className={cn("absolute inset-0", unlocked ? config.cardBg : "bg-card/90")} />
+          {/* Gradient overlay */}
           <div className={cn("absolute inset-0 bg-gradient-to-b", unlocked ? config.bg : "from-muted/10 to-muted/5")} />
 
-          {/* Holographic rainbow overlay for mythic */}
+          {/* Holographic rainbow for mythic+ */}
           {isMythic && unlocked && (
             <div
-              className="absolute inset-0 opacity-30 mix-blend-screen"
+              className="absolute inset-0 opacity-25 mix-blend-screen"
               style={{
                 background: "linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088, #ff0000)",
                 backgroundSize: "400% 400%",
@@ -137,7 +171,7 @@ const NftCertificate = ({
             />
           )}
 
-          {/* Mythic rainbow border glow */}
+          {/* Rainbow border glow for mythic+ */}
           {isMythic && unlocked && (
             <div
               className="absolute -inset-[1px] rounded-2xl -z-10"
@@ -150,13 +184,13 @@ const NftCertificate = ({
             />
           )}
 
-          {/* Inner border frame */}
+          {/* Inner frame */}
           <div className={cn(
             "absolute inset-2 rounded-xl border",
             isMythic && unlocked ? "border-white/10" : unlocked ? config.border : "border-border/10"
           )} />
 
-          {/* Shimmer effect */}
+          {/* Shimmer */}
           {unlocked && (
             <div className="absolute inset-0 overflow-hidden">
               <div
@@ -174,7 +208,7 @@ const NftCertificate = ({
           {/* Sparkle particles for Infinity */}
           {isInfinity && unlocked && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(12)].map((_, i) => (
+              {[...Array(10)].map((_, i) => (
                 <div
                   key={i}
                   className="absolute w-1 h-1 rounded-full bg-white"
@@ -190,35 +224,49 @@ const NftCertificate = ({
             </div>
           )}
 
-          <div className="relative h-full flex flex-col items-center justify-between p-4 py-5">
-            {/* Rarity name at top */}
-            <h4 className={cn(
-              "font-extrabold text-sm tracking-tight capitalize",
-              unlocked ? config.accent : "text-muted-foreground/50"
+          {/* Card content */}
+          <div className="relative h-full flex flex-col items-center justify-between p-3 py-4">
+            {/* Tier label */}
+            <span className={cn(
+              "text-[9px] font-bold uppercase tracking-[0.15em]",
+              unlocked ? config.tierColor : "text-muted-foreground/40"
             )}>
-              {rarity}
-            </h4>
+              {config.tierLabel}
+            </span>
 
-            {/* Center icon */}
-            <div className={cn(
-              "w-14 h-14 rounded-xl flex items-center justify-center border",
-              unlocked ? `bg-gradient-to-br ${config.bg} ${config.border}` : "bg-muted/15 border-border/10"
-            )}>
-              <TreePine className={cn("w-7 h-7", unlocked ? config.icon : "text-muted-foreground/20")} />
+            {/* Center: tree icon */}
+            <div className="flex flex-col items-center gap-2">
+              <div className={cn(
+                "w-12 h-12 rounded-xl flex items-center justify-center border",
+                unlocked ? `bg-gradient-to-br ${config.bg} ${config.border}` : "bg-muted/15 border-border/10"
+              )}>
+                <TreePine className={cn("w-6 h-6", unlocked ? config.icon : "text-muted-foreground/20")} />
+              </div>
+              <h4 className={cn(
+                "text-xs font-bold tracking-tight",
+                unlocked ? config.accent : "text-muted-foreground/40"
+              )}>
+                {label}
+              </h4>
             </div>
 
-            {/* Bottom: milestone + status */}
-            <div className="flex flex-col items-center gap-1">
+            {/* Bottom: milestone */}
+            <div className="flex flex-col items-center gap-0.5">
               <p className={cn(
                 "text-[10px] font-bold tabular-nums",
-                unlocked ? config.accent : "text-muted-foreground/35"
+                unlocked ? config.accent : "text-muted-foreground/30"
               )}>
                 {milestone.toLocaleString()} 🌳
               </p>
-              {unlocked && (
+              {unlocked ? (
                 <div className="flex items-center gap-1">
                   <Check className="w-2.5 h-2.5 text-primary" />
                   <span className="text-[8px] font-bold text-primary uppercase tracking-wider">Owned</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5 text-muted-foreground/30" />
+                  <span className="text-[8px] text-muted-foreground/30 uppercase tracking-wider">Locked</span>
                 </div>
               )}
             </div>
@@ -236,11 +284,8 @@ const NftCertificate = ({
             transform: "rotateY(180deg)",
           }}
         >
-          {/* Card back pattern */}
           <div className="absolute inset-0 bg-gradient-to-b from-muted/20 to-muted/5" />
           <div className="absolute inset-2 rounded-xl border border-border/10" />
-
-          {/* Repeating pattern */}
           <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 8px, currentColor 8px, currentColor 9px)`,
           }} />
@@ -249,20 +294,20 @@ const NftCertificate = ({
             {unlocked ? (
               <>
                 <div className={cn(
-                  "w-14 h-14 rounded-xl flex items-center justify-center border bg-gradient-to-br",
+                  "w-12 h-12 rounded-xl flex items-center justify-center border bg-gradient-to-br",
                   config.bg, config.border
                 )}>
-                  <Check className={cn("w-7 h-7", config.icon)} />
+                  <Check className={cn("w-6 h-6", config.icon)} />
                 </div>
                 <p className={cn("text-xs font-bold", config.accent)}>Collected</p>
                 <p className="text-[9px] text-muted-foreground text-center leading-relaxed">
-                  Proof of Impact
+                  {description}
                 </p>
               </>
             ) : (
               <>
-                <div className="w-14 h-14 rounded-xl bg-muted/15 border border-border/15 flex items-center justify-center">
-                  <Lock className="w-7 h-7 text-muted-foreground/25" />
+                <div className="w-12 h-12 rounded-xl bg-muted/15 border border-border/15 flex items-center justify-center">
+                  <Lock className="w-6 h-6 text-muted-foreground/25" />
                 </div>
                 <p className="text-xs text-muted-foreground/60 font-semibold">Locked</p>
                 <p className="text-[9px] text-muted-foreground/40 text-center">

@@ -129,21 +129,32 @@ const Impact = () => {
             <CurrentLevel treesPlanted={treesPlanted} />
 
 
-            {/* NFT Certificates */}
+            {/* NFT Certificates — stacked card catalog */}
             <div>
               <h2 className="text-lg font-bold text-foreground mb-4">Proof of Impact NFTs</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {NFT_CERTS.map((cert, i) => (
-                  <NftCertificate
-                    key={cert.milestone}
-                    milestone={cert.milestone}
-                    label={cert.label}
-                    description={cert.description}
-                    current={treesPlanted}
-                    index={i}
-                    rarity={cert.rarity}
-                  />
-                ))}
+              <div className="overflow-x-auto pb-4 -mx-4 px-4">
+                <div
+                  className="relative"
+                  style={{
+                    height: "240px",
+                    width: `${160 + (NFT_CERTS.length - 1) * 42 + 20}px`,
+                    minWidth: "100%",
+                    margin: "0 auto",
+                  }}
+                >
+                  {NFT_CERTS.map((cert, i) => (
+                    <NftCertificate
+                      key={cert.milestone}
+                      milestone={cert.milestone}
+                      label={cert.label}
+                      description={cert.description}
+                      current={treesPlanted}
+                      index={i}
+                      total={NFT_CERTS.length}
+                      rarity={cert.rarity}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 
