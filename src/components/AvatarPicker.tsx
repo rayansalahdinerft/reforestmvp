@@ -10,8 +10,14 @@ import avatar3 from "@/assets/avatars/avatar3.png";
 import avatar4 from "@/assets/avatars/avatar4.png";
 import avatar5 from "@/assets/avatars/avatar5.png";
 import avatar6 from "@/assets/avatars/avatar6.png";
+import avatar7 from "@/assets/avatars/avatar7.png";
+import avatar8 from "@/assets/avatars/avatar8.png";
+import avatar9 from "@/assets/avatars/avatar9.png";
+import avatar10 from "@/assets/avatars/avatar10.png";
+import avatar11 from "@/assets/avatars/avatar11.png";
+import avatar12 from "@/assets/avatars/avatar12.png";
 
-const PRESET_AVATARS = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
+const PRESET_AVATARS = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
 
 interface AvatarPickerProps {
   currentAvatar: string;
@@ -90,7 +96,7 @@ const AvatarPicker = ({ currentAvatar, walletAddress, onAvatarChanged }: AvatarP
           </div>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-3" align="start">
+      <PopoverContent className="w-72 p-3" align="start">
         <p className="text-xs font-semibold text-muted-foreground mb-2">Choose your avatar</p>
 
         {saving && (
@@ -101,7 +107,7 @@ const AvatarPicker = ({ currentAvatar, walletAddress, onAvatarChanged }: AvatarP
 
         {!saving && (
           <>
-            <div className="grid grid-cols-3 gap-2 mb-3">
+            <div className="grid grid-cols-4 gap-2 mb-3 max-h-48 overflow-y-auto scrollbar-none">
               {PRESET_AVATARS.map((av, i) => (
                 <button
                   key={i}
