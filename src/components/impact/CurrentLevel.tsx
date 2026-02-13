@@ -137,25 +137,21 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
                   <TooltipTrigger asChild>
                     <div
                       className={cn(
-                        "flex items-center justify-between px-3 py-2.5 rounded-lg cursor-default transition-colors",
+                        "flex items-center justify-between px-3 py-2 rounded-lg cursor-default",
                         isCurrent
-                          ? "bg-secondary/60 border border-border/40"
-                          : achieved
-                            ? "bg-transparent"
-                            : "opacity-40"
+                          ? "bg-secondary/50 border border-border/30"
+                          : "bg-transparent",
+                        !achieved && "opacity-35"
                       )}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="text-[11px] text-muted-foreground font-mono w-5">{lvl.level}</span>
+                        <span className="text-[11px] text-muted-foreground font-mono w-4 text-center">{lvl.level}</span>
                         <p className={cn(
-                          "text-sm font-semibold",
+                          "text-sm font-medium",
                           achieved ? "text-foreground" : "text-muted-foreground"
                         )}>
                           {lvl.label}
                         </p>
-                        <span className={cn("text-[8px] font-bold uppercase tracking-widest", lvl.color)}>
-                          {lvl.rarity}
-                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-muted-foreground tabular-nums">{lvl.target.toLocaleString()}</span>
