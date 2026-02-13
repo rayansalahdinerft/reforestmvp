@@ -18,14 +18,14 @@ interface Level {
 }
 
 const LEVELS: Level[] = [
-  { level: 1, label: "Explorer", avatar: explorerAvatar, target: 0 },
-  { level: 2, label: "Seed", avatar: seedAvatar, target: 10 },
-  { level: 3, label: "Sprout", avatar: sproutAvatar, target: 100 },
-  { level: 4, label: "Roots", avatar: rootsAvatar, target: 1_000 },
-  { level: 5, label: "Canopy", avatar: canopyAvatar, target: 10_000 },
-  { level: 6, label: "Forest", avatar: forestAvatar, target: 100_000 },
-  { level: 7, label: "Legend", avatar: legendAvatar, target: 1_000_000 },
-  { level: 8, label: "Infinity", avatar: infinityAvatar, target: 10_000_000 },
+  { level: 1, label: "Explorer", avatar: explorerAvatar, target: 10 },
+  { level: 2, label: "Seed", avatar: seedAvatar, target: 100 },
+  { level: 3, label: "Sprout", avatar: sproutAvatar, target: 1_000 },
+  { level: 4, label: "Roots", avatar: rootsAvatar, target: 10_000 },
+  { level: 5, label: "Canopy", avatar: canopyAvatar, target: 100_000 },
+  { level: 6, label: "Forest", avatar: forestAvatar, target: 1_000_000 },
+  { level: 7, label: "Legend", avatar: legendAvatar, target: 10_000_000 },
+  { level: 8, label: "Infinity", avatar: infinityAvatar, target: 100_000_000 },
 ];
 
 interface CurrentLevelProps {
