@@ -63,15 +63,15 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
               <img src={currentLevel.avatar} alt={currentLevel.label} className="w-full h-full object-cover" />
             </div>
             <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground shadow-lg">
-              {currentLevel.level}
+              {achievedLevel ? currentLevel.level : 0}
             </div>
           </div>
           <div>
           <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
-              {achievedLevel ? "Current Level" : "No Level Yet"}
+              Current Level
             </p>
             <h3 className="text-xl font-bold text-foreground">
-              {achievedLevel ? currentLevel.label : "—"}
+              {achievedLevel ? currentLevel.label : "Level 0"}
             </h3>
           </div>
         </div>
@@ -88,7 +88,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         <div className="mb-6">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-muted-foreground">
-              {achievedLevel ? "Next" : "First level"}: <span className="text-foreground font-semibold">{nextLevel.label}</span>
+              Next: <span className="text-foreground font-semibold">{nextLevel.label}</span>
             </span>
             <span className="text-muted-foreground font-mono text-xs">
               {treesPlanted.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} / {nextLevel.target.toLocaleString()}

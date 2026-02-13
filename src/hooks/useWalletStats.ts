@@ -7,6 +7,7 @@ interface WalletStats {
   totalDonationsUsd: number;
   totalSwaps: number;
   displayName: string | null;
+  avatarUrl: string | null;
 }
 
 export const useWalletStats = () => {
@@ -16,19 +17,20 @@ export const useWalletStats = () => {
     totalDonationsUsd: 0,
     totalSwaps: 0,
     displayName: null,
+    avatarUrl: null,
   });
   // Important UX: we keep showing 0s when disconnected/loading, then update when data arrives.
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isConnected || !address) {
-      setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0, displayName: null });
+      setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0, displayName: null, avatarUrl: null });
       setLoading(false);
       return;
     }
 
     // Reset to 0 while fetching to avoid showing someone else's previous values.
-    setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0, displayName: null });
+    setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0, displayName: null, avatarUrl: null });
     setLoading(true);
 
     const fetchStats = async () => {
@@ -37,7 +39,7 @@ export const useWalletStats = () => {
         
         const { data, error } = await supabase
           .from('wallet_stats')
-          .select('total_trees, total_donations_usd, total_swaps, display_name')
+          .select('total_trees, total_donations_usd, total_swaps, display_name, avatar_url')
           .eq('wallet_address', normalizedAddress)
           .maybeSingle();
 
@@ -49,9 +51,10 @@ export const useWalletStats = () => {
             totalDonationsUsd: parseFloat(String(data.total_donations_usd)) || 0,
             totalSwaps: data.total_swaps || 0,
             displayName: data.display_name ?? null,
+            avatarUrl: (data as any).avatar_url ?? null,
           });
         } else {
-          setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0, displayName: null });
+          setStats({ totalTrees: 0, totalDonationsUsd: 0, totalSwaps: 0, displayName: null, avatarUrl: null });
         }
       } catch (err) {
         console.error('Error fetching wallet stats:', err);
@@ -89,6 +92,7 @@ export const useWalletStats = () => {
               totalDonationsUsd: parseFloat(newData.total_donations_usd) || 0,
               totalSwaps: newData.total_swaps || 0,
               displayName: newData.display_name ?? null,
+              avatarUrl: newData.avatar_url ?? null,
             });
           }
         }

@@ -40,6 +40,7 @@ export type Database = {
       }
       wallet_stats: {
         Row: {
+          avatar_url: string | null
           created_at: string
           display_name: string | null
           id: string
@@ -50,6 +51,7 @@ export type Database = {
           wallet_address: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
@@ -60,6 +62,7 @@ export type Database = {
           wallet_address: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           display_name?: string | null
           id?: string

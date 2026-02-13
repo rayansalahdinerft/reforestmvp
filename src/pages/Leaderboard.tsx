@@ -1,10 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award } from 'lucide-react';
+import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award, Flame, CalendarDays } from 'lucide-react';
 import { useAppKitAccount } from '@reown/appkit/react';
 import Header from '@/components/Header';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+import explorerAvatar from "@/assets/levels/explorer.png";
+import seedAvatar from "@/assets/levels/seed.png";
+import sproutAvatar from "@/assets/levels/sprout.png";
+import rootsAvatar from "@/assets/levels/roots.png";
+import canopyAvatar from "@/assets/levels/canopy.png";
+import forestAvatar from "@/assets/levels/forest.png";
+import legendAvatar from "@/assets/levels/legend.png";
+import infinityAvatar from "@/assets/levels/infinity.png";
+
+const LEVELS = [
+  { level: 1, label: "Explorer", avatar: explorerAvatar, target: 10 },
+  { level: 2, label: "Seed", avatar: seedAvatar, target: 100 },
+  { level: 3, label: "Sprout", avatar: sproutAvatar, target: 1_000 },
+  { level: 4, label: "Roots", avatar: rootsAvatar, target: 10_000 },
+  { level: 5, label: "Canopy", avatar: canopyAvatar, target: 100_000 },
+  { level: 6, label: "Forest", avatar: forestAvatar, target: 1_000_000 },
+  { level: 7, label: "Legend", avatar: legendAvatar, target: 10_000_000 },
+  { level: 8, label: "Infinity", avatar: infinityAvatar, target: 100_000_000 },
+];
+
+const getLevelAvatar = (trees: number, customAvatar?: string | null) => {
+  if (customAvatar) return customAvatar;
+  const achieved = [...LEVELS].reverse().find((l) => trees >= l.target);
+  return achieved?.avatar ?? explorerAvatar;
+};
 
 interface LeaderboardEntry {
   wallet_address: string;
@@ -12,6 +38,7 @@ interface LeaderboardEntry {
   total_trees: number;
   total_donations_usd: number;
   total_swaps: number;
+  avatar_url: string | null;
 }
 
 const RankIcon = ({ rank }: { rank: number }) => {
@@ -35,7 +62,7 @@ const Leaderboard = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('wallet_stats')
-      .select('wallet_address, display_name, total_trees, total_donations_usd, total_swaps')
+      .select('wallet_address, display_name, total_trees, total_donations_usd, total_swaps, avatar_url')
       .gt('total_trees', 0)
       .order('total_trees', { ascending: false })
       .limit(50);
@@ -102,13 +129,31 @@ const Leaderboard = () => {
           </p>
         </div>
 
+        {/* Monthly Contest Teaser */}
+        <div className="mb-6 p-5 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 border border-primary/20 animate-fade-in">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+              <Flame className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                Monthly Contest
+                <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">Coming Soon</span>
+              </h3>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <CalendarDays className="w-3 h-3" />
+                Who plants the most trees each month wins a surprise reward 🎁
+              </p>
+            </div>
+          </div>
+        </div>
         {/* My rank card */}
         {isConnected && myEntry && (
           <div className="mb-6 p-4 rounded-2xl bg-primary/5 border border-primary/20 animate-fade-in">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <span className="text-lg">🌱</span>
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/20">
+                  <img src={getLevelAvatar(myEntry.total_trees, myEntry.avatar_url)} alt="avatar" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -204,15 +249,20 @@ const Leaderboard = () => {
                     <div className="flex items-center justify-center">
                       <RankIcon rank={rank} />
                     </div>
-                    <div className="min-w-0">
-                      <p className={`text-sm font-medium truncate ${isMe ? 'text-primary' : 'text-foreground'}`}>
-                        {entry.display_name || formatAddress(entry.wallet_address)}
-                      </p>
-                      {entry.display_name && (
-                        <p className="text-[10px] text-muted-foreground truncate">
-                          {formatAddress(entry.wallet_address)}
+                    <div className="min-w-0 flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-border/50 shrink-0">
+                        <img src={getLevelAvatar(entry.total_trees, entry.avatar_url)} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`text-sm font-medium truncate ${isMe ? 'text-primary' : 'text-foreground'}`}>
+                          {entry.display_name || formatAddress(entry.wallet_address)}
                         </p>
-                      )}
+                        {entry.display_name && (
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {formatAddress(entry.wallet_address)}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right">
                       <span className={`text-sm font-bold ${rank <= 3 ? 'text-primary' : 'text-foreground'}`}>

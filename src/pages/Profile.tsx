@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Edit2, Check, X, DollarSign, Users, Leaf, Globe } from "lucide-react";
+import { User, Edit2, Check, X, DollarSign, Users, Leaf, Globe, Camera, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import NftGallery from "@/components/impact/NftGallery";
@@ -36,6 +36,9 @@ const Profile = () => {
   const [editing, setEditing] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const treesPlanted = stats.totalTrees;
   const achievedLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target) ?? null;
@@ -44,6 +47,12 @@ const Profile = () => {
   const co2Absorbed = treesPlanted * 22;
   const oxygenProduced = treesPlanted * 100;
   const showEnv = treesPlanted >= 10;
+
+  // Profile avatar: custom > current level avatar
+  const profileAvatar = stats.avatarUrl || currentLevel.avatar;
+
+  // Suggestions = all level avatars the user has unlocked
+  const unlockedAvatars = LEVELS.filter((l) => treesPlanted >= l.target);
 
   const handleEditStart = () => {
     setNameInput(stats.displayName ?? "");
@@ -55,7 +64,7 @@ const Profile = () => {
     setSaving(true);
     try {
       const { error } = await supabase.functions.invoke("update-display-name", {
-        body: { wallet_address: address.toLowerCase(), display_name: nameInput.trim() || null },
+        body: { walletAddress: address.toLowerCase(), displayName: nameInput.trim() || null },
       });
       if (error) throw error;
       toast.success("Display name updated");
@@ -65,6 +74,57 @@ const Profile = () => {
       toast.error("Failed to update name");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAvatarSelect = async (avatarUrl: string) => {
+    if (!address) return;
+    setUploadingAvatar(true);
+    try {
+      const { error } = await supabase.functions.invoke("update-display-name", {
+        body: { walletAddress: address.toLowerCase(), avatarUrl },
+      });
+      if (error) throw error;
+      toast.success("Avatar updated! 🌱");
+      setShowAvatarPicker(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update avatar");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !address) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2MB");
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split(".").pop() || "png";
+      const path = `${address.toLowerCase()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+
+      await handleAvatarSelect(urlData.publicUrl);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to upload avatar");
+      setUploadingAvatar(false);
     }
   };
 
@@ -92,10 +152,16 @@ const Profile = () => {
             {/* Profile hero card */}
             <div className="swap-card p-6 animate-slide-up backdrop-blur-sm">
               <div className="flex items-center gap-5">
-                {/* Avatar = current level */}
+                {/* Avatar with edit overlay */}
                 <div className="relative shrink-0">
-                  <div className="w-24 h-24 rounded-2xl overflow-hidden border border-primary/20 shadow-lg">
-                    <img src={currentLevel.avatar} alt={currentLevel.label} className="w-full h-full object-cover" />
+                  <div
+                    className="w-24 h-24 rounded-2xl overflow-hidden border border-primary/20 shadow-lg cursor-pointer group"
+                    onClick={() => setShowAvatarPicker(!showAvatarPicker)}
+                  >
+                    <img src={profileAvatar} alt={currentLevel.label} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
+                      <Camera className="w-6 h-6 text-foreground" />
+                    </div>
                   </div>
                   {achievedLevel && (
                     <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-primary flex items-center justify-center text-[11px] font-bold text-primary-foreground shadow-lg">
@@ -137,7 +203,7 @@ const Profile = () => {
                   </div>
                   <p className="text-xs text-muted-foreground font-mono">{shortAddr}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {achievedLevel ? `Level ${currentLevel.level} — ${currentLevel.label}` : "No level yet"}
+                    {achievedLevel ? `Level ${currentLevel.level} — ${currentLevel.label}` : "Level 0"}
                   </p>
                 </div>
 
@@ -149,6 +215,54 @@ const Profile = () => {
                   <p className="text-xs text-muted-foreground">trees planted</p>
                 </div>
               </div>
+
+              {/* Avatar picker */}
+              {showAvatarPicker && (
+                <div className="mt-5 p-4 rounded-xl bg-muted/30 border border-border/50 animate-fade-in">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-3">Choose your avatar</p>
+
+                  {/* Level suggestions */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {LEVELS.map((lvl) => {
+                      const unlocked = treesPlanted >= lvl.target;
+                      return (
+                        <button
+                          key={lvl.level}
+                          disabled={!unlocked || uploadingAvatar}
+                          onClick={() => handleAvatarSelect(lvl.avatar)}
+                          className={cn(
+                            "w-14 h-14 rounded-xl overflow-hidden border-2 transition-all",
+                            unlocked
+                              ? "border-primary/30 hover:border-primary cursor-pointer hover:scale-105"
+                              : "border-border/20 opacity-30 grayscale cursor-not-allowed",
+                            profileAvatar === lvl.avatar && "border-primary ring-2 ring-primary/30"
+                          )}
+                          title={unlocked ? lvl.label : `Unlock at ${lvl.target.toLocaleString()} trees`}
+                        >
+                          <img src={lvl.avatar} alt={lvl.label} className="w-full h-full object-cover" />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Upload custom */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingAvatar}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors text-sm text-foreground font-medium w-full justify-center"
+                  >
+                    <Upload className="w-4 h-4" />
+                    {uploadingAvatar ? "Uploading..." : "Upload custom photo"}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Impact stats */}

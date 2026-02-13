@@ -70,7 +70,7 @@ const Impact = () => {
             <Sprout className="w-8 h-8 text-green-500" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
-            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Level</span>
+            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Impact</span>
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
             Every swap levels you up and plants trees.
