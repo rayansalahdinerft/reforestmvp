@@ -536,3 +536,12 @@ button, a, input, select, textarea {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+/* Infinity sparkle particles */
+@keyframes sparkle-float {
+  0% { opacity: 0; transform: scale(0) translateY(0); }
+  20% { opacity: 1; transform: scale(1.2); }
+  50% { opacity: 0.8; transform: scale(0.8) translateY(-8px); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0) translateY(-16px); }
+}

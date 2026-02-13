@@ -89,6 +89,7 @@ const NftCertificate = ({
   const config = rarityConfig[rarity];
   const [flipped, setFlipped] = useState(false);
   const isMythic = rarity === "mythic" || rarity === "infinity";
+  const isInfinity = rarity === "infinity";
 
   return (
     <div
@@ -119,8 +120,10 @@ const NftCertificate = ({
           )}
           style={{ backfaceVisibility: "hidden" }}
         >
-          {/* Card background */}
-          <div className={cn("absolute inset-0 bg-gradient-to-b", unlocked ? config.bg : "from-muted/15 to-muted/5")} />
+          {/* Solid dark base */}
+          <div className="absolute inset-0 bg-black/80" />
+          {/* Card color gradient on top */}
+          <div className={cn("absolute inset-0 bg-gradient-to-b", unlocked ? config.bg : "from-muted/10 to-muted/5")} />
 
           {/* Holographic rainbow overlay for mythic */}
           {isMythic && unlocked && (
@@ -168,7 +171,25 @@ const NftCertificate = ({
             </div>
           )}
 
-          {/* Card content */}
+          {/* Sparkle particles for Infinity */}
+          {isInfinity && unlocked && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1 h-1 rounded-full bg-white"
+                  style={{
+                    left: `${10 + Math.random() * 80}%`,
+                    top: `${10 + Math.random() * 80}%`,
+                    animation: `sparkle-float ${2 + Math.random() * 3}s ease-in-out infinite`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    opacity: 0,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
           <div className="relative h-full flex flex-col items-center justify-between p-4 py-5">
             {/* Rarity name at top */}
             <h4 className={cn(
