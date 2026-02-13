@@ -4,10 +4,11 @@ import SparklineChart from "@/components/SparklineChart";
 import TokenDetailModal from "@/components/TokenDetailModal";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import { useMarketData, TOKEN_CATEGORIES, type MarketToken } from "@/hooks/useMarketData";
-import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2, Database, AlertTriangle } from "lucide-react";
+import { useWatchlist } from "@/hooks/useWatchlist";
+import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2, Database, AlertTriangle, Star } from "lucide-react";
 import { useState, useMemo } from "react";
 
-const CATEGORIES = ['All', 'Major', 'Layer 2', 'DeFi', 'Stablecoin', 'Meme'];
+const CATEGORIES = ['All', 'Watchlist', 'Major', 'Layer 2', 'DeFi', 'Stablecoin', 'Meme'];
 
 const Market = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -16,6 +17,7 @@ const Market = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { tokens, loading, error, refetch, isStale, isRateLimited } = useMarketData();
+  const { toggle, isWatched, isConnected: walletConnected } = useWatchlist();
 
   const handleTokenClick = (token: MarketToken) => {
     setSelectedToken(token);
@@ -25,28 +27,27 @@ const Market = () => {
   const filteredTokens = useMemo(() => {
     return tokens.filter(token => {
       const category = TOKEN_CATEGORIES[token.id] || 'Other';
-      const matchesCategory = selectedCategory === 'All' || category === selectedCategory;
+      const matchesCategory =
+        selectedCategory === 'All' ||
+        (selectedCategory === 'Watchlist' ? isWatched(token.id) : category === selectedCategory);
       const matchesSearch = token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            token.symbol.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [tokens, selectedCategory, searchQuery]);
+  }, [tokens, selectedCategory, searchQuery, isWatched]);
 
   const formatPrice = (price: number | null | undefined) => {
     if (price == null) return 'N/A';
     if (price >= 1) {
       return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
-    // Show full decimals for small prices (up to 10 decimal places)
     return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 10 });
   };
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Floating leaves animation */}
       <FloatingLeaves />
       
-      {/* Background effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-3xl" />
@@ -68,7 +69,6 @@ const Market = () => {
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8 animate-slide-up">
-          {/* Search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
@@ -80,24 +80,23 @@ const Market = () => {
             />
           </div>
 
-          {/* Category filters */}
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
                   selectedCategory === category
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
                 }`}
               >
+                {category === 'Watchlist' && <Star className="w-3.5 h-3.5" />}
                 {category}
               </button>
             ))}
           </div>
 
-          {/* Refresh button */}
           <button
             onClick={refetch}
             disabled={loading}
@@ -108,20 +107,18 @@ const Market = () => {
           </button>
         </div>
 
-        {/* Results count & status badges */}
+        {/* Results count & status */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <p className="text-sm text-muted-foreground">
               Showing {filteredTokens.length} tokens
             </p>
-            {/* Stale data badge */}
             {isStale && !isRateLimited && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/50 text-accent-foreground text-xs font-medium border border-border">
                 <Database className="w-3 h-3" />
                 Données en cache
               </span>
             )}
-            {/* Rate limited badge */}
             {isRateLimited && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/10 text-destructive text-xs font-medium border border-destructive/20">
                 <AlertTriangle className="w-3 h-3" />
@@ -129,12 +126,10 @@ const Market = () => {
               </span>
             )}
           </div>
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
 
-        {/* Loading state */}
+        {/* Loading */}
         {loading && tokens.length === 0 && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -148,6 +143,7 @@ const Market = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
+                    <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground w-10"></th>
                     <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">#</th>
                     <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">Token</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-muted-foreground">Price</th>
@@ -161,15 +157,31 @@ const Market = () => {
                     const isPositive = token.price_change_percentage_24h >= 0;
                     const category = TOKEN_CATEGORIES[token.id] || 'Other';
                     const sparklineData = token.sparkline_in_7d?.price || [];
-                    // Sample sparkline data for performance (every 4th point)
                     const sampledSparkline = sparklineData.filter((_, i) => i % 4 === 0);
+                    const watched = isWatched(token.id);
 
-                      return (
+                    return (
                       <tr 
                         key={token.id} 
                         className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
                         onClick={() => handleTokenClick(token)}
                       >
+                        <td className="py-4 px-4">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggle(token.id);
+                            }}
+                            className="p-1 rounded-md hover:bg-secondary/50 transition-colors"
+                            title={walletConnected ? (watched ? "Remove from watchlist" : "Add to watchlist") : "Connect wallet to use watchlist"}
+                          >
+                            <Star
+                              className={`w-4 h-4 transition-colors ${
+                                watched ? "fill-primary text-primary" : "text-muted-foreground/30 hover:text-muted-foreground"
+                              }`}
+                            />
+                          </button>
+                        </td>
                         <td className="py-4 px-4 text-sm text-muted-foreground">{index + 1}</td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
@@ -225,7 +237,11 @@ const Market = () => {
         {/* Empty state */}
         {!loading && filteredTokens.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-muted-foreground">No tokens found matching your criteria</p>
+            <p className="text-muted-foreground">
+              {selectedCategory === 'Watchlist' 
+                ? (walletConnected ? "No tokens in your watchlist yet. Click ⭐ to add some!" : "Connect your wallet to use the watchlist.")
+                : "No tokens found matching your criteria"}
+            </p>
           </div>
         )}
 
