@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award } from 'lucide-react';
 import { useAppKitAccount } from '@reown/appkit/react';
 import Header from '@/components/Header';
@@ -76,17 +76,8 @@ const Leaderboard = () => {
     setLoading(false);
   };
 
-  const hasShownContestToast = useRef(false);
-
   useEffect(() => {
     fetchLeaderboard();
-    if (!hasShownContestToast.current) {
-      hasShownContestToast.current = true;
-      toast("🔥 Monthly Contest — Coming Soon!", {
-        description: "Who plants the most trees each month wins a surprise reward 🎁",
-        duration: 5000,
-      });
-    }
   }, []);
 
   const myEntry = entries.find(
