@@ -23,7 +23,7 @@ interface Certificate {
 }
 
 const CERTIFICATES: Certificate[] = [
-  { milestone: 10, label: "Explorer", avatar: explorerAvatar, rarity: "Starter", gradient: "from-stone-400 to-zinc-500", glow: "shadow-stone-500/20", badgeBg: "bg-stone-500/20 text-stone-400 border-stone-500/30" },
+  { milestone: 1, label: "Explorer", avatar: explorerAvatar, rarity: "Starter", gradient: "from-stone-400 to-zinc-500", glow: "shadow-stone-500/20", badgeBg: "bg-stone-500/20 text-stone-400 border-stone-500/30" },
   { milestone: 100, label: "Seed", avatar: seedAvatar, rarity: "Common", gradient: "from-green-400 to-emerald-500", glow: "shadow-green-500/20", badgeBg: "bg-green-500/20 text-green-400 border-green-500/30" },
   { milestone: 1_000, label: "Sprout", avatar: sproutAvatar, rarity: "Uncommon", gradient: "from-blue-400 to-cyan-500", glow: "shadow-blue-500/20", badgeBg: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
   { milestone: 10_000, label: "Roots", avatar: rootsAvatar, rarity: "Rare", gradient: "from-purple-400 to-violet-500", glow: "shadow-purple-500/20", badgeBg: "bg-purple-500/20 text-purple-400 border-purple-500/30" },

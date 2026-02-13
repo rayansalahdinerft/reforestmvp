@@ -17,7 +17,7 @@ import legendAvatar from "@/assets/levels/legend.png";
 import infinityAvatar from "@/assets/levels/infinity.png";
 
 const LEVELS = [
-  { level: 1, label: "Explorer", avatar: explorerAvatar, target: 10 },
+  { level: 1, label: "Explorer", avatar: explorerAvatar, target: 1 },
   { level: 2, label: "Seed", avatar: seedAvatar, target: 100 },
   { level: 3, label: "Sprout", avatar: sproutAvatar, target: 1_000 },
   { level: 4, label: "Roots", avatar: rootsAvatar, target: 10_000 },
