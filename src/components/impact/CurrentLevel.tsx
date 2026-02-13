@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Sparkles, ChevronRight, Lock, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Sparkles } from "lucide-react";
 
 const LEVELS = [
   { level: 1, target: 1 },
@@ -18,8 +16,6 @@ interface CurrentLevelProps {
 }
 
 const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
-  const [expanded, setExpanded] = useState(false);
-
   const achievedLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target) ?? null;
   const currentLevel = achievedLevel ?? LEVELS[0];
   const currentIdx = achievedLevel ? LEVELS.indexOf(currentLevel) : -1;
@@ -43,7 +39,6 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
 
   return (
     <div className="swap-card p-5 animate-slide-up backdrop-blur-sm">
-      {/* Current level header */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Current</p>
@@ -57,12 +52,12 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       </div>
 
-      {/* Progress bar */}
       {nextLevel && (
         <div className="mt-5">
           <div className="flex items-center justify-between text-xs mb-2">
             <span className="text-muted-foreground">
               Next: <span className="text-foreground font-semibold">Level {nextLevel.level}</span>
+              <span className="text-muted-foreground ml-1">({nextLevel.target.toLocaleString()} trees)</span>
             </span>
             <span className="text-muted-foreground font-mono text-[11px] tabular-nums">
               {Math.round(progress)}%
@@ -91,55 +86,9 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       )}
 
-      {/* NFT info */}
       <p className="mt-4 text-[11px] text-muted-foreground text-center">
         Each level unlocks a <span className="text-primary font-semibold">Proof of Impact NFT</span>
       </p>
-
-      {/* Explore toggle */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        {expanded ? "Hide" : "All levels"}
-        <ChevronRight className={cn("w-3.5 h-3.5 transition-transform duration-200", expanded && "rotate-90")} />
-      </button>
-
-      {/* Expanded levels */}
-      {expanded && (
-        <div className="mt-2 space-y-px animate-fade-in">
-          {LEVELS.map((lvl) => {
-            const achieved = treesPlanted >= lvl.target;
-            const isCurrent = achievedLevel?.level === lvl.level;
-
-            return (
-              <div
-                key={lvl.level}
-                className={cn(
-                  "flex items-center justify-between px-3 py-2 rounded-lg",
-                  isCurrent ? "bg-secondary/50 border border-border/30" : "bg-transparent",
-                  !achieved && "opacity-35"
-                )}
-              >
-                <span className={cn(
-                  "text-sm font-medium",
-                  achieved ? "text-foreground" : "text-muted-foreground"
-                )}>
-                  Level {lvl.level}
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground tabular-nums">{lvl.target.toLocaleString()}</span>
-                  {achieved ? (
-                    <Check className="w-3.5 h-3.5 text-primary" />
-                  ) : (
-                    <Lock className="w-3 h-3 text-muted-foreground/30" />
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 };

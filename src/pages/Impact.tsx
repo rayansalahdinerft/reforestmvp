@@ -7,7 +7,7 @@ import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
 import NftGallery from "@/components/impact/NftGallery";
 import NftCertificate from "@/components/impact/NftCertificate";
-import StreaksBadges from "@/components/impact/StreaksBadges";
+
 
 const NFT_CERTS = [
   { milestone: 1, label: "Explorer", description: "Planted your first tree", rarity: "common" as const },
@@ -130,8 +130,6 @@ const Impact = () => {
             {/* Level progression */}
             <CurrentLevel treesPlanted={treesPlanted} />
 
-            {/* Streaks & Badges */}
-            <StreaksBadges />
 
             {/* NFT Certificates */}
             <div>
