@@ -52,30 +52,6 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       </div>
 
-      {nextLevel && (
-        <div className="mt-5">
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="text-muted-foreground">
-              Next: <span className="text-foreground font-semibold">Level {nextLevel.level}</span>
-              <span className="text-muted-foreground ml-1">({nextLevel.target.toLocaleString()} trees)</span>
-            </span>
-            <span className="text-muted-foreground font-mono text-[11px] tabular-nums">
-              {Math.round(progress)}%
-            </span>
-          </div>
-          <div className="h-2.5 bg-muted/40 rounded-full overflow-hidden border border-border/30">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 ease-out relative"
-              style={{ width: `${Math.max(progress, 2)}%` }}
-            >
-              <div className="absolute inset-0 animate-shimmer rounded-full" />
-            </div>
-          </div>
-          <p className="text-[10px] text-muted-foreground mt-1.5 tabular-nums">
-            {treesPlanted.toLocaleString(undefined, { maximumFractionDigits: 2 })} / {nextLevel.target.toLocaleString()} trees
-          </p>
-        </div>
-      )}
 
       {allMaxed && (
         <div className="mt-5 p-3 rounded-xl bg-secondary/50 border border-border/30 text-center">
