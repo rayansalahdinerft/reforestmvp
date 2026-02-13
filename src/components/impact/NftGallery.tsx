@@ -3,6 +3,7 @@ import { Lock, Award, X, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 
+import explorerAvatar from "@/assets/levels/explorer.png";
 import seedAvatar from "@/assets/levels/seed.png";
 import sproutAvatar from "@/assets/levels/sprout.png";
 import rootsAvatar from "@/assets/levels/roots.png";
@@ -22,6 +23,7 @@ interface Certificate {
 }
 
 const CERTIFICATES: Certificate[] = [
+  { milestone: 1, label: "Explorer", avatar: explorerAvatar, rarity: "Starter", gradient: "from-stone-400 to-zinc-500", glow: "shadow-stone-500/20", badgeBg: "bg-stone-500/20 text-stone-400 border-stone-500/30" },
   { milestone: 10, label: "Seed", avatar: seedAvatar, rarity: "Common", gradient: "from-green-400 to-emerald-500", glow: "shadow-green-500/20", badgeBg: "bg-green-500/20 text-green-400 border-green-500/30" },
   { milestone: 100, label: "Sprout", avatar: sproutAvatar, rarity: "Uncommon", gradient: "from-blue-400 to-cyan-500", glow: "shadow-blue-500/20", badgeBg: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
   { milestone: 1_000, label: "Roots", avatar: rootsAvatar, rarity: "Rare", gradient: "from-purple-400 to-violet-500", glow: "shadow-purple-500/20", badgeBg: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
