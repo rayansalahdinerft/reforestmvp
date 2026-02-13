@@ -693,8 +693,8 @@ const SwapCard = () => {
             <div className="px-3 sm:px-4 pb-2">
               <div className="token-input-row">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">You Pay</span>
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Credit / Debit Card</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">💳 Credit / Debit Card</span>
                 </div>
                 <div className="flex items-center justify-between gap-2 sm:gap-4">
                   <div className="flex items-center flex-1 gap-1">
@@ -804,24 +804,47 @@ const SwapCard = () => {
               </div>
             )}
 
-            {/* Buy Button */}
+            {/* Buy Button - Opens Onramper */}
             <div className="px-3 sm:px-4 pb-3 sm:pb-4">
               <button
                 onClick={() => {
-                  if (!buyFiatAmount || !buyToken) {
-                    toast.error('Please enter an amount and select a token');
+                  if (!buyToken) {
+                    toast.error('Please select a token to buy');
                     return;
                   }
-                  toast.info('Fiat on-ramp coming soon! 🚧', {
-                    description: 'Credit card purchases will be available shortly.',
+                  const params = new URLSearchParams({
+                    mode: 'buy',
+                    defaultFiat: 'USD',
+                    defaultCrypto: buyToken.symbol.toUpperCase(),
+                    onlyCryptos: 'ETH,USDC,USDT,DAI,WBTC,LINK,UNI,AAVE',
+                    themeName: 'dark',
+                    containerColor: '0a0f0aff',
+                    primaryColor: '4ade80ff',
+                    secondaryColor: '1a2e1aff',
+                    cardColor: '0d1a0dff',
+                    primaryTextColor: 'f0fdf4ff',
+                    secondaryTextColor: '86efacff',
+                    borderRadius: '0.75',
+                    widgetBorderRadius: '0.75',
                   });
+                  if (buyFiatAmount && parseFloat(buyFiatAmount) > 0) {
+                    params.set('defaultAmount', buyFiatAmount);
+                  }
+                  if (address) {
+                    params.set('wallets', `ETH:${address}`);
+                  }
+                  const onramperUrl = `https://buy.onramper.com?${params.toString()}`;
+                  window.open(onramperUrl, '_blank', 'width=450,height=700,toolbar=no,menubar=no');
                 }}
-                disabled={!buyFiatAmount || !buyToken || parseFloat(buyFiatAmount) <= 0}
+                disabled={!buyToken}
                 className="w-full premium-button flex items-center justify-center gap-2 text-sm sm:text-base py-3 sm:py-4"
               >
                 <CreditCard className="w-5 h-5" />
                 Buy & Plant Trees 🌱
               </button>
+              <p className="text-[8px] sm:text-[10px] text-center text-muted-foreground mt-2">
+                Powered by Onramper • MoonPay, Transak & 15+ providers
+              </p>
             </div>
           </>
         )}
