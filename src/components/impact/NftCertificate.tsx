@@ -1,4 +1,4 @@
-import { Lock, Award, Download, ExternalLink } from "lucide-react";
+import { Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NftCertificateProps {
@@ -12,62 +12,35 @@ interface NftCertificateProps {
 
 const rarityConfig = {
   common: {
-    border: "border-green-500/30",
-    glow: "shadow-[0_0_30px_rgba(34,197,94,0.15)]",
-    gradient: "from-green-600/20 via-emerald-500/10 to-green-700/20",
-    badgeBg: "bg-green-500/20 text-green-400",
-    headerGradient: "from-green-400 to-emerald-500",
-    ring: "ring-green-500/20",
+    accent: "text-emerald-400",
+    border: "border-emerald-500/25",
+    bg: "from-emerald-500/10 to-emerald-600/5",
   },
   uncommon: {
-    border: "border-blue-500/30",
-    glow: "shadow-[0_0_30px_rgba(59,130,246,0.15)]",
-    gradient: "from-blue-600/20 via-cyan-500/10 to-blue-700/20",
-    badgeBg: "bg-blue-500/20 text-blue-400",
-    headerGradient: "from-blue-400 to-cyan-500",
-    ring: "ring-blue-500/20",
+    accent: "text-blue-400",
+    border: "border-blue-500/25",
+    bg: "from-blue-500/10 to-blue-600/5",
   },
   rare: {
-    border: "border-purple-500/30",
-    glow: "shadow-[0_0_30px_rgba(168,85,247,0.2)]",
-    gradient: "from-purple-600/20 via-violet-500/10 to-purple-700/20",
-    badgeBg: "bg-purple-500/20 text-purple-400",
-    headerGradient: "from-purple-400 to-violet-500",
-    ring: "ring-purple-500/20",
+    accent: "text-purple-400",
+    border: "border-purple-500/25",
+    bg: "from-purple-500/10 to-purple-600/5",
   },
   epic: {
-    border: "border-orange-500/30",
-    glow: "shadow-[0_0_35px_rgba(249,115,22,0.2)]",
-    gradient: "from-orange-600/20 via-amber-500/10 to-orange-700/20",
-    badgeBg: "bg-orange-500/20 text-orange-400",
-    headerGradient: "from-orange-400 to-amber-500",
-    ring: "ring-orange-500/20",
+    accent: "text-orange-400",
+    border: "border-orange-500/25",
+    bg: "from-orange-500/10 to-orange-600/5",
   },
   legendary: {
-    border: "border-yellow-500/40",
-    glow: "shadow-[0_0_40px_rgba(234,179,8,0.25)]",
-    gradient: "from-yellow-600/20 via-amber-400/15 to-yellow-700/20",
-    badgeBg: "bg-yellow-500/20 text-yellow-400",
-    headerGradient: "from-yellow-400 to-amber-400",
-    ring: "ring-yellow-500/30",
+    accent: "text-yellow-400",
+    border: "border-yellow-500/30",
+    bg: "from-yellow-500/10 to-amber-500/5",
   },
   mythic: {
-    border: "border-red-500/40",
-    glow: "shadow-[0_0_50px_rgba(239,68,68,0.25)]",
-    gradient: "from-red-600/20 via-rose-500/15 to-red-700/20",
-    badgeBg: "bg-red-500/20 text-red-400",
-    headerGradient: "from-red-400 to-rose-500",
-    ring: "ring-red-500/30",
+    accent: "text-red-400",
+    border: "border-red-500/30",
+    bg: "from-red-500/10 to-rose-500/5",
   },
-};
-
-const treeEmojis: Record<string, string> = {
-  common: "🌱",
-  uncommon: "🌿",
-  rare: "🌳",
-  epic: "🏔️",
-  legendary: "🌍",
-  mythic: "✨",
 };
 
 const NftCertificate = ({
@@ -80,106 +53,67 @@ const NftCertificate = ({
 }: NftCertificateProps) => {
   const unlocked = current >= milestone;
   const config = rarityConfig[rarity];
+  const progress = Math.min((current / milestone) * 100, 100);
 
   return (
     <div
       className={cn(
-        "group relative rounded-3xl border overflow-hidden transition-all duration-500 animate-slide-up",
-        unlocked ? config.border : "border-border/40",
-        unlocked ? config.glow : "",
-        !unlocked && "opacity-50 grayscale"
+        "relative rounded-2xl border overflow-hidden transition-all duration-300 animate-slide-up",
+        unlocked ? config.border : "border-border/30",
+        !unlocked && "opacity-50"
       )}
-      style={{ animationDelay: `${index * 0.08}s` }}
+      style={{ animationDelay: `${index * 0.06}s` }}
     >
-      {/* Card background */}
-      <div
-        className={cn(
-          "absolute inset-0 bg-gradient-to-br transition-opacity duration-500",
-          unlocked ? config.gradient : "from-muted/20 to-muted/10",
-        )}
-      />
+      {/* Background */}
+      <div className={cn(
+        "absolute inset-0 bg-gradient-to-br",
+        unlocked ? config.bg : "from-muted/10 to-muted/5"
+      )} />
 
-      {/* Shimmer effect for unlocked */}
-      {unlocked && (
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 animate-shimmer" />
-        </div>
-      )}
-
-      <div className="relative p-5">
-        {/* Header: Rarity + ID */}
-        <div className="flex items-center justify-between mb-4">
-          <span
-            className={cn(
-              "text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full",
-              unlocked ? config.badgeBg : "bg-muted/30 text-muted-foreground"
-            )}
-          >
+      <div className="relative p-4">
+        {/* Top: rarity badge */}
+        <div className="flex items-center justify-between mb-3">
+          <span className={cn(
+            "text-[8px] font-bold uppercase tracking-widest",
+            unlocked ? config.accent : "text-muted-foreground/50"
+          )}>
             {rarity}
           </span>
-          <span className="text-[10px] text-muted-foreground font-mono">
-            #{String(index + 1).padStart(4, "0")}
-          </span>
-        </div>
-
-        {/* Icon area */}
-        <div className="flex justify-center my-5">
-          <div
-            className={cn(
-              "w-20 h-20 rounded-2xl flex items-center justify-center text-4xl transition-transform duration-300",
-              unlocked
-                ? `bg-gradient-to-br ${config.gradient} ring-1 ${config.ring} group-hover:scale-110`
-                : "bg-muted/30"
-            )}
-          >
-            {unlocked ? (
-              treeEmojis[rarity]
-            ) : (
-              <Lock className="w-8 h-8 text-muted-foreground" />
-            )}
-          </div>
-        </div>
-
-        {/* Title */}
-        <h4
-          className={cn(
-            "text-center font-bold text-lg mb-1",
-            unlocked
-              ? `text-transparent bg-clip-text bg-gradient-to-r ${config.headerGradient}`
-              : "text-muted-foreground"
+          {unlocked ? (
+            <Check className="w-3.5 h-3.5 text-primary" />
+          ) : (
+            <Lock className="w-3 h-3 text-muted-foreground/30" />
           )}
-        >
+        </div>
+
+        {/* Label */}
+        <h4 className={cn(
+          "font-bold text-sm mb-0.5",
+          unlocked ? "text-foreground" : "text-muted-foreground"
+        )}>
           {label}
         </h4>
 
         {/* Milestone */}
-        <p className="text-center text-xs text-muted-foreground mb-3">
-          {milestone.toLocaleString()} trees planted
+        <p className="text-[10px] text-muted-foreground mb-3 tabular-nums">
+          {milestone.toLocaleString()} trees
         </p>
 
-        {/* Description */}
-        <p className="text-center text-xs text-muted-foreground/80 mb-4 leading-relaxed">
-          {unlocked ? description : `Plant ${milestone.toLocaleString()} trees to unlock`}
-        </p>
+        {/* Progress bar */}
+        {!unlocked && (
+          <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary/60 to-accent/60 transition-all duration-500"
+              style={{ width: `${Math.max(progress, 2)}%` }}
+            />
+          </div>
+        )}
 
-        {/* Status / Actions */}
-        <div className="flex justify-center">
-          {unlocked ? (
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold">
-              <Award className={cn("w-3.5 h-3.5", `text-${rarity === "common" ? "green" : rarity === "uncommon" ? "blue" : rarity === "rare" ? "purple" : rarity === "epic" ? "orange" : rarity === "legendary" ? "yellow" : "red"}-400`)} />
-              <span className={cn(
-                "text-transparent bg-clip-text bg-gradient-to-r",
-                config.headerGradient
-              )}>
-                UNLOCKED
-              </span>
-            </div>
-          ) : (
-            <div className="text-[11px] text-muted-foreground/60 font-medium">
-              🔒 LOCKED
-            </div>
-          )}
-        </div>
+        {unlocked && (
+          <p className={cn("text-[10px] font-semibold", config.accent)}>
+            Unlocked
+          </p>
+        )}
       </div>
     </div>
   );
