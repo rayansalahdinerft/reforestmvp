@@ -13,98 +13,77 @@ interface NftCertificateProps {
   rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic" | "infinity";
 }
 
-// Progressive card styles: basic → premium → gold → platinum → black
 const rarityConfig = {
   common: {
-    // Basic blue card
-    cardBg: "from-[#1a2744] via-[#1e3050] to-[#162540]",
-    accent: "text-blue-200/80",
-    textColor: "text-blue-100",
-    subtextColor: "text-blue-300/60",
-    border: "border-blue-400/20",
-    chipBg: "bg-blue-300/10",
-    numberStyle: "text-blue-100/90",
+    // 1K — Bleu basique
+    bg: "linear-gradient(145deg, #1e3a5f 0%, #1a2d4a 40%, #162540 100%)",
+    textMain: "#a3c4e8",
+    textSub: "rgba(130,170,220,0.6)",
+    borderColor: "rgba(100,160,220,0.25)",
+    embossLight: "rgba(150,200,255,0.08)",
     shimmer: false,
-    holographic: false,
+    holo: false,
   },
   uncommon: {
-    // Deeper blue with subtle pattern
-    cardBg: "from-[#182d55] via-[#1a3668] to-[#14284a]",
-    accent: "text-blue-100",
-    textColor: "text-blue-50",
-    subtextColor: "text-blue-200/60",
-    border: "border-blue-300/25",
-    chipBg: "bg-blue-200/10",
-    numberStyle: "text-blue-50",
+    // 10K — Bleu foncé
+    bg: "linear-gradient(145deg, #0f2240 0%, #162d55 40%, #0d1b35 100%)",
+    textMain: "#7da8d4",
+    textSub: "rgba(100,150,200,0.5)",
+    borderColor: "rgba(80,140,210,0.3)",
+    embossLight: "rgba(120,180,255,0.06)",
     shimmer: false,
-    holographic: false,
+    holo: false,
   },
   rare: {
-    // Gold card
-    cardBg: "from-[#8B7530] via-[#C5A748] to-[#8B7530]",
-    accent: "text-yellow-100",
-    textColor: "text-yellow-50",
-    subtextColor: "text-yellow-200/70",
-    border: "border-yellow-300/40",
-    chipBg: "bg-yellow-200/15",
-    numberStyle: "text-yellow-50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]",
+    // 100K — OR
+    bg: "linear-gradient(145deg, #b8952a 0%, #d4aa3c 30%, #c49a28 60%, #a07820 100%)",
+    textMain: "#fff8e1",
+    textSub: "rgba(255,248,220,0.7)",
+    borderColor: "rgba(212,170,60,0.5)",
+    embossLight: "rgba(255,240,180,0.15)",
     shimmer: true,
-    holographic: false,
+    holo: false,
   },
   epic: {
-    // Platinum / Silver card
-    cardBg: "from-[#8a8a8a] via-[#c0c0c0] to-[#8a8a8a]",
-    accent: "text-gray-100",
-    textColor: "text-white",
-    subtextColor: "text-gray-200/70",
-    border: "border-white/30",
-    chipBg: "bg-white/10",
-    numberStyle: "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]",
+    // 1M — Platine/Argent
+    bg: "linear-gradient(145deg, #a0a0a0 0%, #d0d0d0 30%, #b8b8b8 60%, #909090 100%)",
+    textMain: "#ffffff",
+    textSub: "rgba(255,255,255,0.65)",
+    borderColor: "rgba(255,255,255,0.35)",
+    embossLight: "rgba(255,255,255,0.2)",
     shimmer: true,
-    holographic: false,
+    holo: false,
   },
   legendary: {
-    // Black premium card
-    cardBg: "from-[#1a1a1a] via-[#2a2a2a] to-[#111111]",
-    accent: "text-gray-300",
-    textColor: "text-white",
-    subtextColor: "text-gray-400",
-    border: "border-gray-600/40",
-    chipBg: "bg-white/5",
-    numberStyle: "text-white font-light tracking-wider",
+    // 10M — Noir premium
+    bg: "linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 30%, #1f1f1f 60%, #111111 100%)",
+    textMain: "#e0e0e0",
+    textSub: "rgba(200,200,200,0.5)",
+    borderColor: "rgba(120,120,120,0.3)",
+    embossLight: "rgba(255,255,255,0.04)",
     shimmer: true,
-    holographic: false,
+    holo: false,
   },
   mythic: {
-    // Black + gold accents
-    cardBg: "from-[#0d0d0d] via-[#1a1a1a] to-[#0a0a0a]",
-    accent: "text-amber-300",
-    textColor: "text-amber-100",
-    subtextColor: "text-amber-400/60",
-    border: "border-amber-500/30",
-    chipBg: "bg-amber-400/10",
-    numberStyle: "text-amber-200 drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]",
+    // alias — same as legendary for 6-card scheme
+    bg: "linear-gradient(145deg, #0d0d0d 0%, #1a1a1a 30%, #0f0f0f 60%, #080808 100%)",
+    textMain: "#d4af37",
+    textSub: "rgba(212,175,55,0.5)",
+    borderColor: "rgba(212,175,55,0.3)",
+    embossLight: "rgba(255,215,0,0.06)",
     shimmer: true,
-    holographic: true,
+    holo: true,
   },
   infinity: {
-    // Ultra premium — dark with rainbow accents
-    cardBg: "from-[#0a0a12] via-[#12121f] to-[#080810]",
-    accent: "text-violet-200",
-    textColor: "text-white",
-    subtextColor: "text-violet-300/60",
-    border: "border-violet-400/30",
-    chipBg: "bg-violet-400/10",
-    numberStyle: "text-white drop-shadow-[0_0_12px_rgba(139,92,246,0.4)]",
+    // 100M — Noir absolu + or
+    bg: "linear-gradient(145deg, #050505 0%, #111111 30%, #0a0a0a 60%, #000000 100%)",
+    textMain: "#d4af37",
+    textSub: "rgba(212,175,55,0.5)",
+    borderColor: "rgba(212,175,55,0.35)",
+    embossLight: "rgba(255,215,0,0.08)",
     shimmer: true,
-    holographic: true,
+    holo: true,
   },
-};
-
-const formatTreeCount = (n: number): string => {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(0)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
-  return n.toLocaleString();
 };
 
 const NftCertificate = ({
@@ -120,26 +99,28 @@ const NftCertificate = ({
   const config = rarityConfig[rarity];
   const [flipped, setFlipped] = useState(false);
 
-  // Stacked offset
-  const offsetX = index * 48;
-  const rotation = (index - (total - 1) / 2) * 2;
+  const offsetX = index * 52;
+  const rotation = (index - (total - 1) / 2) * 2.5;
 
   return (
     <div
-      className="absolute top-0 left-0 w-[200px] sm:w-[220px] transition-all duration-300 ease-out"
+      className="absolute top-0 left-0 transition-all duration-300 ease-out"
       style={{
-        aspectRatio: "85.6/53.98", // standard card ratio
+        width: "210px",
+        aspectRatio: "85.6 / 53.98",
         transform: `translateX(${offsetX}px) rotate(${rotation}deg)`,
         zIndex: flipped ? 30 : 10 + index,
-        perspective: "1000px",
+        perspective: "800px",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.transform = `translateX(${offsetX}px) rotate(0deg) translateY(-14px) scale(1.06)`;
-        (e.currentTarget as HTMLElement).style.zIndex = "25";
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = `translateX(${offsetX}px) rotate(0deg) translateY(-18px) scale(1.08)`;
+        el.style.zIndex = "25";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.transform = `translateX(${offsetX}px) rotate(${rotation}deg)`;
-        (e.currentTarget as HTMLElement).style.zIndex = `${flipped ? 30 : 10 + index}`;
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = `translateX(${offsetX}px) rotate(${rotation}deg)`;
+        el.style.zIndex = `${flipped ? 30 : 10 + index}`;
       }}
     >
       <div
@@ -151,37 +132,42 @@ const NftCertificate = ({
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
-        {/* ===== FRONT — Credit Card Style ===== */}
+        {/* ===== FRONT ===== */}
         <div
-          className={cn(
-            "absolute inset-0 rounded-xl overflow-hidden border",
-            unlocked ? config.border : "border-border/15",
-            !unlocked && "opacity-40 grayscale-[60%] saturate-50",
-          )}
-          style={{ backfaceVisibility: "hidden" }}
+          className="absolute inset-0 rounded-xl overflow-hidden"
+          style={{
+            backfaceVisibility: "hidden",
+            background: unlocked ? config.bg : "linear-gradient(145deg, #1a1a1a, #222, #1a1a1a)",
+            border: `1.5px solid ${unlocked ? config.borderColor : "rgba(80,80,80,0.2)"}`,
+            boxShadow: unlocked
+              ? `0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 ${config.embossLight}`
+              : "0 4px 16px rgba(0,0,0,0.3)",
+            opacity: unlocked ? 1 : 0.35,
+            filter: unlocked ? "none" : "grayscale(60%) brightness(0.7)",
+          }}
         >
-          {/* Card background */}
-          <div className={cn("absolute inset-0 bg-gradient-to-br", unlocked ? config.cardBg : "from-muted/30 to-muted/10")} />
-
-          {/* Subtle texture overlay */}
-          <div className="absolute inset-0 opacity-[0.04]" style={{
-            backgroundImage: "radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%)",
+          {/* Subtle metallic texture */}
+          <div className="absolute inset-0" style={{
+            background: `radial-gradient(ellipse at 30% 20%, ${config.embossLight} 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(0,0,0,0.15) 0%, transparent 50%)`,
           }} />
 
-          {/* Shimmer for premium cards */}
+          {/* Shimmer sweep */}
           {config.shimmer && unlocked && (
             <div className="absolute inset-0 overflow-hidden">
               <div
-                className="absolute -inset-full bg-gradient-to-r from-white/0 via-white/15 to-white/0 w-[200%]"
-                style={{ animation: "card-shimmer 3s ease-in-out infinite" }}
+                className="absolute -inset-full w-[200%]"
+                style={{
+                  background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 45%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.12) 55%, transparent 60%)",
+                  animation: "card-shimmer 3s ease-in-out infinite",
+                }}
               />
             </div>
           )}
 
-          {/* Holographic effect for mythic+ */}
-          {config.holographic && unlocked && (
+          {/* Holo rainbow for mythic/infinity */}
+          {config.holo && unlocked && (
             <div
-              className="absolute inset-0 opacity-15 mix-blend-screen"
+              className="absolute inset-0 opacity-10 mix-blend-screen"
               style={{
                 background: "linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088, #ff0000)",
                 backgroundSize: "400% 400%",
@@ -190,127 +176,104 @@ const NftCertificate = ({
             />
           )}
 
-          {/* Sparkle particles for Infinity */}
-          {rarity === "infinity" && unlocked && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-0.5 h-0.5 rounded-full bg-white"
-                  style={{
-                    left: `${15 + Math.random() * 70}%`,
-                    top: `${15 + Math.random() * 70}%`,
-                    animation: `sparkle-float ${2 + Math.random() * 3}s ease-in-out infinite`,
-                    animationDelay: `${Math.random() * 3}s`,
-                    opacity: 0,
-                  }}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* === Card Content Layout (like a credit card) === */}
-          <div className="relative h-full flex flex-col justify-between p-3 sm:p-4">
-            {/* Top row: Logo + NFC chip area */}
-            <div className="flex items-start justify-between">
-              {/* ReforestWallet logo */}
+          {/* === Card content === */}
+          <div className="relative h-full flex flex-col justify-between p-3.5">
+            {/* Top: Logo */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <img src={leafIcon} alt="" className="w-5 h-5 sm:w-6 sm:h-6 rounded-md" />
-                <span className={cn("text-[8px] sm:text-[9px] font-bold tracking-tight leading-none", config.textColor)}>
-                  Reforest<span className="text-primary">Wallet</span>
+                <img src={leafIcon} alt="" className="w-5 h-5 rounded" style={{ opacity: unlocked ? 1 : 0.3 }} />
+                <span className="text-[8px] font-bold tracking-tight" style={{ color: unlocked ? config.textMain : "#555" }}>
+                  Reforest<span style={{ color: unlocked ? "#22c55e" : "#444" }}>Wallet</span>
                 </span>
               </div>
-              {/* Chip icon area */}
+              {/* Chip */}
               {unlocked && (
-                <div className={cn("w-7 h-5 sm:w-8 sm:h-6 rounded-sm border flex items-center justify-center", config.chipBg, config.border)}>
-                  <div className="w-4 h-3 sm:w-5 sm:h-4 rounded-[2px] border border-current opacity-40" style={{
-                    background: "linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))",
+                <div className="w-7 h-5 rounded-sm" style={{
+                  background: `linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))`,
+                  border: `1px solid ${config.borderColor}`,
+                }}>
+                  <div className="w-full h-full rounded-sm" style={{
+                    background: "linear-gradient(135deg, rgba(200,180,100,0.2), rgba(200,180,100,0.05))",
                   }} />
                 </div>
               )}
             </div>
 
-            {/* Middle: Tree count — large embossed number */}
-            <div className="flex-1 flex items-center">
-              <p className={cn(
-                "text-xl sm:text-2xl font-bold tracking-[0.08em] tabular-nums",
-                unlocked ? config.numberStyle : "text-muted-foreground/25"
-              )} style={{
-                textShadow: unlocked ? "0 1px 0 rgba(255,255,255,0.1), 0 -1px 0 rgba(0,0,0,0.3)" : "none",
-                letterSpacing: "0.12em",
+            {/* Center: Embossed tree count */}
+            <div>
+              <p className="text-[22px] font-bold tabular-nums" style={{
+                color: unlocked ? config.textMain : "#333",
+                letterSpacing: "0.1em",
+                textShadow: unlocked
+                  ? `0 2px 4px rgba(0,0,0,0.5), 0 -1px 0 ${config.embossLight}`
+                  : "none",
+                fontFamily: "'Space Grotesk', monospace",
               }}>
-                {milestone.toLocaleString()} 🌳
+                {milestone.toLocaleString()}
+              </p>
+              <p className="text-[9px] font-medium uppercase tracking-[0.2em] mt-0.5" style={{
+                color: unlocked ? config.textSub : "#333",
+              }}>
+                trees planted
               </p>
             </div>
 
-            {/* Bottom row: Card name + status */}
+            {/* Bottom: Label + status */}
             <div className="flex items-end justify-between">
               <div>
-                <p className={cn(
-                  "text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.15em]",
-                  unlocked ? config.textColor : "text-muted-foreground/30"
-                )} style={{
-                  textShadow: unlocked ? "0 1px 0 rgba(0,0,0,0.3)" : "none",
+                <p className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{
+                  color: unlocked ? config.textMain : "#333",
+                  textShadow: unlocked ? `0 1px 2px rgba(0,0,0,0.4)` : "none",
                 }}>
                   {label}
                 </p>
-                {unlocked && (
+                {unlocked ? (
                   <div className="flex items-center gap-1 mt-0.5">
                     <Check className="w-2.5 h-2.5 text-primary" />
-                    <span className="text-[7px] sm:text-[8px] font-bold text-primary uppercase tracking-wider">Owned</span>
+                    <span className="text-[7px] font-bold text-primary uppercase tracking-wider">Owned</span>
                   </div>
-                )}
-                {!unlocked && (
+                ) : (
                   <div className="flex items-center gap-1 mt-0.5">
-                    <Lock className="w-2.5 h-2.5 text-muted-foreground/25" />
-                    <span className="text-[7px] sm:text-[8px] text-muted-foreground/25 uppercase tracking-wider">Locked</span>
+                    <Lock className="w-2.5 h-2.5" style={{ color: "#444" }} />
+                    <span className="text-[7px] uppercase tracking-wider" style={{ color: "#444" }}>Locked</span>
                   </div>
                 )}
               </div>
-              {/* Contactless icon area */}
-              <div className={cn("opacity-40", unlocked ? config.subtextColor : "text-muted-foreground/20")}>
-                <TreePine className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
+              <TreePine className="w-4 h-4" style={{ color: unlocked ? config.textSub : "#333", opacity: 0.5 }} />
             </div>
           </div>
         </div>
 
         {/* ===== BACK ===== */}
         <div
-          className={cn(
-            "absolute inset-0 rounded-xl overflow-hidden border",
-            "border-border/20"
-          )}
+          className="absolute inset-0 rounded-xl overflow-hidden"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
+            background: unlocked ? config.bg : "linear-gradient(145deg, #1a1a1a, #222, #1a1a1a)",
+            border: `1.5px solid ${unlocked ? config.borderColor : "rgba(80,80,80,0.2)"}`,
+            boxShadow: `0 8px 32px rgba(0,0,0,0.5)`,
           }}
         >
-          <div className={cn("absolute inset-0 bg-gradient-to-br", unlocked ? config.cardBg : "from-muted/20 to-muted/10")} />
-
           {/* Magnetic stripe */}
-          <div className="absolute top-[18%] left-0 right-0 h-[14%] bg-black/60" />
+          <div className="absolute top-[16%] left-0 right-0 h-[12%]" style={{ background: "rgba(0,0,0,0.6)" }} />
 
-          <div className="relative h-full flex flex-col items-center justify-end gap-2 p-4 pb-5">
+          <div className="relative h-full flex flex-col items-center justify-end gap-1.5 p-3 pb-4">
             {unlocked ? (
               <>
-                <div className="flex items-center gap-1.5">
-                  <Check className={cn("w-4 h-4", config.accent)} />
-                  <p className={cn("text-xs font-bold", config.accent)}>Proof of Impact</p>
-                </div>
-                <p className={cn("text-[9px] text-center leading-relaxed", config.subtextColor)}>
-                  {description}
-                </p>
-                <p className={cn("text-[8px] font-mono tracking-widest", config.subtextColor)}>
-                  {formatTreeCount(milestone)} TREES • NFT
+                <Check className="w-5 h-5" style={{ color: config.textMain }} />
+                <p className="text-[11px] font-bold" style={{ color: config.textMain }}>Proof of Impact</p>
+                <p className="text-[8px] text-center" style={{ color: config.textSub }}>{description}</p>
+                <p className="text-[7px] font-mono tracking-widest mt-1" style={{ color: config.textSub }}>
+                  NFT • {milestone.toLocaleString()} TREES
                 </p>
               </>
             ) : (
               <>
-                <Lock className="w-5 h-5 text-muted-foreground/25" />
-                <p className="text-xs text-muted-foreground/50 font-semibold">Locked</p>
-                <p className="text-[9px] text-muted-foreground/35 text-center">
-                  Plant {milestone.toLocaleString()} trees to unlock
+                <Lock className="w-5 h-5" style={{ color: "#444" }} />
+                <p className="text-[11px] font-semibold" style={{ color: "#555" }}>Locked</p>
+                <p className="text-[8px] text-center" style={{ color: "#444" }}>
+                  Plant {milestone.toLocaleString()} trees
                 </p>
               </>
             )}
