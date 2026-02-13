@@ -5,7 +5,6 @@ import { DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
-import NftGallery from "@/components/impact/NftGallery";
 
 const Impact = () => {
   const { stats, loading, isConnected } = useWalletStats();
@@ -71,10 +70,10 @@ const Impact = () => {
             <Sprout className="w-8 h-8 text-green-500" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
-            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">Impact</span>
+            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Level</span>
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Every swap contributes to global reforestation.
+            Every swap levels you up and plants trees.
           </p>
         </div>
 
@@ -116,9 +115,6 @@ const Impact = () => {
 
             {/* Level progression */}
             <CurrentLevel treesPlanted={treesPlanted} />
-
-            {/* NFT Certificates */}
-            <NftGallery treesPlanted={treesPlanted} />
 
             {/* Environmental summary */}
             {showEnvironmentalImpact && (
