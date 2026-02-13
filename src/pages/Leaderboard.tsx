@@ -3,6 +3,7 @@ import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award } from 'lucide-r
 import { useAppKitAccount } from '@reown/appkit/react';
 import Header from '@/components/Header';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
+import AvatarPicker from '@/components/AvatarPicker';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -143,9 +144,11 @@ const Leaderboard = () => {
           <div className="mb-6 p-4 rounded-2xl bg-primary/5 border border-primary/20 animate-fade-in">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/20">
-                  <img src={getLevelAvatar(myEntry.total_trees, myEntry.avatar_url)} alt="avatar" className="w-full h-full object-cover" />
-                </div>
+                <AvatarPicker
+                  currentAvatar={getLevelAvatar(myEntry.total_trees, myEntry.avatar_url)}
+                  walletAddress={address!}
+                  onAvatarChanged={fetchLeaderboard}
+                />
                 <div>
                   <div className="flex items-center gap-2">
                     {editingName ? (
