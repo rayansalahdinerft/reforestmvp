@@ -3,10 +3,11 @@ import confetti from "canvas-confetti";
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
-import { TreePine, DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
+import { TreePine, DollarSign, Users, Leaf, Sprout, Globe, Award } from "lucide-react";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
 import TreeLevel from "@/components/impact/TreeLevel";
+import NftCertificate from "@/components/impact/NftCertificate";
 
 const TREE_COST_USD = 2.5;
 
@@ -151,6 +152,30 @@ const Impact = () => {
               <TreeLevel level={2} label="Sapling" target={100} current={treesPlanted} onAchieve={triggerConfetti} />
               <TreeLevel level={3} label="Grove" target={1000} current={treesPlanted} onAchieve={triggerConfetti} />
               <TreeLevel level={4} label="Forest" target={10000} current={treesPlanted} onAchieve={triggerConfetti} />
+            </div>
+          </div>
+        )}
+
+        {/* NFT Proof-of-Impact Certificates */}
+        {isConnected && (
+          <div className="swap-card p-8 mt-8 animate-slide-up backdrop-blur-sm" style={{ animationDelay: "0.35s" }}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 flex items-center justify-center">
+                <Award className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">NFT Certificates</h3>
+                <p className="text-sm text-muted-foreground">Proof-of-Impact collectibles unlocked at each milestone</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              <NftCertificate index={0} milestone={10} label="First Seedling" description="You planted your first 10 trees. The journey begins!" current={treesPlanted} rarity="common" />
+              <NftCertificate index={1} milestone={100} label="Growing Roots" description="100 trees! Your commitment to nature is taking root." current={treesPlanted} rarity="uncommon" />
+              <NftCertificate index={2} milestone={1000} label="Forest Guardian" description="1,000 trees planted. You're a true guardian of the forest." current={treesPlanted} rarity="rare" />
+              <NftCertificate index={3} milestone={10000} label="Ecosystem Builder" description="10,000 trees! You've created an entire ecosystem." current={treesPlanted} rarity="epic" />
+              <NftCertificate index={4} milestone={100000} label="Planet Protector" description="100K trees. Your impact reaches across continents." current={treesPlanted} rarity="legendary" />
+              <NftCertificate index={5} milestone={1000000} label="Mythic Reforester" description="1 MILLION trees. A legendary achievement for the planet." current={treesPlanted} rarity="mythic" />
             </div>
           </div>
         )}
