@@ -1,22 +1,31 @@
-import { TreePine, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+import explorerAvatar from "@/assets/levels/explorer.png";
+import seedAvatar from "@/assets/levels/seed.png";
+import sproutAvatar from "@/assets/levels/sprout.png";
+import rootsAvatar from "@/assets/levels/roots.png";
+import canopyAvatar from "@/assets/levels/canopy.png";
+import forestAvatar from "@/assets/levels/forest.png";
+import legendAvatar from "@/assets/levels/legend.png";
+import infinityAvatar from "@/assets/levels/infinity.png";
 
 interface Level {
   level: number;
   label: string;
-  emoji: string;
+  avatar: string;
   target: number;
 }
 
 const LEVELS: Level[] = [
-  { level: 0, label: "Explorateur", emoji: "🌰", target: 0 },
-  { level: 1, label: "Graine", emoji: "🌱", target: 10 },
-  { level: 2, label: "Pousse", emoji: "🌿", target: 100 },
-  { level: 3, label: "Racines", emoji: "🌾", target: 1_000 },
-  { level: 4, label: "Canopée", emoji: "🌳", target: 10_000 },
-  { level: 5, label: "Forêt", emoji: "🌲", target: 100_000 },
-  { level: 6, label: "Légende", emoji: "🌍", target: 1_000_000 },
-  { level: 7, label: "Infinity", emoji: "♾️", target: 10_000_000 },
+  { level: 1, label: "Explorer", avatar: explorerAvatar, target: 0 },
+  { level: 2, label: "Seed", avatar: seedAvatar, target: 10 },
+  { level: 3, label: "Sprout", avatar: sproutAvatar, target: 100 },
+  { level: 4, label: "Roots", avatar: rootsAvatar, target: 1_000 },
+  { level: 5, label: "Canopy", avatar: canopyAvatar, target: 10_000 },
+  { level: 6, label: "Forest", avatar: forestAvatar, target: 100_000 },
+  { level: 7, label: "Legend", avatar: legendAvatar, target: 1_000_000 },
+  { level: 8, label: "Infinity", avatar: infinityAvatar, target: 10_000_000 },
 ];
 
 interface CurrentLevelProps {
@@ -24,7 +33,6 @@ interface CurrentLevelProps {
 }
 
 const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
-  // Find current level: last level whose target we've reached
   const currentLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target) ?? LEVELS[0];
   const currentIdx = LEVELS.indexOf(currentLevel);
   const nextLevel = currentIdx < LEVELS.length - 1 ? LEVELS[currentIdx + 1] : null;
@@ -45,12 +53,9 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
       {/* Hero level display */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          {/* Big avatar */}
           <div className="relative">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
-              <span className="text-4xl">
-                {currentLevel.emoji}
-              </span>
+            <div className="w-20 h-20 rounded-2xl overflow-hidden border border-primary/20 shadow-lg">
+              <img src={currentLevel.avatar} alt={currentLevel.label} className="w-full h-full object-cover" />
             </div>
             <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground shadow-lg">
               {currentLevel.level}
@@ -58,7 +63,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
-              Niveau actuel
+              Current Level
             </p>
             <h3 className="text-xl font-bold text-foreground">
               {currentLevel.label}
@@ -69,7 +74,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
           <p className="text-2xl font-bold gradient-text tabular-nums">
             {treesPlanted.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: treesPlanted < 10 ? 2 : 0 })}
           </p>
-          <p className="text-xs text-muted-foreground">arbres plantés</p>
+          <p className="text-xs text-muted-foreground">trees planted</p>
         </div>
       </div>
 
@@ -78,7 +83,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         <div className="mb-6">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-muted-foreground">
-              Prochain : <span className="text-foreground font-semibold">{nextLevel.emoji} {nextLevel.label}</span>
+              Next: <span className="text-foreground font-semibold">{nextLevel.label}</span>
             </span>
             <span className="text-muted-foreground font-mono text-xs">
               {treesPlanted.toLocaleString()} / {nextLevel.target.toLocaleString()}
@@ -93,7 +98,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground mt-1.5 text-right">
-            {Math.round(progress)}% complété
+            {Math.round(progress)}% completed
           </p>
         </div>
       )}
@@ -102,7 +107,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         <div className="mb-6 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-center">
           <p className="text-sm text-primary font-medium flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" />
-            Statut Infinity atteint — ♾️
+            Infinity status reached — ♾️
           </p>
         </div>
       )}
@@ -111,24 +116,27 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
       <div className="flex items-center gap-0.5 overflow-x-auto pb-1 scrollbar-none">
         {LEVELS.map((lvl, i) => {
           const achieved = treesPlanted >= lvl.target;
-          const isCurrent =
-            currentLevel?.level === lvl.level ||
-            (allMaxed && i === LEVELS.length - 1);
+          const isCurrent = currentLevel.level === lvl.level;
 
           return (
             <div key={lvl.level} className="flex items-center">
               <div
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all text-xs whitespace-nowrap",
+                  "flex items-center gap-1.5 px-1.5 py-1 rounded-full transition-all whitespace-nowrap",
                   isCurrent
-                    ? "bg-primary/20 border border-primary/40 text-foreground font-semibold"
-                    : achieved
-                      ? "text-muted-foreground/80"
-                      : "text-muted-foreground/30"
+                    ? "bg-primary/20 border border-primary/40"
+                    : ""
                 )}
               >
-                <span className="text-sm">{lvl.emoji}</span>
-                {isCurrent && <span>{lvl.label}</span>}
+                <img
+                  src={lvl.avatar}
+                  alt={lvl.label}
+                  className={cn(
+                    "w-6 h-6 rounded-full object-cover",
+                    !achieved && !isCurrent && "opacity-30 grayscale"
+                  )}
+                />
+                {isCurrent && <span className="text-xs font-semibold text-foreground pr-1">{lvl.label}</span>}
               </div>
               {i < LEVELS.length - 1 && (
                 <ChevronRight className={cn("w-3 h-3 shrink-0 mx-0.5", achieved ? "text-primary/40" : "text-muted-foreground/20")} />
@@ -136,12 +144,6 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
             </div>
           );
         })}
-        <div className="flex items-center">
-          <ChevronRight className="w-3 h-3 text-muted-foreground/20 shrink-0 mx-0.5" />
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs text-purple-400/30">
-            <span className="text-sm">🔮</span>
-          </div>
-        </div>
       </div>
     </div>
   );
