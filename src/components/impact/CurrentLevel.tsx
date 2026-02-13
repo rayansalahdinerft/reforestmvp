@@ -23,17 +23,6 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
     ? (currentIdx < LEVELS.length - 1 ? LEVELS[currentIdx + 1] : null)
     : LEVELS[0];
 
-  const progress = !achievedLevel
-    ? Math.min((treesPlanted / LEVELS[0].target) * 100, 100)
-    : nextLevel
-      ? Math.min(
-          ((treesPlanted - currentLevel.target) /
-            (nextLevel.target - currentLevel.target)) *
-            100,
-          100
-        )
-      : 100;
-
   const allMaxed = !nextLevel;
   const currentLvlNum = achievedLevel ? currentLevel.level : 0;
 
@@ -52,9 +41,13 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       </div>
 
-
-      {allMaxed && (
-        <div className="mt-5 p-3 rounded-xl bg-secondary/50 border border-border/30 text-center">
+      {/* Objective for next level */}
+      {nextLevel ? (
+        <p className="mt-3 text-xs text-muted-foreground">
+          Objective: <span className="text-foreground font-semibold">{nextLevel.target.toLocaleString()} trees</span> to reach Level {nextLevel.level}
+        </p>
+      ) : (
+        <div className="mt-3 p-3 rounded-xl bg-secondary/50 border border-border/30 text-center">
           <p className="text-sm text-foreground font-medium flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" />
             Max level reached
