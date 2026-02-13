@@ -152,6 +152,10 @@ const Impact = () => {
               <TreeLevel level={2} label="Sapling" target={100} current={treesPlanted} onAchieve={triggerConfetti} />
               <TreeLevel level={3} label="Grove" target={1000} current={treesPlanted} onAchieve={triggerConfetti} />
               <TreeLevel level={4} label="Forest" target={10000} current={treesPlanted} onAchieve={triggerConfetti} />
+              <TreeLevel level={5} label="Ecosystem" target={100000} current={treesPlanted} onAchieve={triggerConfetti} />
+              <TreeLevel level={6} label="Biome" target={1000000} current={treesPlanted} onAchieve={triggerConfetti} />
+              <TreeLevel level={7} label="???" target={10000000} current={treesPlanted} onAchieve={triggerConfetti} hidden />
+              <TreeLevel level={8} label="???" target={100000000} current={treesPlanted} onAchieve={triggerConfetti} hidden />
             </div>
           </div>
         )}
@@ -176,6 +180,8 @@ const Impact = () => {
               <NftCertificate index={3} milestone={10000} label="Ecosystem Builder" description="10,000 trees! You've created an entire ecosystem." current={treesPlanted} rarity="epic" />
               <NftCertificate index={4} milestone={100000} label="Planet Protector" description="100K trees. Your impact reaches across continents." current={treesPlanted} rarity="legendary" />
               <NftCertificate index={5} milestone={1000000} label="Mythic Reforester" description="1 MILLION trees. A legendary achievement for the planet." current={treesPlanted} rarity="mythic" />
+              <NftCertificate index={6} milestone={10000000} label="???" description="A secret awaits those who dare dream this big." current={treesPlanted} rarity="mythic" />
+              <NftCertificate index={7} milestone={100000000} label="???" description="The ultimate proof of impact. Does it even exist?" current={treesPlanted} rarity="mythic" />
             </div>
           </div>
         )}
