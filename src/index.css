@@ -522,3 +522,10 @@ button, a, input, select, textarea {
 .radial-glow {
   background: radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.12), transparent);
 }
+
+/* NFT card shimmer */
+@keyframes card-shimmer {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  50% { transform: translateX(100%) skewX(-15deg); }
+  100% { transform: translateX(100%) skewX(-15deg); }
+}
