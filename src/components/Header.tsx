@@ -31,7 +31,7 @@ const Header = () => {
     { path: '/market', label: 'Market' },
     { path: '/leaderboard', label: 'Leaderboard' },
     { path: '/portfolio', label: 'Portfolio' },
-    { path: '/impact', label: 'Level' },
+    { path: '/impact', label: 'Impact' },
     { path: '/profile', label: 'Profile' },
   ];
 
