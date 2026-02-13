@@ -1,40 +1,23 @@
-import { useCallback } from "react";
-import confetti from "canvas-confetti";
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
-import { TreePine, DollarSign, Users, Leaf, Sprout, Globe, Award } from "lucide-react";
+import { DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
-import TreeLevel from "@/components/impact/TreeLevel";
-import NftCertificate from "@/components/impact/NftCertificate";
-
-const TREE_COST_USD = 2.5;
+import CurrentLevel from "@/components/impact/CurrentLevel";
+import NftGallery from "@/components/impact/NftGallery";
 
 const Impact = () => {
   const { stats, loading, isConnected } = useWalletStats();
 
   const treesPlanted = stats.totalTrees;
-  
-  // Calculate meaningful environmental impact only for >= 10 trees (Level 1 Seedling)
   const showEnvironmentalImpact = treesPlanted >= 10;
-  const co2Absorbed = treesPlanted * 22; // kg per year
-  const oxygenProduced = treesPlanted * 100; // kg per year
-
-  const triggerConfetti = useCallback(() => {
-    const colors = ["#22c55e", "#10b981", "#34d399", "#6ee7b7"];
-    
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors,
-    });
-  }, []);
+  const co2Absorbed = treesPlanted * 22;
+  const oxygenProduced = treesPlanted * 100;
 
   const impactCards = [
     {
-      icon: TreePine,
+      icon: Leaf,
       value: treesPlanted,
       decimals: 2,
       label: "Trees Planted",
@@ -58,7 +41,7 @@ const Impact = () => {
       color: "blue",
     },
     {
-      icon: Leaf,
+      icon: Globe,
       value: 0,
       suffix: "",
       label: "CO₂ Absorbed/Year",
@@ -71,147 +54,97 @@ const Impact = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Floating leaves animation */}
       <FloatingLeaves />
 
-      {/* Background effects - organic nature style */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-green-500/8 to-emerald-500/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-lime-500/5 to-green-500/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-radial from-primary/3 to-transparent rounded-full" />
       </div>
 
       <Header />
       <NewsTicker />
 
-      <main className="max-w-5xl mx-auto px-4 py-12 relative z-10">
+      <main className="max-w-4xl mx-auto px-4 py-12 relative z-10">
         {/* Hero */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm border border-green-500/20">
-            <Sprout className="w-10 h-10 text-green-500 animate-glow-pulse" />
+        <div className="text-center mb-10 animate-fade-in">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm border border-green-500/20">
+            <Sprout className="w-8 h-8 text-green-500" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
             Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">Impact</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-            Every swap you make contributes to global reforestation.
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Every swap contributes to global reforestation.
           </p>
         </div>
 
-        {/* Connect Wallet CTA when not connected */}
+        {/* Connect Wallet CTA */}
         {!isConnected && (
-          <div className="swap-card p-8 text-center mb-12 animate-slide-up backdrop-blur-sm">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted/50 flex items-center justify-center">
-              <Globe className="w-8 h-8 text-muted-foreground" />
+          <div className="swap-card p-8 text-center mb-10 animate-slide-up backdrop-blur-sm">
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-muted/50 flex items-center justify-center">
+              <Globe className="w-7 h-7 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">Connect your wallet</h3>
-            <p className="text-muted-foreground mb-6">
-              Connect your wallet to see your personal impact and contribution to reforestation.
+            <h3 className="text-lg font-semibold text-foreground mb-2">Connect your wallet</h3>
+            <p className="text-muted-foreground text-sm">
+              Connect your wallet to see your personal impact.
             </p>
           </div>
         )}
 
-        {/* Impact Stats Cards */}
         {isConnected && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {impactCards.map((card, index) => (
-              <ImpactCard
-                key={card.label}
-                icon={card.icon}
-                value={card.value}
-                prefix={card.prefix}
-                suffix={card.suffix}
-                decimals={card.decimals}
-                label={card.label}
-                description={card.description}
-                color={card.color}
-                loading={loading}
-                index={index}
-                locked={card.locked}
-                displayValue={card.displayValue}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Reforestation Levels */}
-        {isConnected && (
-          <div className="swap-card p-8 animate-slide-up backdrop-blur-sm" style={{ animationDelay: "0.3s" }}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 flex items-center justify-center">
-                <TreePine className="w-6 h-6 text-green-500" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Reforestation Levels</h3>
-                <p className="text-sm text-muted-foreground">Plant trees to unlock new levels</p>
-              </div>
+          <div className="space-y-6">
+            {/* Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {impactCards.map((card, index) => (
+                <ImpactCard
+                  key={card.label}
+                  icon={card.icon}
+                  value={card.value}
+                  prefix={card.prefix}
+                  suffix={card.suffix}
+                  decimals={card.decimals}
+                  label={card.label}
+                  description={card.description}
+                  color={card.color}
+                  loading={loading}
+                  index={index}
+                  locked={card.locked}
+                  displayValue={card.displayValue}
+                />
+              ))}
             </div>
 
-            <div className="space-y-3">
-              <TreeLevel level={1} label="Seedling" target={10} current={treesPlanted} onAchieve={triggerConfetti} />
-              <TreeLevel level={2} label="Sapling" target={100} current={treesPlanted} onAchieve={triggerConfetti} />
-              <TreeLevel level={3} label="Grove" target={1000} current={treesPlanted} onAchieve={triggerConfetti} />
-              <TreeLevel level={4} label="Forest" target={10000} current={treesPlanted} onAchieve={triggerConfetti} />
-              <TreeLevel level={5} label="Ecosystem" target={100000} current={treesPlanted} onAchieve={triggerConfetti} />
-              <TreeLevel level={6} label="Biome" target={1000000} current={treesPlanted} onAchieve={triggerConfetti} />
-              <TreeLevel level={7} label="???" target={10000000} current={treesPlanted} onAchieve={triggerConfetti} hidden />
-              <TreeLevel level={8} label="???" target={100000000} current={treesPlanted} onAchieve={triggerConfetti} hidden />
-            </div>
-          </div>
-        )}
+            {/* Level progression */}
+            <CurrentLevel treesPlanted={treesPlanted} />
 
-        {/* NFT Proof-of-Impact Certificates */}
-        {isConnected && (
-          <div className="swap-card p-8 mt-8 animate-slide-up backdrop-blur-sm" style={{ animationDelay: "0.35s" }}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 flex items-center justify-center">
-                <Award className="w-6 h-6 text-purple-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">NFT Certificates</h3>
-                <p className="text-sm text-muted-foreground">Proof-of-Impact collectibles unlocked at each milestone</p>
-              </div>
-            </div>
+            {/* NFT Certificates */}
+            <NftGallery treesPlanted={treesPlanted} />
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              <NftCertificate index={0} milestone={10} label="First Seedling" description="You planted your first 10 trees. The journey begins!" current={treesPlanted} rarity="common" />
-              <NftCertificate index={1} milestone={100} label="Growing Roots" description="100 trees! Your commitment to nature is taking root." current={treesPlanted} rarity="uncommon" />
-              <NftCertificate index={2} milestone={1000} label="Forest Guardian" description="1,000 trees planted. You're a true guardian of the forest." current={treesPlanted} rarity="rare" />
-              <NftCertificate index={3} milestone={10000} label="Ecosystem Builder" description="10,000 trees! You've created an entire ecosystem." current={treesPlanted} rarity="epic" />
-              <NftCertificate index={4} milestone={100000} label="Planet Protector" description="100K trees. Your impact reaches across continents." current={treesPlanted} rarity="legendary" />
-              <NftCertificate index={5} milestone={1000000} label="Mythic Reforester" description="1 MILLION trees. A legendary achievement for the planet." current={treesPlanted} rarity="mythic" />
-              <NftCertificate index={6} milestone={10000000} label="???" description="A secret awaits those who dare dream this big." current={treesPlanted} rarity="mythic" />
-              <NftCertificate index={7} milestone={100000000} label="???" description="The ultimate proof of impact. Does it even exist?" current={treesPlanted} rarity="mythic" />
-            </div>
-          </div>
-        )}
-
-        {/* Environmental Impact Summary */}
-        {isConnected && showEnvironmentalImpact && (
-          <div 
-            className="mt-8 p-6 rounded-3xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-lime-500/10 border border-green-500/20 backdrop-blur-sm animate-slide-up"
-            style={{ animationDelay: "0.4s" }}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                <Globe className="w-5 h-5 text-green-400" />
+            {/* Environmental summary */}
+            {showEnvironmentalImpact && (
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-lime-500/10 border border-green-500/20 backdrop-blur-sm animate-slide-up" style={{ animationDelay: "0.25s" }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-xl bg-green-500/20 flex items-center justify-center">
+                    <Globe className="w-4.5 h-4.5 text-green-400" />
+                  </div>
+                  <span className="font-semibold text-foreground">Environmental Impact</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div className="p-3 rounded-xl bg-card/50 border border-green-500/10">
+                    <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
+                      {Math.floor(co2Absorbed).toLocaleString()} kg
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">CO₂ absorbed/year</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-card/50 border border-blue-500/10">
+                    <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                      {Math.floor(oxygenProduced).toLocaleString()} kg
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">O₂ produced/year</p>
+                  </div>
+                </div>
               </div>
-              <span className="font-semibold text-foreground text-lg">Environmental Impact</span>
-            </div>
-            <div className="grid grid-cols-2 gap-6 text-center">
-              <div className="p-4 rounded-2xl bg-card/50 border border-green-500/10">
-                <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
-                  {Math.floor(co2Absorbed).toLocaleString()} kg
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">CO₂ absorbed/year</p>
-              </div>
-              <div className="p-4 rounded-2xl bg-card/50 border border-blue-500/10">
-                <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
-                  {Math.floor(oxygenProduced).toLocaleString()} kg
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">O₂ produced/year</p>
-              </div>
-            </div>
+            )}
           </div>
         )}
       </main>
