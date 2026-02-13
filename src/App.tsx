@@ -8,7 +8,6 @@ import Portfolio from "./pages/Portfolio";
 import Impact from "./pages/Impact";
 import Market from "./pages/Market";
 import Leaderboard from "./pages/Leaderboard";
-import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -23,7 +22,6 @@ const App = () => (
           <Route path="/impact" element={<Impact />} />
           <Route path="/market" element={<Market />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
