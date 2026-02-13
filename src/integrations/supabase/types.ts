@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      badges: {
+        Row: {
+          badge_description: string | null
+          badge_name: string
+          badge_type: string
+          earned_at: string
+          id: string
+          wallet_address: string
+        }
+        Insert: {
+          badge_description?: string | null
+          badge_name: string
+          badge_type: string
+          earned_at?: string
+          id?: string
+          wallet_address: string
+        }
+        Update: {
+          badge_description?: string | null
+          badge_name?: string
+          badge_type?: string
+          earned_at?: string
+          id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       tree_counter: {
         Row: {
           id: string
@@ -42,8 +69,11 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          current_streak: number
           display_name: string | null
           id: string
+          last_swap_date: string | null
+          longest_streak: number
           total_donations_usd: number
           total_swaps: number
           total_trees: number
@@ -53,8 +83,11 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          current_streak?: number
           display_name?: string | null
           id?: string
+          last_swap_date?: string | null
+          longest_streak?: number
           total_donations_usd?: number
           total_swaps?: number
           total_trees?: number
@@ -64,12 +97,36 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          current_streak?: number
           display_name?: string | null
           id?: string
+          last_swap_date?: string | null
+          longest_streak?: number
           total_donations_usd?: number
           total_swaps?: number
           total_trees?: number
           updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      watchlist: {
+        Row: {
+          created_at: string
+          id: string
+          token_id: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          token_id: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          token_id?: string
           wallet_address?: string
         }
         Relationships: []

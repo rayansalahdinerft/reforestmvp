@@ -5,6 +5,20 @@ import { DollarSign, Users, Leaf, Sprout, Globe } from "lucide-react";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
+import NftGallery from "@/components/impact/NftGallery";
+import NftCertificate from "@/components/impact/NftCertificate";
+import StreaksBadges from "@/components/impact/StreaksBadges";
+
+const NFT_CERTS = [
+  { milestone: 1, label: "Explorer", description: "Planted your first tree", rarity: "common" as const },
+  { milestone: 100, label: "Seed", description: "100 trees funded", rarity: "common" as const },
+  { milestone: 1_000, label: "Grove", description: "1,000 trees planted", rarity: "uncommon" as const },
+  { milestone: 10_000, label: "Forest", description: "10,000 trees planted", rarity: "rare" as const },
+  { milestone: 100_000, label: "Jungle", description: "100K trees planted", rarity: "epic" as const },
+  { milestone: 1_000_000, label: "Biome", description: "1 million trees planted", rarity: "legendary" as const },
+  { milestone: 10_000_000, label: "Legend", description: "10M trees planted", rarity: "mythic" as const },
+  { milestone: 100_000_000, label: "Infinity", description: "100M trees planted", rarity: "mythic" as const },
+];
 
 const Impact = () => {
   const { stats, loading, isConnected } = useWalletStats();
@@ -44,7 +58,7 @@ const Impact = () => {
       value: 0,
       suffix: "",
       label: "CO₂ Absorbed/Year",
-      description: showEnvironmentalImpact ? "Environmental impact estimate" : "Unlock at Lv.1 (10 trees)",
+      description: showEnvironmentalImpact ? "Environmental impact estimate" : "Unlock at Lv.1 (1 tree)",
       color: "emerald",
       locked: !showEnvironmentalImpact,
       displayValue: showEnvironmentalImpact ? `${Math.floor(co2Absorbed).toLocaleString()} kg` : null,
@@ -115,6 +129,30 @@ const Impact = () => {
 
             {/* Level progression */}
             <CurrentLevel treesPlanted={treesPlanted} />
+
+            {/* Streaks & Badges */}
+            <StreaksBadges />
+
+            {/* NFT Certificates */}
+            <div>
+              <h2 className="text-lg font-bold text-foreground mb-4">Proof of Impact NFTs</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {NFT_CERTS.map((cert, i) => (
+                  <NftCertificate
+                    key={cert.milestone}
+                    milestone={cert.milestone}
+                    label={cert.label}
+                    description={cert.description}
+                    current={treesPlanted}
+                    index={i}
+                    rarity={cert.rarity}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* NFT reveal overlay */}
+            <NftGallery treesPlanted={treesPlanted} />
 
             {/* Environmental summary */}
             {showEnvironmentalImpact && (
