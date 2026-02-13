@@ -77,7 +77,7 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold gradient-text tabular-nums">
-            {treesPlanted.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            {treesPlanted.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: treesPlanted < 10 ? 2 : 0 })}
           </p>
           <p className="text-xs text-muted-foreground">arbres plantés</p>
         </div>
@@ -117,8 +117,8 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
         </div>
       )}
 
-      {/* Level roadmap */}
-      <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+      {/* Compact arrow timeline */}
+      <div className="flex items-center gap-0.5 overflow-x-auto pb-1 scrollbar-none">
         {LEVELS.map((lvl, i) => {
           const achieved = treesPlanted >= lvl.target;
           const isCurrent =
@@ -129,45 +129,27 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
             <div key={lvl.level} className="flex items-center">
               <div
                 className={cn(
-                  "flex flex-col items-center min-w-[60px] px-2 py-2 rounded-xl transition-all",
+                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all text-xs whitespace-nowrap",
                   isCurrent
-                    ? "bg-primary/15 border border-primary/30 scale-105"
+                    ? "bg-primary/20 border border-primary/40 text-foreground font-semibold"
                     : achieved
-                      ? "opacity-70"
-                      : "opacity-30"
+                      ? "text-muted-foreground/80"
+                      : "text-muted-foreground/30"
                 )}
               >
-                <span className="text-lg mb-0.5">{lvl.emoji}</span>
-                <div
-                  className={cn(
-                    "w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold mb-0.5",
-                    achieved
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {lvl.level}
-                </div>
-                <span className="text-[9px] text-muted-foreground font-medium whitespace-nowrap">
-                  {lvl.label}
-                </span>
+                <span className="text-sm">{lvl.emoji}</span>
+                {isCurrent && <span>{lvl.label}</span>}
               </div>
               {i < LEVELS.length - 1 && (
-                <ChevronRight className="w-3 h-3 text-muted-foreground/30 shrink-0" />
+                <ChevronRight className={cn("w-3 h-3 shrink-0 mx-0.5", achieved ? "text-primary/40" : "text-muted-foreground/20")} />
               )}
             </div>
           );
         })}
-
-        {/* Secret level hint */}
         <div className="flex items-center">
-          <ChevronRight className="w-3 h-3 text-muted-foreground/30 shrink-0" />
-          <div className="flex flex-col items-center min-w-[60px] px-2 py-2 rounded-xl opacity-25">
-            <span className="text-lg mb-0.5">🔮</span>
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold mb-0.5 bg-purple-500/20 text-purple-400">
-              ?
-            </div>
-            <span className="text-[9px] text-purple-400/60 font-medium">Secret</span>
+          <ChevronRight className="w-3 h-3 text-muted-foreground/20 shrink-0 mx-0.5" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs text-purple-400/30">
+            <span className="text-sm">🔮</span>
           </div>
         </div>
       </div>
