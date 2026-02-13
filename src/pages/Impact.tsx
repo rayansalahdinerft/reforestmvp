@@ -15,7 +15,7 @@ const NFT_CERTS = [
   { milestone: 100_000, label: "Jungle", description: "100K trees planted", rarity: "epic" as const },
   { milestone: 1_000_000, label: "Biome", description: "1 million trees planted", rarity: "legendary" as const },
   { milestone: 10_000_000, label: "Legend", description: "10M trees planted", rarity: "mythic" as const },
-  { milestone: 100_000_000, label: "Infinity", description: "100M trees planted", rarity: "mythic" as const },
+  { milestone: 100_000_000, label: "Infinity", description: "100M trees planted", rarity: "infinity" as const },
 ];
 
 const Impact = () => {

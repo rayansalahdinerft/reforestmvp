@@ -8,63 +8,72 @@ interface NftCertificateProps {
   description: string;
   current: number;
   index: number;
-  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic";
+  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic" | "infinity";
 }
 
 const rarityConfig = {
   common: {
-    accent: "text-emerald-300",
-    border: "border-emerald-400/50",
-    bg: "from-emerald-500/30 via-emerald-600/15 to-green-800/25",
-    shimmer: "from-emerald-200/0 via-emerald-200/30 to-emerald-200/0",
-    glow: "shadow-emerald-400/30",
-    icon: "text-emerald-300",
-    ring: "ring-emerald-400/30",
+    accent: "text-emerald-200",
+    border: "border-emerald-300/60",
+    bg: "from-emerald-400/45 via-emerald-500/25 to-green-700/35",
+    shimmer: "from-emerald-100/0 via-emerald-100/40 to-emerald-100/0",
+    glow: "shadow-emerald-300/40",
+    icon: "text-emerald-200",
+    ring: "ring-emerald-300/40",
   },
   uncommon: {
-    accent: "text-blue-300",
-    border: "border-blue-400/50",
-    bg: "from-blue-500/30 via-blue-600/15 to-indigo-800/25",
-    shimmer: "from-blue-200/0 via-blue-200/30 to-blue-200/0",
-    glow: "shadow-blue-400/30",
-    icon: "text-blue-300",
-    ring: "ring-blue-400/30",
+    accent: "text-blue-200",
+    border: "border-blue-300/60",
+    bg: "from-blue-400/45 via-blue-500/25 to-indigo-700/35",
+    shimmer: "from-blue-100/0 via-blue-100/40 to-blue-100/0",
+    glow: "shadow-blue-300/40",
+    icon: "text-blue-200",
+    ring: "ring-blue-300/40",
   },
   rare: {
-    accent: "text-purple-300",
-    border: "border-purple-400/50",
-    bg: "from-purple-500/30 via-purple-600/15 to-violet-800/25",
-    shimmer: "from-purple-200/0 via-purple-200/35 to-purple-200/0",
-    glow: "shadow-purple-400/30",
-    icon: "text-purple-300",
-    ring: "ring-purple-400/30",
+    accent: "text-purple-200",
+    border: "border-purple-300/60",
+    bg: "from-purple-400/45 via-purple-500/25 to-violet-700/35",
+    shimmer: "from-purple-100/0 via-purple-100/45 to-purple-100/0",
+    glow: "shadow-purple-300/40",
+    icon: "text-purple-200",
+    ring: "ring-purple-300/40",
   },
   epic: {
-    accent: "text-orange-300",
-    border: "border-orange-400/50",
-    bg: "from-orange-500/30 via-amber-600/15 to-orange-800/25",
-    shimmer: "from-orange-200/0 via-orange-200/35 to-orange-200/0",
-    glow: "shadow-orange-400/35",
-    icon: "text-orange-300",
-    ring: "ring-orange-400/30",
+    accent: "text-orange-200",
+    border: "border-orange-300/60",
+    bg: "from-orange-400/45 via-amber-500/25 to-orange-700/35",
+    shimmer: "from-orange-100/0 via-orange-100/45 to-orange-100/0",
+    glow: "shadow-orange-300/45",
+    icon: "text-orange-200",
+    ring: "ring-orange-300/40",
   },
   legendary: {
-    accent: "text-yellow-300",
-    border: "border-yellow-400/60",
-    bg: "from-yellow-500/35 via-amber-500/20 to-yellow-800/25",
-    shimmer: "from-yellow-100/0 via-yellow-100/40 to-yellow-100/0",
-    glow: "shadow-yellow-400/40",
-    icon: "text-yellow-300",
-    ring: "ring-yellow-400/35",
+    accent: "text-yellow-200",
+    border: "border-yellow-300/70",
+    bg: "from-yellow-400/50 via-amber-400/30 to-yellow-700/35",
+    shimmer: "from-yellow-50/0 via-yellow-50/50 to-yellow-50/0",
+    glow: "shadow-yellow-300/50",
+    icon: "text-yellow-200",
+    ring: "ring-yellow-300/45",
   },
   mythic: {
-    accent: "text-red-300",
-    border: "border-red-400/60",
-    bg: "from-red-500/35 via-rose-500/20 to-red-800/25",
-    shimmer: "from-red-100/0 via-red-100/40 to-red-100/0",
-    glow: "shadow-red-400/40",
-    icon: "text-red-300",
-    ring: "ring-red-400/35",
+    accent: "text-red-200",
+    border: "border-red-300/70",
+    bg: "from-red-400/50 via-rose-400/30 to-red-700/35",
+    shimmer: "from-red-50/0 via-red-50/50 to-red-50/0",
+    glow: "shadow-red-300/50",
+    icon: "text-red-200",
+    ring: "ring-red-300/45",
+  },
+  infinity: {
+    accent: "text-violet-200",
+    border: "border-violet-300/70",
+    bg: "from-violet-400/50 via-fuchsia-400/30 to-cyan-600/35",
+    shimmer: "from-white/0 via-white/40 to-white/0",
+    glow: "shadow-violet-300/50",
+    icon: "text-violet-200",
+    ring: "ring-violet-300/45",
   },
 };
 
@@ -79,7 +88,7 @@ const NftCertificate = ({
   const unlocked = current >= milestone;
   const config = rarityConfig[rarity];
   const [flipped, setFlipped] = useState(false);
-  const isMythic = rarity === "mythic";
+  const isMythic = rarity === "mythic" || rarity === "infinity";
 
   return (
     <div
