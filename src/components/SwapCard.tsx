@@ -812,11 +812,24 @@ const SwapCard = () => {
                     toast.error('Please select a token to buy');
                     return;
                   }
+                  // Onramper uses specific crypto identifiers with network suffix
+                  const onramperCryptoMap: Record<string, string> = {
+                    'ETH': 'eth_ethereum',
+                    'WETH': 'eth_ethereum',
+                    'USDC': 'usdc_ethereum',
+                    'USDT': 'usdt_ethereum',
+                    'DAI': 'dai_ethereum',
+                    'WBTC': 'wbtc_ethereum',
+                    'LINK': 'link_ethereum',
+                    'UNI': 'uni_ethereum',
+                    'AAVE': 'aave_ethereum',
+                  };
+                  const cryptoId = onramperCryptoMap[buyToken.symbol.toUpperCase()] || buyToken.symbol.toLowerCase();
                   const params = new URLSearchParams({
                     mode: 'buy',
                     defaultFiat: 'USD',
-                    defaultCrypto: buyToken.symbol.toUpperCase(),
-                    onlyCryptos: 'ETH,USDC,USDT,DAI,WBTC,LINK,UNI,AAVE',
+                    defaultCrypto: cryptoId,
+                    onlyCryptos: 'eth_ethereum,usdc_ethereum,usdt_ethereum,dai_ethereum,wbtc_ethereum,link_ethereum,uni_ethereum,aave_ethereum',
                     themeName: 'dark',
                     containerColor: '0a0f0aff',
                     primaryColor: '4ade80ff',
