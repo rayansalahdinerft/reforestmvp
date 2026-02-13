@@ -16,14 +16,14 @@ interface Level {
 }
 
 const LEVELS: Level[] = [
-  { level: 1, label: "Explorer", emoji: "🧭", target: 1, rarity: "Starter", color: "text-stone-400", glow: "from-stone-500/15 to-stone-600/5", nftName: "First Steps", nftDesc: "Your journey begins — proof you planted your very first tree." },
-  { level: 2, label: "Seed", emoji: "🌰", target: 100, rarity: "Common", color: "text-emerald-400", glow: "from-emerald-500/15 to-emerald-600/5", nftName: "Seed Bearer", nftDesc: "100 trees funded. You carry the seeds of change." },
-  { level: 3, label: "Sprout", emoji: "🌱", target: 1_000, rarity: "Uncommon", color: "text-green-400", glow: "from-green-500/15 to-green-600/5", nftName: "Green Sprout", nftDesc: "1,000 trees — your impact is visibly growing." },
-  { level: 4, label: "Roots", emoji: "🌿", target: 10_000, rarity: "Rare", color: "text-blue-400", glow: "from-blue-500/15 to-blue-600/5", nftName: "Deep Roots", nftDesc: "10K trees planted. Your roots run deep in the ecosystem." },
-  { level: 5, label: "Canopy", emoji: "🌳", target: 100_000, rarity: "Epic", color: "text-purple-400", glow: "from-purple-500/15 to-purple-600/5", nftName: "Canopy Guardian", nftDesc: "100K trees — you shelter entire ecosystems." },
-  { level: 6, label: "Forest", emoji: "🏔️", target: 1_000_000, rarity: "Legendary", color: "text-orange-400", glow: "from-orange-500/15 to-orange-600/5", nftName: "Forest Keeper", nftDesc: "1M trees. You've created an entire forest." },
-  { level: 7, label: "Legend", emoji: "⭐", target: 10_000_000, rarity: "Mythic", color: "text-yellow-400", glow: "from-yellow-500/15 to-yellow-600/5", nftName: "Living Legend", nftDesc: "10M trees — your name echoes through the canopy." },
-  { level: 8, label: "Infinity", emoji: "♾️", target: 100_000_000, rarity: "∞", color: "text-cyan-400", glow: "from-cyan-500/15 to-cyan-600/5", nftName: "Infinite Impact", nftDesc: "100M trees. Beyond legendary — eternal impact." },
+  { level: 1, label: "Explorer", emoji: "🧭", target: 1, rarity: "Starter", color: "text-stone-400", glow: "from-stone-500/15 to-stone-600/5", nftName: "First Tree", nftDesc: "You planted your first tree. The journey starts here." },
+  { level: 2, label: "Seed", emoji: "🌱", target: 100, rarity: "Common", color: "text-emerald-400", glow: "from-emerald-500/15 to-emerald-600/5", nftName: "100 Trees", nftDesc: "100 trees funded. You're building momentum." },
+  { level: 3, label: "Grove", emoji: "🌿", target: 1_000, rarity: "Uncommon", color: "text-green-400", glow: "from-green-500/15 to-green-600/5", nftName: "1K Trees", nftDesc: "1,000 trees — a real grove is taking shape." },
+  { level: 4, label: "Forest", emoji: "🌲", target: 10_000, rarity: "Rare", color: "text-blue-400", glow: "from-blue-500/15 to-blue-600/5", nftName: "10K Trees", nftDesc: "10,000 trees. You've built a forest." },
+  { level: 5, label: "Jungle", emoji: "🌳", target: 100_000, rarity: "Epic", color: "text-purple-400", glow: "from-purple-500/15 to-purple-600/5", nftName: "100K Trees", nftDesc: "100K trees — an entire ecosystem thrives." },
+  { level: 6, label: "Biome", emoji: "🏔", target: 1_000_000, rarity: "Legendary", color: "text-orange-400", glow: "from-orange-500/15 to-orange-600/5", nftName: "1M Trees", nftDesc: "1 million trees. You reshaped a biome." },
+  { level: 7, label: "Legend", emoji: "⭐", target: 10_000_000, rarity: "Mythic", color: "text-yellow-400", glow: "from-yellow-500/15 to-yellow-600/5", nftName: "10M Trees", nftDesc: "10M trees — your name is written in nature." },
+  { level: 8, label: "Infinity", emoji: "♾️", target: 100_000_000, rarity: "∞", color: "text-cyan-400", glow: "from-cyan-500/15 to-cyan-600/5", nftName: "100M Trees", nftDesc: "100M trees. Infinite impact, eternal legacy." },
 ];
 
 interface CurrentLevelProps {
