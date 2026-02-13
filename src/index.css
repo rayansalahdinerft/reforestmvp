@@ -529,3 +529,10 @@ button, a, input, select, textarea {
   50% { transform: translateX(100%) skewX(-15deg); }
   100% { transform: translateX(100%) skewX(-15deg); }
 }
+
+/* Holographic rainbow shift */
+@keyframes holo-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
