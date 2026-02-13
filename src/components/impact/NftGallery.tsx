@@ -14,12 +14,13 @@ interface Certificate {
 }
 
 const CERTIFICATES: Certificate[] = [
-  { milestone: 10, label: "Première Pousse", emoji: "🌱", rarity: "Common", gradient: "from-green-400 to-emerald-500", glow: "shadow-green-500/20", badgeBg: "bg-green-500/20 text-green-400 border-green-500/30" },
-  { milestone: 100, label: "Gardien des Racines", emoji: "🌿", rarity: "Uncommon", gradient: "from-blue-400 to-cyan-500", glow: "shadow-blue-500/20", badgeBg: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  { milestone: 1_000, label: "Sentinelle Verte", emoji: "🌳", rarity: "Rare", gradient: "from-purple-400 to-violet-500", glow: "shadow-purple-500/20", badgeBg: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  { milestone: 10_000, label: "Esprit de la Forêt", emoji: "🏔️", rarity: "Epic", gradient: "from-orange-400 to-amber-500", glow: "shadow-orange-500/20", badgeBg: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  { milestone: 100_000, label: "Protecteur de Gaïa", emoji: "🌍", rarity: "Legendary", gradient: "from-yellow-300 to-amber-400", glow: "shadow-yellow-500/30", badgeBg: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
-  { milestone: 1_000_000, label: "Titan Originel", emoji: "✨", rarity: "Mythic", gradient: "from-red-400 to-rose-500", glow: "shadow-red-500/30", badgeBg: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { milestone: 10, label: "Graine Originelle", emoji: "🌱", rarity: "Common", gradient: "from-green-400 to-emerald-500", glow: "shadow-green-500/20", badgeBg: "bg-green-500/20 text-green-400 border-green-500/30" },
+  { milestone: 100, label: "Première Pousse", emoji: "🌿", rarity: "Uncommon", gradient: "from-blue-400 to-cyan-500", glow: "shadow-blue-500/20", badgeBg: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { milestone: 1_000, label: "Gardien des Racines", emoji: "🌾", rarity: "Rare", gradient: "from-purple-400 to-violet-500", glow: "shadow-purple-500/20", badgeBg: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  { milestone: 10_000, label: "Esprit de la Canopée", emoji: "🌳", rarity: "Epic", gradient: "from-orange-400 to-amber-500", glow: "shadow-orange-500/20", badgeBg: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
+  { milestone: 100_000, label: "Sentinelle de la Forêt", emoji: "🌲", rarity: "Legendary", gradient: "from-yellow-300 to-amber-400", glow: "shadow-yellow-500/30", badgeBg: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
+  { milestone: 1_000_000, label: "Protecteur de la Biosphère", emoji: "🌍", rarity: "Mythic", gradient: "from-red-400 to-rose-500", glow: "shadow-red-500/30", badgeBg: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { milestone: 10_000_000, label: "Légende Originelle", emoji: "⭐", rarity: "Divine", gradient: "from-amber-300 via-yellow-400 to-orange-500", glow: "shadow-amber-500/40", badgeBg: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
 ];
 
 interface NftGalleryProps {

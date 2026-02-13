@@ -9,12 +9,13 @@ interface Level {
 }
 
 const LEVELS: Level[] = [
-  { level: 1, label: "Pousse", emoji: "🌱", target: 10 },
-  { level: 2, label: "Racine", emoji: "🌿", target: 100 },
-  { level: 3, label: "Canopée", emoji: "🌳", target: 1_000 },
-  { level: 4, label: "Forêt", emoji: "🏔️", target: 10_000 },
-  { level: 5, label: "Biosphère", emoji: "🌍", target: 100_000 },
-  { level: 6, label: "Légende", emoji: "✨", target: 1_000_000 },
+  { level: 1, label: "Graine", emoji: "🌱", target: 10 },
+  { level: 2, label: "Pousse", emoji: "🌿", target: 100 },
+  { level: 3, label: "Racines", emoji: "🌾", target: 1_000 },
+  { level: 4, label: "Canopée", emoji: "🌳", target: 10_000 },
+  { level: 5, label: "Forêt", emoji: "🌲", target: 100_000 },
+  { level: 6, label: "Biosphère", emoji: "🌍", target: 1_000_000 },
+  { level: 7, label: "Légende", emoji: "⭐", target: 10_000_000 },
 ];
 
 interface CurrentLevelProps {
