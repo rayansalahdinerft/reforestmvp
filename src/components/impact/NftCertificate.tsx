@@ -11,60 +11,67 @@ interface NftCertificateProps {
 }
 
 const rarityConfig = {
+  // Forest Steel — brushed steel, robust
   common: {
-    bg: "linear-gradient(145deg, #2a3d5c 0%, #3b5278 30%, #2e4468 60%, #1e3250 100%)",
-    textMain: "#c8ddf0",
-    textSub: "rgba(160,200,240,0.6)",
-    border: "rgba(100,170,240,0.25)",
-    engrave: "0 1px 3px rgba(0,0,0,0.9), 0 -1px 0 rgba(180,220,255,0.12), inset 0 0 20px rgba(100,170,240,0.05)",
+    bg: "linear-gradient(145deg, #4a5568 0%, #718096 30%, #a0aec0 50%, #718096 70%, #4a5568 100%)",
+    textMain: "#e2e8f0",
+    textSub: "rgba(200,215,230,0.6)",
+    border: "rgba(160,174,192,0.35)",
+    engrave: "0 1px 3px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,255,255,0.15), inset 0 0 20px rgba(160,174,192,0.08)",
     shimmer: false,
     holo: false,
   },
+  // Forest Steel — brushed steel
   uncommon: {
-    bg: "linear-gradient(145deg, #0c1a33 0%, #1a2f55 30%, #162a4d 60%, #0d1b35 100%)",
-    textMain: "#9bbde0",
-    textSub: "rgba(120,170,220,0.55)",
-    border: "rgba(70,140,220,0.3)",
-    engrave: "0 1px 3px rgba(0,0,0,0.9), 0 -1px 0 rgba(140,190,255,0.1), inset 0 0 20px rgba(70,140,220,0.05)",
+    bg: "linear-gradient(145deg, #4a5568 0%, #718096 30%, #a0aec0 50%, #718096 70%, #4a5568 100%)",
+    textMain: "#e2e8f0",
+    textSub: "rgba(200,215,230,0.6)",
+    border: "rgba(160,174,192,0.35)",
+    engrave: "0 1px 3px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,255,255,0.15), inset 0 0 20px rgba(160,174,192,0.08)",
     shimmer: false,
     holo: false,
   },
+  // Verdant Bronze — bronze texturé
   rare: {
+    bg: "linear-gradient(145deg, #5c3d1e 0%, #8b6914 25%, #cd7f32 45%, #a0682d 70%, #6b4226 100%)",
+    textMain: "#f5e6c8",
+    textSub: "rgba(245,230,200,0.65)",
+    border: "rgba(205,127,50,0.45)",
+    engrave: "0 2px 6px rgba(0,0,0,0.8), 0 -1px 0 rgba(245,230,200,0.2), 0 0 12px rgba(205,127,50,0.12)",
+    shimmer: true,
+    holo: false,
+  },
+  // Emerald Silver — argent poli + accents émeraude
+  epic: {
+    bg: "linear-gradient(145deg, #8a9bae 0%, #c0c8d0 25%, #dde3e8 45%, #b8c4d0 70%, #8a9bae 100%)",
+    textMain: "#ffffff",
+    textSub: "rgba(80,200,140,0.7)",
+    border: "rgba(80,200,140,0.35)",
+    engrave: "0 2px 6px rgba(0,0,0,0.5), 0 -1px 0 rgba(255,255,255,0.35), 0 0 16px rgba(80,200,140,0.1)",
+    shimmer: true,
+    holo: false,
+  },
+  // Guardian Gold — or mat, gravure profonde
+  legendary: {
     bg: "linear-gradient(145deg, #6b4f0e 0%, #c49a28 25%, #d4aa3c 45%, #b8952a 70%, #7a5e14 100%)",
     textMain: "#fff8e1",
     textSub: "rgba(255,245,200,0.7)",
     border: "rgba(212,170,60,0.5)",
-    engrave: "0 2px 6px rgba(0,0,0,0.7), 0 -1px 0 rgba(255,240,180,0.25), 0 0 12px rgba(212,170,60,0.15)",
+    engrave: "0 2px 8px rgba(0,0,0,0.8), 0 -1px 0 rgba(255,240,180,0.3), 0 0 14px rgba(212,170,60,0.2)",
     shimmer: true,
     holo: false,
   },
-  epic: {
-    bg: "linear-gradient(145deg, #707070 0%, #b0b0b0 25%, #d0d0d0 45%, #a0a0a0 70%, #808080 100%)",
-    textMain: "#ffffff",
-    textSub: "rgba(255,255,255,0.65)",
-    border: "rgba(255,255,255,0.35)",
-    engrave: "0 2px 6px rgba(0,0,0,0.6), 0 -1px 0 rgba(255,255,255,0.3), 0 0 12px rgba(255,255,255,0.1)",
-    shimmer: true,
-    holo: false,
-  },
-  legendary: {
-    bg: "linear-gradient(145deg, #0d0d0d 0%, #1c1c1c 30%, #252525 50%, #181818 75%, #0a0a0a 100%)",
-    textMain: "#e0e0e0",
-    textSub: "rgba(200,200,200,0.5)",
-    border: "rgba(120,120,120,0.25)",
-    engrave: "0 2px 6px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,255,255,0.08)",
-    shimmer: true,
-    holo: false,
-  },
+  // Earth Platinum — platine, reflets froids
   mythic: {
-    bg: "linear-gradient(145deg, #0a0a0a 0%, #151515 30%, #1a1a1a 50%, #0f0f0f 100%)",
-    textMain: "#d4af37",
-    textSub: "rgba(212,175,55,0.5)",
-    border: "rgba(212,175,55,0.3)",
-    engrave: "0 2px 6px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,215,0,0.1), 0 0 16px rgba(212,175,55,0.1)",
+    bg: "linear-gradient(145deg, #c0c5ce 0%, #d8dce5 25%, #e8ecf0 45%, #d0d5de 70%, #b0b8c5 100%)",
+    textMain: "#2d3748",
+    textSub: "rgba(45,55,72,0.55)",
+    border: "rgba(200,210,225,0.5)",
+    engrave: "0 2px 6px rgba(0,0,0,0.3), 0 -1px 0 rgba(255,255,255,0.5), 0 0 16px rgba(200,210,225,0.15)",
     shimmer: true,
     holo: true,
   },
+  // Gaia Black Edition — noir profond, gravure or/platine
   infinity: {
     bg: "linear-gradient(145deg, #030303 0%, #0a0a0a 30%, #111111 50%, #080808 100%)",
     textMain: "#d4af37",

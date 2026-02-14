@@ -9,12 +9,12 @@ import CurrentLevel from "@/components/impact/CurrentLevel";
 import NftCertificate from "@/components/impact/NftCertificate";
 
 const NFT_CERTS = [
-  { milestone: 1_000, label: "Grove", description: "1,000 trees planted", rarity: "uncommon" as const },
-  { milestone: 10_000, label: "Forest", description: "10,000 trees planted", rarity: "rare" as const },
-  { milestone: 100_000, label: "Jungle", description: "100K trees planted", rarity: "epic" as const },
-  { milestone: 1_000_000, label: "Biome", description: "1 million trees planted", rarity: "legendary" as const },
-  { milestone: 10_000_000, label: "Legend", description: "10M trees planted", rarity: "mythic" as const },
-  { milestone: 100_000_000, label: "Infinity", description: "100M trees planted", rarity: "infinity" as const },
+  { milestone: 1_000, label: "Forest Steel", description: "1,000 trees planted", rarity: "uncommon" as const },
+  { milestone: 10_000, label: "Verdant Bronze", description: "10,000 trees planted", rarity: "rare" as const },
+  { milestone: 100_000, label: "Emerald Silver", description: "100K trees planted", rarity: "epic" as const },
+  { milestone: 1_000_000, label: "Guardian Gold", description: "1 million trees planted", rarity: "legendary" as const },
+  { milestone: 10_000_000, label: "Earth Platinum", description: "10M trees planted", rarity: "mythic" as const },
+  { milestone: 100_000_000, label: "Gaia Black Edition", description: "100M trees planted", rarity: "infinity" as const },
 ];
 
 const Impact = () => {
