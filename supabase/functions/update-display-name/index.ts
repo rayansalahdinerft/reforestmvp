@@ -46,10 +46,15 @@ Deno.serve(async (req) => {
       );
     }
 
+    const normalizedAddress = walletAddress.toLowerCase();
+
+    // Upsert: create row if it doesn't exist yet
     const { data, error } = await supabase
       .from('wallet_stats')
-      .update(updatePayload)
-      .eq('wallet_address', walletAddress.toLowerCase())
+      .upsert(
+        { wallet_address: normalizedAddress, ...updatePayload },
+        { onConflict: 'wallet_address' }
+      )
       .select()
       .single();
 
