@@ -180,17 +180,35 @@ const NftCertificate = ({ milestone, label, description, current, rarity, featur
             trees planted
           </p>
 
-          {/* Status badge */}
-          <div className="absolute bottom-4">
+          {/* Status badge + progress */}
+          <div className="absolute bottom-4 w-full px-5">
             {unlocked ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center justify-center gap-1">
                 <Check className="w-3 h-3 text-primary" />
                 <span className="text-[8px] font-bold text-primary uppercase tracking-widest">Owned</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1">
-                <Lock className="w-3 h-3" style={{ color: "#3a3a3a" }} />
-                <span className="text-[8px] uppercase tracking-widest" style={{ color: "#3a3a3a" }}>Locked</span>
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[7px] uppercase tracking-wider" style={{ color: "#555" }}>
+                  <span>{current.toLocaleString()}</span>
+                  <span>{formatMilestone(milestone)}</span>
+                </div>
+                <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: `${Math.min((current / milestone) * 100, 100)}%`,
+                      background: `linear-gradient(90deg, ${c.textSub}, ${c.textMain})`,
+                      opacity: 0.5,
+                    }}
+                  />
+                </div>
+                <div className="flex items-center justify-center gap-1">
+                  <Lock className="w-2.5 h-2.5" style={{ color: "#444" }} />
+                  <span className="text-[7px] uppercase tracking-widest" style={{ color: "#444" }}>
+                    {Math.floor((current / milestone) * 100)}%
+                  </span>
+                </div>
               </div>
             )}
           </div>
