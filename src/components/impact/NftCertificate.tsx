@@ -86,15 +86,6 @@ const NftCertificate = ({ milestone, label, description, current, rarity, featur
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
 
-        {/* Top badge */}
-        <div className="absolute top-3 left-0 right-0 flex justify-center">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10">
-            <img src={leafIcon} alt="" className="w-3.5 h-3.5 rounded" />
-            <span className="text-[8px] font-bold tracking-[0.15em] uppercase text-white/70">
-              Proof of Impact
-            </span>
-          </div>
-        </div>
 
         {/* Bottom content */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
