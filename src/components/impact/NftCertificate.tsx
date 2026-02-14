@@ -102,8 +102,8 @@ const NftCertificate = ({ milestone, label, description, current, rarity, featur
           boxShadow: unlocked
             ? `0 20px 60px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3)`
             : "0 4px 16px rgba(0,0,0,0.25)",
-          opacity: unlocked ? 1 : 0.25,
-          filter: unlocked ? "none" : "grayscale(70%) brightness(0.5)",
+          opacity: unlocked ? 1 : 0.6,
+          filter: unlocked ? "none" : "grayscale(40%) brightness(0.7)",
         }}
       >
         {/* Metal brushed texture */}
