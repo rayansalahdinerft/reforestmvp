@@ -1,23 +1,9 @@
 import { useState, useRef } from "react";
-import { Camera, Upload, Check, X, Loader2 } from "lucide-react";
+import { Camera, Upload, Loader2 } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-import avatar1 from "@/assets/avatars/avatar1.png";
-import avatar2 from "@/assets/avatars/avatar2.png";
-import avatar3 from "@/assets/avatars/avatar3.png";
-import avatar4 from "@/assets/avatars/avatar4.png";
-import avatar5 from "@/assets/avatars/avatar5.png";
-import avatar6 from "@/assets/avatars/avatar6.png";
-import avatar7 from "@/assets/avatars/avatar7.png";
-import avatar8 from "@/assets/avatars/avatar8.png";
-import avatar9 from "@/assets/avatars/avatar9.png";
-import avatar10 from "@/assets/avatars/avatar10.png";
-import avatar11 from "@/assets/avatars/avatar11.png";
-import avatar12 from "@/assets/avatars/avatar12.png";
-
-const PRESET_AVATARS = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
+import { PRESET_AVATARS } from "@/utils/avatarResolver";
 
 interface AvatarPickerProps {
   currentAvatar: string;
@@ -30,11 +16,11 @@ const AvatarPicker = ({ currentAvatar, walletAddress, onAvatarChanged }: AvatarP
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSelectPreset = async (avatarUrl: string) => {
+  const handleSelectPreset = async (index: number) => {
     setSaving(true);
     try {
       const { error } = await supabase.functions.invoke("update-display-name", {
-        body: { walletAddress: walletAddress.toLowerCase(), avatarUrl },
+        body: { walletAddress: walletAddress.toLowerCase(), avatarUrl: `preset:${index}` },
       });
       if (error) throw error;
       toast.success("Avatar updated! 🎨");
@@ -111,7 +97,7 @@ const AvatarPicker = ({ currentAvatar, walletAddress, onAvatarChanged }: AvatarP
               {PRESET_AVATARS.map((av, i) => (
                 <button
                   key={i}
-                  onClick={() => handleSelectPreset(av)}
+                  onClick={() => handleSelectPreset(i)}
                   className="w-full aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/50 transition-all hover:scale-105"
                 >
                   <img src={av} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover" />
