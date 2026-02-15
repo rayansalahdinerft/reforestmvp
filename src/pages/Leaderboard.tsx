@@ -6,6 +6,7 @@ import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import AvatarPicker from '@/components/AvatarPicker';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { resolveAvatarUrl } from '@/utils/avatarResolver';
 
 import explorerAvatar from "@/assets/levels/explorer.png";
 import seedAvatar from "@/assets/levels/seed.png";
@@ -27,10 +28,14 @@ const LEVELS = [
   { level: 8, label: "Infinity", avatar: infinityAvatar, target: 100_000_000 },
 ];
 
-const getLevelAvatar = (trees: number, customAvatar?: string | null) => {
-  if (customAvatar) return customAvatar;
+const getLevelFallback = (trees: number) => {
   const achieved = [...LEVELS].reverse().find((l) => trees >= l.target);
   return achieved?.avatar ?? explorerAvatar;
+};
+
+const getAvatar = (trees: number, avatarUrl?: string | null) => {
+  const fallback = getLevelFallback(trees);
+  return resolveAvatarUrl(avatarUrl, fallback);
 };
 
 interface LeaderboardEntry {
@@ -136,7 +141,7 @@ const Leaderboard = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <AvatarPicker
-                  currentAvatar={getLevelAvatar(myEntry.total_trees, myEntry.avatar_url)}
+                  currentAvatar={getAvatar(myEntry.total_trees, myEntry.avatar_url)}
                   walletAddress={address!}
                   onAvatarChanged={fetchLeaderboard}
                 />
@@ -236,7 +241,7 @@ const Leaderboard = () => {
                     </div>
                     <div className="min-w-0 flex items-center gap-2.5">
                       <div className="w-7 h-7 rounded-full overflow-hidden border border-border/50 shrink-0">
-                        <img src={getLevelAvatar(entry.total_trees, entry.avatar_url)} alt="" className="w-full h-full object-cover" />
+                        <img src={getAvatar(entry.total_trees, entry.avatar_url)} alt="" className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
                         <p className={`text-sm font-medium truncate ${isMe ? 'text-primary' : 'text-foreground'}`}>
