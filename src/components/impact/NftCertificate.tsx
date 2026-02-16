@@ -129,7 +129,7 @@ const NftCertificate = ({ milestone, label, description, current, rarity, featur
                     <Lock className="w-3 h-3 text-white/40" />
                     <span className="text-[8px] font-semibold text-white/40 uppercase tracking-wider">NFT Locked</span>
                   </div>
-                  <span className="text-[8px] font-bold text-white/50">{progress < 1 && progress > 0 ? progress.toFixed(2) : Math.floor(progress)}%</span>
+                  <span className="text-[8px] font-bold text-white/50">{progress > 0 && progress < 0.01 ? progress.toFixed(3) : progress < 1 ? progress.toFixed(2) : Math.floor(progress)}%</span>
                 </div>
                 <div className="h-1 rounded-full overflow-hidden bg-white/10">
                   <div
