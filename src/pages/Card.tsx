@@ -197,26 +197,11 @@ const Card = () => {
                   <text x="0" y="14" fontFamily="Arial,sans-serif" fontWeight="bold" fontStyle="italic" fontSize="16" fill="white" fillOpacity="0.7" letterSpacing="1">VISA</text>
                 </svg>
               </div>
-
-
-
-          </div>
-        </div>
-
-        {/* Balance pill */}
-        <div className="max-w-xs mx-auto px-6 pb-8 relative z-10">
-          <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <div className="glass-subtle rounded-full px-5 py-3 flex items-center justify-between">
-              <div>
-                <p className="text-[10px] text-muted-foreground leading-none">My balance</p>
-                <p className="text-sm font-bold tabular-nums leading-tight">$0.00</p>
-                </div>
-              </div>
-              <span className="text-[10px] text-primary/50 font-medium">Soon</span>
             </div>
           </div>
         </div>
       </section>
+
 
       {/* Features */}
       <section className="max-w-xs mx-auto px-6 pb-8 relative z-10">
