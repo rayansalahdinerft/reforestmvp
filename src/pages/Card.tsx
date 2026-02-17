@@ -180,13 +180,8 @@ const Card = () => {
                      background: 'linear-gradient(135deg, transparent 25%, hsl(0 0% 100% / 0.3) 45%, transparent 55%)',
                    }} />
 
-              {/* ReforestWallet text logo — top left */}
-              <div className="absolute top-5 left-5">
-                <span className="text-[11px] font-bold tracking-tight leading-none">
-                  <span className="text-foreground/90">Reforest</span>
-                  <span className="text-primary/90">Wallet</span>
-                </span>
-              </div>
+
+
 
               {/* Card name — bottom left */}
               <div className="absolute bottom-5 left-5">
