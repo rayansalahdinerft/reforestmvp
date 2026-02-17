@@ -183,8 +183,8 @@ const Card = () => {
 
 
 
-              {/* Card name — bottom left */}
-              <div className="absolute bottom-5 left-5">
+              {/* Card name — top left */}
+              <div className="absolute top-5 left-5">
                 <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground/50">
                   Reforest Card
                 </span>
