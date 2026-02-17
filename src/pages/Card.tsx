@@ -37,31 +37,6 @@ const featureDetails: Record<string, { title: string; description: string; point
   },
 };
 
-const CardVisual = ({ className = '' }: { className?: string }) => (
-  <div
-    className={`relative aspect-[1.586/1] rounded-[20px] overflow-hidden ${className}`}
-    style={{
-      transform: 'perspective(800px) rotateY(-8deg) rotateX(4deg) rotate(-3deg)',
-      background: 'linear-gradient(145deg, hsl(0 0% 12%), hsl(0 0% 6%) 40%, hsl(0 0% 10%) 70%, hsl(0 0% 5%))',
-      boxShadow: '0 30px 60px -15px hsl(0 0% 0% / 0.7), 0 0 0 1px hsl(0 0% 20% / 0.3), inset 0 1px 0 0 hsl(0 0% 22% / 0.3)',
-    }}
-  >
-    <div className="absolute inset-0 opacity-[0.07]"
-         style={{ background: 'linear-gradient(135deg, transparent 25%, hsl(0 0% 100% / 0.3) 45%, transparent 55%)' }} />
-    <div className="absolute top-5 left-5">
-      <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground/50">
-        Reforest Card
-      </span>
-    </div>
-    <div className="absolute bottom-4 right-5 text-right">
-      <p className="text-[8px] font-semibold tracking-[0.15em] uppercase text-foreground/60">DEBIT</p>
-      <svg width="50" height="16" viewBox="0 0 50 16">
-        <text x="0" y="14" fontFamily="Arial,sans-serif" fontWeight="bold" fontStyle="italic" fontSize="16" fill="white" fillOpacity="0.7" letterSpacing="1">VISA</text>
-      </svg>
-    </div>
-  </div>
-);
-
 const Card = () => {
   const [activeDetail, setActiveDetail] = useState<string | null>(null);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left');
@@ -104,7 +79,7 @@ const Card = () => {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="max-w-sm lg:max-w-lg mx-auto px-6 pt-6">
+          <div className="max-w-sm mx-auto px-6 pt-6">
             <button
               onClick={() => setActiveDetail(null)}
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
@@ -168,93 +143,69 @@ const Card = () => {
         </div>
       )}
 
-      {/* === MOBILE LAYOUT (unchanged) === */}
-      <div className="lg:hidden">
-        <section className="relative overflow-hidden">
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/6 blur-[100px] pointer-events-none" />
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/6 blur-[100px] pointer-events-none" />
 
-          <div className="max-w-lg mx-auto px-6 pt-14 pb-4 text-center relative z-10">
-            <h1 className="text-4xl font-bold leading-[1.08] tracking-tight mb-4 animate-hero-reveal">
-              Crypto becomes
-              <br />
-              more <span className="gradient-text">simple.</span>
-            </h1>
-            <p className="text-muted-foreground text-sm max-w-[260px] mx-auto mb-8 animate-glow-reveal">
-              All your transactions with Reforest Card.
-            </p>
-          </div>
+        <div className="max-w-lg mx-auto px-6 pt-14 pb-4 text-center relative z-10">
+          <h1 className="text-4xl sm:text-5xl font-bold leading-[1.08] tracking-tight mb-4 animate-hero-reveal">
+            Crypto becomes
+            <br />
+            more <span className="gradient-text">simple.</span>
+          </h1>
+          <p className="text-muted-foreground text-sm max-w-[260px] mx-auto mb-8 animate-glow-reveal">
+            All your transactions with Reforest Card.
+          </p>
+        </div>
 
-          <div className="max-w-xs mx-auto px-6 pb-6 relative z-10">
-            <div className="animate-hero-reveal" style={{ animationDelay: '0.2s' }}>
-              <CardVisual />
-            </div>
-          </div>
-        </section>
-
-        <section className="max-w-xs mx-auto px-6 pb-8 relative z-10">
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-            Upcoming Features
-          </h2>
-          <div className="space-y-2.5">
-            <FeatureCard icon={<Wallet className="w-5 h-5 text-primary" />} title="Fiat Wallet" subtitle="Deposit, withdraw, track" delay="0.55s" onClick={() => goTo('wallet', 'left')} />
-            <FeatureCard icon={<Banknote className="w-5 h-5 text-primary" />} title="Buy & Sell Crypto" subtitle="Instantly from your wallet" delay="0.6s" onClick={() => goTo('buysell', 'left')} />
-            <FeatureCard icon={<CreditCard className="w-5 h-5 text-primary" />} title="Reforest Card" subtitle="Spend crypto in real life" delay="0.65s" highlight onClick={() => goTo('card', 'left')} />
-          </div>
-        </section>
-
-        <section className="max-w-xs mx-auto px-6 pb-20 relative z-10">
-          <div className="flex items-center gap-2 text-muted-foreground/40 text-[11px] justify-center animate-fade-in" style={{ animationDelay: '0.75s' }}>
-            <ShieldCheck className="w-3.5 h-3.5 text-primary/25" />
-            <span>Identity verification (KYC) will be required.</span>
-          </div>
-        </section>
-      </div>
-
-      {/* === DESKTOP LAYOUT === */}
-      <div className="hidden lg:block">
-        <section className="relative overflow-hidden">
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/5 blur-[150px] pointer-events-none" />
-
-          <div className="max-w-6xl mx-auto px-12 pt-20 pb-16 relative z-10">
-            <div className="grid grid-cols-2 gap-16 items-center">
-              {/* Left — Text + Features */}
-              <div>
-                <h1 className="text-6xl font-bold leading-[1.05] tracking-tight mb-5 animate-hero-reveal">
-                  Crypto becomes
-                  <br />
-                  more <span className="gradient-text">simple.</span>
-                </h1>
-                <p className="text-muted-foreground text-lg max-w-sm mb-12 animate-glow-reveal">
-                  All your transactions with Reforest Card.
-                </p>
-
-                <div>
-                  <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-                    Upcoming Features
-                  </h2>
-                  <div className="space-y-3 max-w-md">
-                    <FeatureCard icon={<Wallet className="w-5 h-5 text-primary" />} title="Fiat Wallet" subtitle="Deposit, withdraw, track" delay="0.55s" onClick={() => goTo('wallet', 'left')} />
-                    <FeatureCard icon={<Banknote className="w-5 h-5 text-primary" />} title="Buy & Sell Crypto" subtitle="Instantly from your wallet" delay="0.6s" onClick={() => goTo('buysell', 'left')} />
-                    <FeatureCard icon={<CreditCard className="w-5 h-5 text-primary" />} title="Reforest Card" subtitle="Spend crypto in real life" delay="0.65s" highlight onClick={() => goTo('card', 'left')} />
-                  </div>
-
-                  <div className="flex items-center gap-2 text-muted-foreground/40 text-[11px] mt-8 animate-fade-in" style={{ animationDelay: '0.75s' }}>
-                    <ShieldCheck className="w-3.5 h-3.5 text-primary/25" />
-                    <span>Identity verification (KYC) will be required.</span>
-                  </div>
-                </div>
+        {/* Card */}
+        <div className="max-w-xs mx-auto px-6 pb-6 relative z-10">
+          <div className="animate-hero-reveal" style={{ animationDelay: '0.2s' }}>
+            <div
+              className="relative aspect-[1.586/1] rounded-[20px] overflow-hidden"
+              style={{
+                transform: 'perspective(800px) rotateY(-8deg) rotateX(4deg) rotate(-3deg)',
+                background: 'linear-gradient(145deg, hsl(0 0% 12%), hsl(0 0% 6%) 40%, hsl(0 0% 10%) 70%, hsl(0 0% 5%))',
+                boxShadow: '0 30px 60px -15px hsl(0 0% 0% / 0.7), 0 0 0 1px hsl(0 0% 20% / 0.3), inset 0 1px 0 0 hsl(0 0% 22% / 0.3)',
+              }}
+            >
+              <div className="absolute inset-0 opacity-[0.07]"
+                   style={{ background: 'linear-gradient(135deg, transparent 25%, hsl(0 0% 100% / 0.3) 45%, transparent 55%)' }} />
+              <div className="absolute top-5 left-5">
+                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground/50">
+                  Reforest Card
+                </span>
               </div>
-
-              {/* Right — Card visual */}
-              <div className="flex items-center justify-center">
-                <div className="w-full max-w-md animate-hero-reveal" style={{ animationDelay: '0.2s' }}>
-                  <CardVisual className="animate-float" />
-                </div>
+              <div className="absolute bottom-4 right-5 text-right">
+                <p className="text-[8px] font-semibold tracking-[0.15em] uppercase text-foreground/60">DEBIT</p>
+                <svg width="50" height="16" viewBox="0 0 50 16">
+                  <text x="0" y="14" fontFamily="Arial,sans-serif" fontWeight="bold" fontStyle="italic" fontSize="16" fill="white" fillOpacity="0.7" letterSpacing="1">VISA</text>
+                </svg>
               </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* Features — row on desktop, column on mobile */}
+      <section className="max-w-4xl mx-auto px-6 pb-8 relative z-10">
+        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 animate-fade-in text-center md:text-left" style={{ animationDelay: '0.5s' }}>
+          Upcoming Features
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+          <FeatureCard icon={<Wallet className="w-5 h-5 text-primary" />} title="Fiat Wallet" subtitle="Deposit, withdraw, track" delay="0.55s" onClick={() => goTo('wallet', 'left')} />
+          <FeatureCard icon={<Banknote className="w-5 h-5 text-primary" />} title="Buy & Sell Crypto" subtitle="Instantly from your wallet" delay="0.6s" onClick={() => goTo('buysell', 'left')} />
+          <FeatureCard icon={<CreditCard className="w-5 h-5 text-primary" />} title="Reforest Card" subtitle="Spend crypto in real life" delay="0.65s" highlight onClick={() => goTo('card', 'left')} />
+        </div>
+      </section>
+
+      {/* KYC */}
+      <section className="max-w-xs mx-auto px-6 pb-20 relative z-10">
+        <div className="flex items-center gap-2 text-muted-foreground/40 text-[11px] justify-center animate-fade-in" style={{ animationDelay: '0.75s' }}>
+          <ShieldCheck className="w-3.5 h-3.5 text-primary/25" />
+          <span>Identity verification (KYC) will be required.</span>
+        </div>
+      </section>
     </div>
   );
 };
