@@ -32,6 +32,7 @@ const Header = () => {
     { path: '/leaderboard', label: 'Leaderboard' },
     { path: '/portfolio', label: 'Portfolio' },
     { path: '/impact', label: 'Impact' },
+    { path: '/card', label: 'Card' },
   ];
 
   return (
