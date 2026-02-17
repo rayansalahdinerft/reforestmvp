@@ -9,7 +9,7 @@ const featureDetails: Record<string, { title: string; description: string; point
     description: 'A dedicated space to manage your money like a real account.',
     points: [
       'Deposit fiat instantly',
-      'Withdraw to your bank account',
+      'Withdraw to your bank account with no fees',
       'Track your balance in real time',
       'Seamless integration with crypto',
     ],
@@ -102,51 +102,32 @@ const Card = () => {
         <div className="max-w-xs mx-auto px-6 pb-6 relative z-10">
           <div className="animate-hero-reveal" style={{ animationDelay: '0.2s' }}>
             <div
-              className="relative aspect-[1.586/1] rounded-2xl overflow-hidden"
+              className="relative aspect-[1.586/1] rounded-[20px] overflow-hidden"
               style={{
                 transform: 'perspective(800px) rotateY(-8deg) rotateX(4deg) rotate(-3deg)',
-                background: 'linear-gradient(145deg, hsl(0 0% 75%), hsl(0 0% 60%) 30%, hsl(0 0% 70%) 50%, hsl(0 0% 58%) 70%, hsl(0 0% 67%))',
-                boxShadow: '0 30px 60px -15px hsl(0 0% 0% / 0.5), 0 0 0 1px hsl(0 0% 78% / 0.15), inset 0 1px 0 0 hsl(0 0% 88% / 0.4), inset 0 -1px 0 0 hsl(0 0% 42% / 0.3)',
+                background: 'linear-gradient(135deg, hsl(280 40% 82%), hsl(200 50% 85%) 25%, hsl(320 30% 88%) 45%, hsl(160 40% 82%) 65%, hsl(270 35% 85%) 85%, hsl(200 45% 80%))',
+                boxShadow: '0 30px 60px -15px hsl(0 0% 0% / 0.5), 0 0 0 1px hsl(0 0% 90% / 0.2), inset 0 1px 0 0 hsl(0 0% 100% / 0.3)',
               }}
             >
-              {/* Brushed metal */}
-              <div className="absolute inset-0 opacity-[0.05]"
+              {/* Holographic shimmer overlay */}
+              <div className="absolute inset-0 opacity-30"
                    style={{
-                     backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 1px, hsl(0 0% 100% / 0.08) 1px, hsl(0 0% 100% / 0.08) 2px)',
-                     backgroundSize: '3px 100%',
+                     background: 'linear-gradient(135deg, transparent 15%, hsl(0 0% 100% / 0.5) 35%, transparent 50%, hsl(180 60% 90% / 0.3) 65%, transparent 80%)',
                    }} />
-              {/* Shimmer */}
-              <div className="absolute inset-0 opacity-25"
+              <div className="absolute inset-0 opacity-20"
                    style={{
-                     background: 'linear-gradient(135deg, transparent 20%, hsl(0 0% 100% / 0.5) 40%, transparent 55%)',
+                     background: 'radial-gradient(ellipse at 60% 40%, hsl(280 50% 90% / 0.5), transparent 60%), radial-gradient(ellipse at 30% 70%, hsl(160 50% 85% / 0.4), transparent 50%)',
                    }} />
 
-              {/* Leaf embossed */}
-              <div className="absolute top-4 left-4">
-                <img src={leafIcon} alt="" className="w-7 h-7 rounded-lg" style={{ filter: 'grayscale(1) brightness(0.55) contrast(1.1)', opacity: 0.45 }} />
+              {/* Leaf logo */}
+              <div className="absolute top-5 left-5">
+                <img src={leafIcon} alt="" className="w-8 h-8 rounded-lg" style={{ filter: 'grayscale(0.6) brightness(0.5) contrast(1)', opacity: 0.55 }} />
               </div>
 
-              {/* Chip */}
-              <div className="absolute top-1/2 left-4 -translate-y-1/2">
-                <div className="w-9 h-6 rounded" style={{ background: 'linear-gradient(145deg, hsl(0 0% 62%), hsl(0 0% 50%))', boxShadow: 'inset 0 1px 0 hsl(0 0% 72% / 0.5)' }}>
-                  <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-[0.5px] p-[2px] opacity-25">
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <div key={i} className="rounded-[1px]" style={{ background: 'hsl(0 0% 40%)' }} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Card name */}
-              <div className="absolute bottom-4 left-4">
-                <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(0 0% 42%)' }}>
-                  Reforest Card
-                </span>
-              </div>
-
-              {/* VISA */}
-              <div className="absolute bottom-3 right-4">
-                <svg width="46" height="15" viewBox="0 0 46 15"><text x="0" y="13" fontFamily="Arial,sans-serif" fontWeight="bold" fontStyle="italic" fontSize="15" fill="hsl(0,0%,40%)" letterSpacing="1">VISA</text></svg>
+              {/* DEBIT + VISA bottom-right */}
+              <div className="absolute bottom-4 right-5 text-right">
+                <p className="text-[8px] font-semibold tracking-[0.15em] uppercase" style={{ color: 'hsl(260 20% 35%)' }}>DEBIT</p>
+                <svg width="50" height="16" viewBox="0 0 50 16"><text x="0" y="14" fontFamily="Arial,sans-serif" fontWeight="bold" fontStyle="italic" fontSize="16" fill="hsl(260,20%,30%)" letterSpacing="1">VISA</text></svg>
               </div>
             </div>
           </div>
