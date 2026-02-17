@@ -203,23 +203,8 @@ const Card = () => {
                 </svg>
               </div>
 
-              {/* Chip */}
-              <div className="absolute top-1/2 left-5 -translate-y-1/2">
-                <div
-                  className="w-9 h-6 rounded"
-                  style={{
-                    background: 'linear-gradient(145deg, hsl(45 30% 55%), hsl(45 20% 40%))',
-                    boxShadow: 'inset 0 1px 0 hsl(45 30% 65% / 0.5)',
-                  }}
-                >
-                  <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-[0.5px] p-[2px] opacity-30">
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <div key={i} className="rounded-[1px]" style={{ background: 'hsl(45 20% 30%)' }} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+
+
           </div>
         </div>
 
@@ -227,13 +212,9 @@ const Card = () => {
         <div className="max-w-xs mx-auto px-6 pb-8 relative z-10">
           <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <div className="glass-subtle rounded-full px-5 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                  <img src={leafIcon} alt="" className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground leading-none">My balance</p>
-                  <p className="text-sm font-bold tabular-nums leading-tight">$0.00</p>
+              <div>
+                <p className="text-[10px] text-muted-foreground leading-none">My balance</p>
+                <p className="text-sm font-bold tabular-nums leading-tight">$0.00</p>
                 </div>
               </div>
               <span className="text-[10px] text-primary/50 font-medium">Soon</span>
