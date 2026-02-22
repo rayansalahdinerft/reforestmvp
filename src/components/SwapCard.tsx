@@ -495,7 +495,7 @@ const SwapCard = () => {
           )}
         </div>
 
-        {mode === 'swap' ? (
+        {mode === 'swap' && (
           <>
             {/* Demo mode indicator */}
             {!isContractDeployed && (
@@ -730,7 +730,8 @@ const SwapCard = () => {
               </button>
             </div>
           </>
-        ) : (
+        )}
+        {mode === 'buy' && (
           <>
             {/* ===== BUY MODE ===== */}
             {/* Fiat Amount Input */}
