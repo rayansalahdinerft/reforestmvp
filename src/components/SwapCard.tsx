@@ -11,6 +11,8 @@ import { useTokenPrices } from '@/hooks/useTokenPrices';
 import { getContractAddress } from '@/config/contracts';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import SwapSuccessConfetti from './SwapSuccessConfetti';
+import { addSwapToHistory } from './SwapHistory';
 
 const FEE_PERCENT = 0.01;
 const REFORESTATION_PERCENT = 0.40; // 40% of fee goes to NGO (swap mode)
@@ -29,6 +31,7 @@ const SwapCard = () => {
   const [slippage, setSlippage] = useState(1);
   const [showSlippageSettings, setShowSlippageSettings] = useState(false);
   const [inputMode, setInputMode] = useState<'token' | 'usd'>('token');
+  const [showConfetti, setShowConfetti] = useState(false);
   const slippageRef = useRef<HTMLDivElement>(null);
 
   const { isConnected, address } = useAppKitAccount();
@@ -244,6 +247,23 @@ const SwapCard = () => {
         console.error('[REFOREST] Error calling update-tree-counter:', err);
       }
 
+      // Trigger confetti
+      setShowConfetti(false);
+      setTimeout(() => setShowConfetti(true), 50);
+
+      // Save to history
+      addSwapToHistory({
+        timestamp: Date.now(),
+        sellToken: sellToken.symbol,
+        buyToken: buyToken.symbol,
+        sellAmount: actualSellAmount,
+        buyAmount: result.dstAmount || buyAmount || '0',
+        txHash: result.hash,
+        status: 'success',
+        chainId: CHAIN_ID,
+        donationUsd: donationAmount,
+      });
+
       toast.success(
         <div>
           <p>Swap successful! 🌱</p>
@@ -338,6 +358,7 @@ const SwapCard = () => {
 
   return (
     <div className="w-full max-w-[460px] mx-auto animate-slide-up px-1 sm:px-0">
+      <SwapSuccessConfetti trigger={showConfetti} />
       {/* Card */}
       <div className="swap-card p-0.5 sm:p-1.5">
         {/* Header */}
