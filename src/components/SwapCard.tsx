@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X, CreditCard, ArrowLeftRight } from 'lucide-react';
+import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X, CreditCard, ArrowLeftRight, Send } from 'lucide-react';
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
-import { useBalance } from 'wagmi';
+import { useBalance, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
+import { parseEther, parseUnits, isAddress } from 'viem';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
 import { useSwapExecution } from '@/hooks/useSwapExecution';
@@ -20,18 +21,21 @@ const BUY_REFORESTATION_PERCENT = 0.002; // 0.2% of amount goes to NGO (buy mode
 const CHAIN_ID = 1; // Ethereum mainnet only
 
 const SwapCard = () => {
-  const [mode, setMode] = useState<'swap' | 'buy'>('swap');
+  const [mode, setMode] = useState<'swap' | 'buy' | 'send'>('swap');
   const [sellAmount, setSellAmount] = useState('');
   const [buyAmount, setBuyAmount] = useState('');
   const [buyFiatAmount, setBuyFiatAmount] = useState('');
   const [activeInput, setActiveInput] = useState<'sell' | 'buy'>('sell');
   const [sellToken, setSellToken] = useState<Token | null>(null);
   const [buyToken, setBuyToken] = useState<Token | null>(null);
-  const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | null>(null);
+  const [modalOpen, setModalOpen] = useState<'sell' | 'buy' | 'send' | null>(null);
   const [slippage, setSlippage] = useState(1);
   const [showSlippageSettings, setShowSlippageSettings] = useState(false);
   const [inputMode, setInputMode] = useState<'token' | 'usd'>('token');
   const [showConfetti, setShowConfetti] = useState(false);
+  const [sendRecipient, setSendRecipient] = useState('');
+  const [sendAmount, setSendAmount] = useState('');
+  const [sendToken, setSendToken] = useState<Token | null>(null);
   const slippageRef = useRef<HTMLDivElement>(null);
 
   const { isConnected, address } = useAppKitAccount();
@@ -58,11 +62,18 @@ const SwapCard = () => {
     reset: resetSwap 
   } = useSwapExecution();
 
+  // Send transaction hook
+  const { sendTransaction, data: sendTxHash, isPending: isSending, reset: resetSend } = useSendTransaction();
+  const { isLoading: isSendConfirming, isSuccess: isSendSuccess } = useWaitForTransactionReceipt({
+    hash: sendTxHash,
+  });
+
   // Initialize tokens on mount
   useEffect(() => {
     const tokens = getTokensForChain(CHAIN_ID);
     setSellToken(tokens[0] || null); // ETH
     setBuyToken(tokens[2] || null);  // USDC
+    setSendToken(tokens[0] || null); // ETH for send
   }, []);
 
   // Close slippage panel on click outside
@@ -389,6 +400,17 @@ const SwapCard = () => {
                 >
                   <CreditCard className="w-3.5 h-3.5" />
                   Buy
+                </button>
+                <button
+                  onClick={() => { setMode('send'); setSellAmount(''); setBuyAmount(''); setBuyFiatAmount(''); }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                    mode === 'send'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  Send
                 </button>
               </div>
               {mode === 'swap' && (
@@ -882,6 +904,142 @@ const SwapCard = () => {
               </p>
             </div>
           </>
+        )} 
+        
+        {mode === 'send' && (
+          <>
+            {/* Send Token Selector */}
+            <div className="px-3 sm:px-4 pb-2">
+              <div className="token-input-row">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Token</span>
+                  {maxBalance && isConnected && isNativeToken && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] sm:text-xs text-muted-foreground">
+                        Bal: {parseFloat(maxBalance) < 0.01 ? parseFloat(maxBalance).toFixed(6) : parseFloat(maxBalance).toFixed(4)} {sendToken?.symbol}
+                      </span>
+                      <button
+                        onClick={() => setSendAmount(maxBalance)}
+                        className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-all"
+                      >
+                        MAX
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between gap-2 sm:gap-4">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={sendAmount}
+                    onChange={(e) => setSendAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="swap-input flex-1 text-2xl sm:text-3xl"
+                  />
+                  <button
+                    onClick={() => setModalOpen('send')}
+                    className="token-selector-btn shrink-0"
+                  >
+                    {sendToken?.logoURI && (
+                      <img src={sendToken.logoURI} alt={sendToken.symbol} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full ring-2 ring-border" />
+                    )}
+                    <span className="text-sm sm:text-base">{sendToken?.symbol || 'Select'}</span>
+                    <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div className="flex justify-center -my-2 relative z-10">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-card border-4 border-background flex items-center justify-center shadow-lg">
+                <Send className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              </div>
+            </div>
+
+            {/* Recipient Address */}
+            <div className="px-3 sm:px-4 pt-2 pb-4">
+              <div className="token-input-row bg-primary/5 border border-primary/10">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Recipient Address</span>
+                  {sendRecipient && isAddress(sendRecipient) && (
+                    <span className="text-[10px] sm:text-xs text-primary font-medium">✓ Valid</span>
+                  )}
+                  {sendRecipient && !isAddress(sendRecipient) && (
+                    <span className="text-[10px] sm:text-xs text-destructive font-medium">✗ Invalid</span>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={sendRecipient}
+                  onChange={(e) => setSendRecipient(e.target.value)}
+                  placeholder="0x..."
+                  className="swap-input w-full text-sm sm:text-base font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Send Success */}
+            {isSendSuccess && sendTxHash && (
+              <div className="px-3 sm:px-5 pb-4">
+                <a 
+                  href={`${chainInfo?.blockExplorer || 'https://etherscan.io'}/tx/${sendTxHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
+                >
+                  <p className="text-[10px] sm:text-xs text-primary truncate">View transaction: {sendTxHash.slice(0, 8)}...{sendTxHash.slice(-6)}</p>
+                </a>
+              </div>
+            )}
+
+            {/* Send Button */}
+            <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+              <button
+                onClick={() => {
+                  if (!isConnected) {
+                    open();
+                    return;
+                  }
+                  if (!sendRecipient || !isAddress(sendRecipient)) {
+                    toast.error('Please enter a valid recipient address');
+                    return;
+                  }
+                  if (!sendAmount || parseFloat(sendAmount) <= 0) {
+                    toast.error('Please enter an amount');
+                    return;
+                  }
+                  if (!sendToken) {
+                    toast.error('Please select a token');
+                    return;
+                  }
+
+                  // Only native ETH transfer supported for now
+                  const isNative = sendToken.address?.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+                  if (!isNative) {
+                    toast.error('Only ETH transfers are supported for now');
+                    return;
+                  }
+
+                  sendTransaction({
+                    to: sendRecipient as `0x${string}`,
+                    value: parseEther(sendAmount),
+                  });
+                }}
+                disabled={isSending || isSendConfirming || !sendAmount || !sendRecipient}
+                className="w-full premium-button flex items-center justify-center gap-2 text-sm sm:text-base py-3 sm:py-4"
+              >
+                {(isSending || isSendConfirming) ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : isSendSuccess ? (
+                  <CheckCircle className="w-5 h-5" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+                {!isConnected ? 'Connect Wallet' : isSending ? 'Confirm in wallet...' : isSendConfirming ? 'Sending...' : isSendSuccess ? 'Sent! ✓' : 'Send'}
+              </button>
+            </div>
+          </>
         )}
       </div>
 
@@ -899,6 +1057,13 @@ const SwapCard = () => {
         onSelect={setBuyToken}
         chainId={CHAIN_ID}
         selectedToken={sellToken}
+      />
+      <TokenSelectorModal
+        isOpen={modalOpen === 'send'}
+        onClose={() => setModalOpen(null)}
+        onSelect={setSendToken}
+        chainId={CHAIN_ID}
+        selectedToken={null}
       />
     </div>
   );
