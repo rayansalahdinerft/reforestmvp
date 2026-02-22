@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import NftGallery from "@/components/impact/NftGallery";
+import SwapHistory from "@/components/SwapHistory";
 import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { Wallet, RefreshCw } from "lucide-react";
@@ -74,6 +75,9 @@ const Portfolio = () => {
                 </div>
               )}
             </div>
+
+            {/* Swap History */}
+            <SwapHistory />
 
             {/* NFT unlock reveal only */}
             <NftGallery treesPlanted={treesPlanted} />
