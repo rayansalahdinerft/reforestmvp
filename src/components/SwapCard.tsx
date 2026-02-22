@@ -262,6 +262,7 @@ const SwapCard = () => {
         status: 'success',
         chainId: CHAIN_ID,
         donationUsd: donationAmount,
+        walletAddress: address || '',
       });
 
       toast.success(
