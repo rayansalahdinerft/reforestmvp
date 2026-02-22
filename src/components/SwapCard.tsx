@@ -913,30 +913,79 @@ const SwapCard = () => {
             <div className="px-3 sm:px-4 pb-2">
               <div className="token-input-row">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Token</span>
-                  {maxBalance && isConnected && isNativeToken && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] sm:text-xs text-muted-foreground">
-                        Bal: {parseFloat(maxBalance) < 0.01 ? parseFloat(maxBalance).toFixed(6) : parseFloat(maxBalance).toFixed(4)} {sendToken?.symbol}
-                      </span>
-                      <button
-                        onClick={() => setSendAmount(maxBalance)}
-                        className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-all"
-                      >
-                        MAX
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">You Send</span>
+                    <button
+                      onClick={() => {
+                        setInputMode(inputMode === 'token' ? 'usd' : 'token');
+                        setSendAmount('');
+                      }}
+                      className={`px-2 py-0.5 text-[10px] font-medium rounded-lg transition-all ${
+                        inputMode === 'usd' 
+                          ? 'bg-primary/20 text-primary' 
+                          : 'bg-secondary text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {inputMode === 'usd' ? '$USD' : 'Token'}
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {maxBalance && isConnected && isNativeToken && (
+                      <>
+                        <span className="text-[10px] sm:text-xs text-muted-foreground">
+                          {(() => {
+                            const bal = parseFloat(maxBalance);
+                            const formattedBal = bal < 0.01 ? bal.toFixed(6) : bal.toFixed(4);
+                            const sendTokenPrice = sendToken ? getPrice(sendToken.symbol) : null;
+                            const usdValue = sendTokenPrice ? (bal * sendTokenPrice).toFixed(2) : null;
+                            return `Bal: ${formattedBal} ${sendToken?.symbol}${usdValue ? ` ($${usdValue})` : ''}`;
+                          })()}
+                        </span>
+                        <button
+                          onClick={() => {
+                            const sendTokenPrice = sendToken ? getPrice(sendToken.symbol) : null;
+                            if (inputMode === 'usd' && sendTokenPrice && maxBalance) {
+                              setSendAmount((parseFloat(maxBalance) * sendTokenPrice).toFixed(2));
+                            } else {
+                              setSendAmount(maxBalance);
+                            }
+                          }}
+                          className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-all"
+                        >
+                          MAX
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
+                {sendAmount && (
+                  <div className="mb-2">
+                    <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
+                      {(() => {
+                        const sendTokenPrice = sendToken ? getPrice(sendToken.symbol) : null;
+                        if (inputMode === 'usd' && sendTokenPrice) {
+                          return `≈ ${(parseFloat(sendAmount) / sendTokenPrice).toFixed(6)} ${sendToken?.symbol || ''}`;
+                        }
+                        if (inputMode === 'token' && sendTokenPrice) {
+                          return `$${(parseFloat(sendAmount) * sendTokenPrice).toFixed(2)}`;
+                        }
+                        return '';
+                      })()}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between gap-2 sm:gap-4">
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={sendAmount}
-                    onChange={(e) => setSendAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="swap-input flex-1 text-2xl sm:text-3xl"
-                  />
+                  <div className="flex items-center flex-1 gap-1">
+                    {inputMode === 'usd' && <span className="text-2xl sm:text-3xl text-muted-foreground">$</span>}
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={sendAmount}
+                      onChange={(e) => setSendAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="swap-input flex-1 text-2xl sm:text-3xl"
+                    />
+                  </div>
                   <button
                     onClick={() => setModalOpen('send')}
                     className="token-selector-btn shrink-0"
@@ -1022,9 +1071,15 @@ const SwapCard = () => {
                     return;
                   }
 
+                  // Convert USD to token amount if in USD mode
+                  const sendTokenPrice = sendToken ? getPrice(sendToken.symbol) : null;
+                  const actualAmount = inputMode === 'usd' && sendTokenPrice
+                    ? (parseFloat(sendAmount) / sendTokenPrice).toString()
+                    : sendAmount;
+
                   sendTransaction({
                     to: sendRecipient as `0x${string}`,
-                    value: parseEther(sendAmount),
+                    value: parseEther(actualAmount),
                   });
                 }}
                 disabled={isSending || isSendConfirming || !sendAmount || !sendRecipient}
