@@ -3,6 +3,7 @@ import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
+import SwapHistory from "@/components/SwapHistory";
 
 const Index = () => {
   return (
@@ -41,8 +42,13 @@ const Index = () => {
         </div>
 
         {/* Swap Card - centered */}
-        <div className="flex justify-center mb-8 sm:mb-12">
+        <div className="flex justify-center mb-4 sm:mb-6">
           <SwapCard />
+        </div>
+
+        {/* Swap History */}
+        <div className="flex justify-center mb-8 sm:mb-12">
+          <SwapHistory />
         </div>
 
         {/* Footer stats */}
