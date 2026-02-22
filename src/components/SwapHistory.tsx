@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, ArrowRightLeft, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export interface SwapHistoryEntry {
   id: string;
@@ -12,6 +13,7 @@ export interface SwapHistoryEntry {
   status: 'success' | 'failed';
   chainId: number;
   donationUsd: number;
+  walletAddress?: string;
 }
 
 const STORAGE_KEY = 'reforest_swap_history';
@@ -59,14 +61,25 @@ const formatTimeAgo = (timestamp: number) => {
 const SwapHistory = () => {
   const [history, setHistory] = useState<SwapHistoryEntry[]>([]);
   const [expanded, setExpanded] = useState(false);
+  const { address } = useAppKitAccount();
 
   useEffect(() => {
-    setHistory(getSwapHistory());
+    const all = getSwapHistory();
+    const filtered = address
+      ? all.filter((e) => e.walletAddress?.toLowerCase() === address.toLowerCase())
+      : [];
+    setHistory(filtered);
 
-    const handler = () => setHistory(getSwapHistory());
+    const handler = () => {
+      const all = getSwapHistory();
+      const filtered = address
+        ? all.filter((e) => e.walletAddress?.toLowerCase() === address.toLowerCase())
+        : [];
+      setHistory(filtered);
+    };
     window.addEventListener('swap-history-updated', handler);
     return () => window.removeEventListener('swap-history-updated', handler);
-  }, []);
+  }, [address]);
 
   if (history.length === 0) return null;
 
