@@ -139,16 +139,24 @@ const AIChatbot = () => {
               <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                 <Bot className="w-6 h-6 text-primary" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Salut ! 👋 Je suis l'assistant Reforest.<br />
-                Pose-moi une question sur le swap, les tokens, ou ton impact ! 🌱
+              <p className="text-sm text-muted-foreground text-left">
+                Salut 👋 Je suis l'assistant Reforest.<br />
+                Je suis là pour t'aider à utiliser l'écosystème Reforest, comprendre les mécaniques DeFi, et t'accompagner en cas de problème technique ou de question sur ton impact 🌱
               </p>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {['Comment fonctionne Reforest ?', "C'est quoi le slippage ?", 'Comment monter de niveau ?'].map(q => (
+              <p className="text-xs text-muted-foreground text-left mt-2">
+                Questions fréquentes :
+              </p>
+              <div className="flex flex-wrap gap-2 justify-start mt-1">
+                {[
+                  'Comment fonctionne l\'architecture Reforest et ses tokens',
+                  'C\'est quoi le slippage et pourquoi ça influence ton swap',
+                  'Comment monter de niveau grâce à tes actions on-chain',
+                  'Que faire si un swap échoue ou si une transaction reste bloquée',
+                ].map(q => (
                   <button
                     key={q}
                     onClick={() => { setInput(q); }}
-                    className="text-xs px-3 py-1.5 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border border-border"
+                    className="text-xs px-3 py-1.5 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-muted transition-colors border border-border text-left"
                   >
                     {q}
                   </button>
