@@ -10,6 +10,7 @@ import Market from "./pages/Market";
 import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
 import NotFound from "./pages/NotFound";
+import AIChatbot from "./components/AIChatbot";
 
 const App = () => (
   <WalletProvider>
@@ -27,6 +28,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <AIChatbot />
       </BrowserRouter>
     </TooltipProvider>
   </WalletProvider>
