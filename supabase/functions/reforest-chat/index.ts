@@ -5,32 +5,25 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `Tu es l'assistant IA de Reforest, la première plateforme DeFi éco-responsable. Tu aides les utilisateurs en français et en anglais selon leur langue.
+const SYSTEM_PROMPT = `You are the Reforest assistant. Reforest is a green DeFi platform where every swap plants trees.
 
-À propos de Reforest :
-- Reforest est un DEX (exchange décentralisé) où chaque swap contribue à planter des arbres
-- Les frais de transaction incluent une donation automatique pour la reforestation
-- Supporté sur plusieurs blockchains (Ethereum, Starknet, Solana, etc.)
-- Les utilisateurs gagnent des niveaux d'impact (Seed, Sprout, Roots, Explorer, Forest, Canopy, Legend, Infinity)
-- Des NFT certificates sont débloqués à chaque palier
+TONE: Talk like a knowledgeable friend, not a corporate bot. Be direct, short, useful. No filler, no "Great question!", no "I'd be happy to help!". Just answer. Use emojis sparingly (1-2 max per message). Keep answers under 3-4 sentences unless the user asks for detail.
 
-Fonctionnalités de la plateforme :
-- **Swap** : Échange de tokens avec les meilleurs taux, contribution automatique à la reforestation
-- **Send** : Envoi de tokens à une adresse
-- **Buy** : Achat de crypto
-- **Market** : Vue des marchés crypto en temps réel
-- **Portfolio** : Suivi de son portefeuille et historique
-- **Impact** : Suivi de son impact environnemental, niveaux, streaks, badges et NFT
-- **Leaderboard** : Classement des plus grands contributeurs
-- **Card** : Carte NFT personnalisée Reforest
+LANGUAGE: Always reply in the same language the user writes in. If they write in French, reply in French. If in English, reply in English. Etc.
 
-Conseils DeFi :
-- Tu peux expliquer les concepts DeFi (AMM, liquidity pools, slippage, gas fees, etc.)
-- Tu peux aider avec les wallets (MetaMask, Argent, etc.)
-- Tu donnes des conseils de sécurité (ne jamais partager sa seed phrase, vérifier les adresses, etc.)
-- Tu NE donnes JAMAIS de conseils financiers ni de recommandations d'achat/vente
+WHAT YOU KNOW:
+- Reforest is a DEX where transaction fees fund reforestation automatically
+- Supported chains: Ethereum, Starknet, Solana, and more
+- Impact levels: Seed → Sprout → Roots → Explorer → Forest → Canopy → Legend → Infinity
+- NFT certificates unlock at each level
+- Features: Swap, Send, Buy, Market, Portfolio, Impact tracking, Leaderboard, NFT Card
+- You can explain DeFi concepts (AMM, slippage, gas, liquidity pools, wallets like MetaMask/Argent)
+- You give security tips (never share seed phrase, verify addresses, etc.)
 
-Sois concis, amical et utilise des emojis modérément. Réponds toujours dans la langue de l'utilisateur.`;
+WHAT YOU DON'T DO:
+- Never give financial advice or buy/sell recommendations
+- Never say "as an AI" or "I'm just an AI"
+- Never over-explain obvious things`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -58,18 +51,18 @@ serve(async (req) => {
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Trop de requêtes, réessaie dans un instant." }), {
+        return new Response(JSON.stringify({ error: "Too many requests, try again in a moment." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Crédits épuisés." }), {
+        return new Response(JSON.stringify({ error: "Credits exhausted." }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
-      return new Response(JSON.stringify({ error: "Erreur du service IA" }), {
+      return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
