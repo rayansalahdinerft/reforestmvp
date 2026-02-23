@@ -141,7 +141,7 @@ const AIChatbot = () => {
               </div>
               <p className="text-sm text-muted-foreground">
                 Salut ! 👋 Je suis l'assistant Reforest.<br />
-                Pose-moi une question sur le swap, les tokens, ou ton impact ! 🌱
+                Je suis là pour t'aider, te guider et répondre à toutes tes questions 🌱
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {['Comment fonctionne Reforest ?', "C'est quoi le slippage ?", 'Comment monter de niveau ?'].map(q => (
