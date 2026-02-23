@@ -52,7 +52,7 @@ const AIChatbot = () => {
 
       if (!resp.ok || !resp.body) {
         const err = await resp.json().catch(() => ({}));
-        upsert(err.error || 'Désolé, une erreur est survenue. Réessaie plus tard.');
+        upsert(err.error || 'Something went wrong. Try again later.');
         setIsLoading(false);
         return;
       }
@@ -82,7 +82,7 @@ const AIChatbot = () => {
         }
       }
     } catch {
-      upsert('Erreur de connexion. Vérifie ta connexion internet.');
+      upsert('Connection error. Check your internet.');
     }
     setIsLoading(false);
   }, []);
@@ -127,7 +127,7 @@ const AIChatbot = () => {
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-foreground">Reforest AI</p>
-            <p className="text-xs text-muted-foreground">Assistant DeFi & Impact</p>
+            <p className="text-xs text-muted-foreground">DeFi & Impact Assistant</p>
           </div>
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
         </div>
@@ -140,11 +140,11 @@ const AIChatbot = () => {
                 <Bot className="w-6 h-6 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground">
-                Salut ! 👋 Je suis l'assistant Reforest.<br />
-                Je suis là pour t'aider, te guider et répondre à toutes tes questions 🌱
+                Hey! 👋 I'm the Reforest assistant.<br />
+                I'm here to help, guide you and answer all your questions 🌱
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
-                {['Comment fonctionne Reforest ?', "C'est quoi le slippage ?", 'Comment monter de niveau ?'].map(q => (
+                {['How does Reforest work?', 'What is slippage?', 'How do I level up?'].map(q => (
                   <button
                     key={q}
                     onClick={() => { setInput(q); }}
@@ -206,7 +206,7 @@ const AIChatbot = () => {
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Pose ta question..."
+              placeholder="Ask anything..."
               className="flex-1 bg-secondary rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 border border-border"
             />
             <Button
