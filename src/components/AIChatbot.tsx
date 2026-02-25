@@ -99,6 +99,14 @@ const AIChatbot = () => {
 
   return (
     <>
+      {/* Backdrop to close on outside click */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
@@ -130,6 +138,12 @@ const AIChatbot = () => {
             <p className="text-xs text-muted-foreground">DeFi & Impact Assistant</p>
           </div>
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <button
+            onClick={() => setOpen(false)}
+            className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+          >
+            <X className="w-4 h-4 text-muted-foreground" />
+          </button>
         </div>
 
         {/* Messages */}
