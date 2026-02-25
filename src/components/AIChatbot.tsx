@@ -103,7 +103,7 @@ const AIChatbot = () => {
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          'fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300',
+          'fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300',
           'bg-primary text-primary-foreground hover:scale-110 active:scale-95',
           'shadow-[0_0_20px_hsl(var(--primary)/0.4)]',
           open && 'rotate-90'
@@ -115,7 +115,7 @@ const AIChatbot = () => {
       {/* Chat window */}
       <div
         className={cn(
-          'fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-background shadow-2xl transition-all duration-300 flex flex-col',
+          'fixed bottom-36 md:bottom-24 right-4 md:right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-background shadow-2xl transition-all duration-300 flex flex-col',
           open ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none'
         )}
         style={{ height: '500px', maxHeight: 'calc(100vh - 8rem)' }}
