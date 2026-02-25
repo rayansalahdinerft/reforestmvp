@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Share2, Download, X, TreePine, Leaf } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 
@@ -89,13 +90,22 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
         }
       }
 
-      // Fallback: download image + open platform
+      // Fallback desktop: copy image to clipboard + open platform
       if (blob) {
-        const link = document.createElement("a");
-        link.download = "my-reforest-impact.png";
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        URL.revokeObjectURL(link.href);
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({ "image/png": blob }),
+          ]);
+          toast.success("Image copied to clipboard! Paste it in your post (Ctrl+V / ⌘V)");
+        } catch {
+          // Clipboard API not supported, download instead
+          const link = document.createElement("a");
+          link.download = "my-reforest-impact.png";
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          URL.revokeObjectURL(link.href);
+          toast.info("Image downloaded! Attach it to your post.");
+        }
       }
 
       const text = encodeURIComponent(SHARE_TEXT(treesPlanted));
