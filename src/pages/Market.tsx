@@ -136,102 +136,137 @@ const Market = () => {
           </div>
         )}
 
-        {/* Token Table */}
+        {/* Token List */}
         {tokens.length > 0 && (
-          <div className="swap-card overflow-hidden animate-fade-in">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground w-10"></th>
-                    <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">#</th>
-                    <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">Token</th>
-                    <th className="text-right py-4 px-4 text-sm font-medium text-muted-foreground">Price</th>
-                    <th className="text-right py-4 px-4 text-sm font-medium text-muted-foreground">24h</th>
-                    <th className="text-center py-4 px-4 text-sm font-medium text-muted-foreground">7D Chart</th>
-                    <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">Category</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredTokens.map((token, index) => {
-                    const isPositive = token.price_change_percentage_24h >= 0;
-                    const category = TOKEN_CATEGORIES[token.id] || 'Other';
-                    const sparklineData = token.sparkline_in_7d?.price || [];
-                    const sampledSparkline = sparklineData.filter((_, i) => i % 4 === 0);
-                    const watched = isWatched(token.id);
+          <>
+            {/* Mobile: Card layout */}
+            <div className="flex flex-col gap-2 md:hidden animate-fade-in">
+              {filteredTokens.map((token, index) => {
+                const isPositive = token.price_change_percentage_24h >= 0;
+                const category = TOKEN_CATEGORIES[token.id] || 'Other';
+                const sparklineData = token.sparkline_in_7d?.price || [];
+                const sampledSparkline = sparklineData.filter((_, i) => i % 4 === 0);
+                const watched = isWatched(token.id);
 
-                    return (
-                      <tr 
-                        key={token.id} 
-                        className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
-                        onClick={() => handleTokenClick(token)}
-                      >
-                        <td className="py-4 px-4">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggle(token.id);
-                            }}
-                            className="p-1 rounded-md hover:bg-secondary/50 transition-colors"
-                            title={walletConnected ? (watched ? "Remove from watchlist" : "Add to watchlist") : "Connect wallet to use watchlist"}
-                          >
-                            <Star
-                              className={`w-4 h-4 transition-colors ${
-                                watched ? "fill-primary text-primary" : "text-muted-foreground/30 hover:text-muted-foreground"
-                              }`}
-                            />
-                          </button>
-                        </td>
-                        <td className="py-4 px-4 text-sm text-muted-foreground">{index + 1}</td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-3">
-                            <img 
-                              src={token.image} 
-                              alt={token.symbol} 
-                              className="w-8 h-8 rounded-full"
-                              loading="lazy"
-                            />
-                            <div>
-                              <p className="font-semibold text-foreground uppercase">{token.symbol}</p>
-                              <p className="text-xs text-muted-foreground">{token.name}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <p className="font-semibold text-foreground tabular-nums">
-                            ${formatPrice(token.current_price)}
-                          </p>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className={`flex items-center justify-end gap-1 ${isPositive ? 'text-primary' : 'text-destructive'}`}> 
-                            {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                            <span className="font-medium tabular-nums">
-                              {isPositive ? '+' : ''}{token.price_change_percentage_24h?.toFixed(2) || '0.00'}%
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex justify-center">
-                            <SparklineChart 
-                              data={sampledSparkline} 
-                              width={100} 
-                              height={32}
-                              isPositive={isPositive}
-                            />
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <span className="px-2 py-1 rounded-md bg-secondary/50 text-xs text-muted-foreground">
-                            {category}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                return (
+                  <div
+                    key={token.id}
+                    className="swap-card p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+                    onClick={() => handleTokenClick(token)}
+                  >
+                    {/* Star */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggle(token.id); }}
+                      className="p-0.5 shrink-0"
+                    >
+                      <Star className={`w-4 h-4 ${watched ? "fill-primary text-primary" : "text-muted-foreground/30"}`} />
+                    </button>
+
+                    {/* Logo */}
+                    <img src={token.image} alt={token.symbol} className="w-8 h-8 rounded-full shrink-0" loading="lazy" />
+
+                    {/* Name + Category */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-foreground uppercase truncate">{token.symbol}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{token.name}</p>
+                    </div>
+
+                    {/* Sparkline */}
+                    <div className="shrink-0">
+                      <SparklineChart data={sampledSparkline} width={60} height={24} isPositive={isPositive} />
+                    </div>
+
+                    {/* Price + Change */}
+                    <div className="text-right shrink-0 min-w-[70px]">
+                      <p className="font-semibold text-sm text-foreground tabular-nums">
+                        ${formatPrice(token.current_price)}
+                      </p>
+                      <div className={`flex items-center justify-end gap-0.5 text-xs ${isPositive ? 'text-primary' : 'text-destructive'}`}>
+                        {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                        <span className="tabular-nums">
+                          {isPositive ? '+' : ''}{token.price_change_percentage_24h?.toFixed(2) || '0.00'}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+
+            {/* Desktop: Table layout */}
+            <div className="swap-card overflow-hidden animate-fade-in hidden md:block">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground w-10"></th>
+                      <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">#</th>
+                      <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">Token</th>
+                      <th className="text-right py-4 px-4 text-sm font-medium text-muted-foreground">Price</th>
+                      <th className="text-right py-4 px-4 text-sm font-medium text-muted-foreground">24h</th>
+                      <th className="text-center py-4 px-4 text-sm font-medium text-muted-foreground">7D Chart</th>
+                      <th className="text-left py-4 px-4 text-sm font-medium text-muted-foreground">Category</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredTokens.map((token, index) => {
+                      const isPositive = token.price_change_percentage_24h >= 0;
+                      const category = TOKEN_CATEGORIES[token.id] || 'Other';
+                      const sparklineData = token.sparkline_in_7d?.price || [];
+                      const sampledSparkline = sparklineData.filter((_, i) => i % 4 === 0);
+                      const watched = isWatched(token.id);
+
+                      return (
+                        <tr 
+                          key={token.id} 
+                          className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
+                          onClick={() => handleTokenClick(token)}
+                        >
+                          <td className="py-4 px-4">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggle(token.id); }}
+                              className="p-1 rounded-md hover:bg-secondary/50 transition-colors"
+                            >
+                              <Star className={`w-4 h-4 transition-colors ${watched ? "fill-primary text-primary" : "text-muted-foreground/30 hover:text-muted-foreground"}`} />
+                            </button>
+                          </td>
+                          <td className="py-4 px-4 text-sm text-muted-foreground">{index + 1}</td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <img src={token.image} alt={token.symbol} className="w-8 h-8 rounded-full" loading="lazy" />
+                              <div>
+                                <p className="font-semibold text-foreground uppercase">{token.symbol}</p>
+                                <p className="text-xs text-muted-foreground">{token.name}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4 text-right">
+                            <p className="font-semibold text-foreground tabular-nums">${formatPrice(token.current_price)}</p>
+                          </td>
+                          <td className="py-4 px-4 text-right">
+                            <div className={`flex items-center justify-end gap-1 ${isPositive ? 'text-primary' : 'text-destructive'}`}>
+                              {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                              <span className="font-medium tabular-nums">
+                                {isPositive ? '+' : ''}{token.price_change_percentage_24h?.toFixed(2) || '0.00'}%
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex justify-center">
+                              <SparklineChart data={sampledSparkline} width={100} height={32} isPositive={isPositive} />
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className="px-2 py-1 rounded-md bg-secondary/50 text-xs text-muted-foreground">{category}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
 
         {/* Empty state */}
