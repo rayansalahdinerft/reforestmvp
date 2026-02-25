@@ -103,7 +103,7 @@ const AIChatbot = () => {
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          'fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300',
+          'fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 w-11 h-11 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300',
           'bg-primary text-primary-foreground hover:scale-110 active:scale-95',
           'shadow-[0_0_20px_hsl(var(--primary)/0.4)]',
           open && 'rotate-90'
