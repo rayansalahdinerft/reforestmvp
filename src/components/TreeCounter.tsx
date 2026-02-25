@@ -68,43 +68,43 @@ const TreeCounter = () => {
   const swapsValue = loading ? 0 : stats.totalSwaps;
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 md:gap-6 animate-fade-in">
+    <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:justify-center sm:gap-4 md:gap-6 animate-fade-in">
       {/* Trees Planted */}
-      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-          <TreePine className="w-5 h-5 text-primary animate-glow-pulse" />
+      <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <TreePine className="w-4 h-4 sm:w-5 sm:h-5 text-primary animate-glow-pulse" />
         </div>
-        <div>
-          <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
+        <div className="text-center sm:text-left">
+          <p className="text-sm sm:text-xl font-bold text-foreground tracking-tight tabular-nums">
             <AnimatedNumber value={treesValue} />
           </p>
-          <p className="text-xs font-medium text-muted-foreground">Your Trees</p>
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground">Trees</p>
         </div>
       </div>
 
       {/* Donations */}
-      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-          <DollarSign className="w-5 h-5 text-primary" />
+      <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
         </div>
-        <div>
-          <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
+        <div className="text-center sm:text-left">
+          <p className="text-sm sm:text-xl font-bold text-foreground tracking-tight tabular-nums">
             <AnimatedNumber value={donationsValue} prefix="$" />
           </p>
-          <p className="text-xs font-medium text-muted-foreground">Your Donations</p>
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground">Donated</p>
         </div>
       </div>
 
       {/* Swaps */}
-      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Users className="w-5 h-5 text-primary" />
+      <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 px-2 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
         </div>
-        <div>
-          <p className="text-xl font-bold text-foreground tracking-tight tabular-nums">
+        <div className="text-center sm:text-left">
+          <p className="text-sm sm:text-xl font-bold text-foreground tracking-tight tabular-nums">
             <AnimatedNumber value={swapsValue} />
           </p>
-          <p className="text-xs font-medium text-muted-foreground">Your Swaps</p>
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground">Swaps</p>
         </div>
       </div>
     </div>

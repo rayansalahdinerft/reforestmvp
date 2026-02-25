@@ -21,28 +21,28 @@ const Portfolio = () => {
       <Header />
       <NewsTicker />
 
-      <main className="max-w-4xl mx-auto px-4 py-12 relative z-10">
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
+        <div className="text-center mb-6 sm:mb-12 animate-fade-in">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2 sm:mb-4 tracking-tight">
             Your <span className="text-primary">Portfolio</span>
           </h1>
-          <p className="text-lg text-muted-foreground">Your tokens at a glance</p>
+          <p className="text-sm sm:text-lg text-muted-foreground">Your tokens at a glance</p>
         </div>
 
         {!isConnected ? (
-          <div className="swap-card p-8 text-center animate-slide-up">
-            <Wallet className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-foreground mb-2">Connect Your Wallet</h2>
+          <div className="swap-card p-5 sm:p-8 text-center animate-slide-up">
+            <Wallet className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Connect Your Wallet</h2>
             <p className="text-muted-foreground">Connect your wallet to view your portfolio</p>
           </div>
         ) : (
           <div className="space-y-6">
             {/* Wallet balances */}
-            <div className="swap-card p-6 animate-slide-up backdrop-blur-sm">
-              <div className="flex items-center justify-between mb-4">
+            <div className="swap-card p-4 sm:p-6 animate-slide-up backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Total Wallet Value</p>
-                  <h2 className="text-3xl font-bold text-foreground tabular-nums">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-1">Total Wallet Value</p>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground tabular-nums">
                     ${totalValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </h2>
                 </div>
