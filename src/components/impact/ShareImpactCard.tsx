@@ -113,80 +113,62 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
           ref={cardRef}
           className="relative overflow-hidden rounded-3xl aspect-[9/16]"
           style={{
-            background: "linear-gradient(145deg, #050505 0%, #0a0a0a 50%, #050505 100%)",
-            padding: "1.5px",
+            background: "linear-gradient(145deg, #0a1a0f 0%, #0d2818 30%, #122d1a 60%, #0a1a0f 100%)",
+            padding: "2px",
           }}
         >
           <div
-            className="relative rounded-[22px] p-5 overflow-hidden h-full flex flex-col justify-between"
+            className="relative rounded-[22px] p-6 overflow-hidden h-full flex flex-col justify-between"
             style={{
-              background: "linear-gradient(160deg, #080808 0%, #0d0d0d 40%, #060606 100%)",
+              background: "linear-gradient(160deg, #0c1f12 0%, #0f2a18 40%, #0a1a0f 100%)",
             }}
           >
-            {/* Decorative floating leaves */}
-            <div className="absolute top-[10%] left-[8%] text-emerald-500/10 text-3xl rotate-[-25deg] select-none pointer-events-none">🍃</div>
-            <div className="absolute top-[25%] right-[12%] text-emerald-500/8 text-2xl rotate-[40deg] select-none pointer-events-none">🌿</div>
-            <div className="absolute bottom-[30%] left-[15%] text-emerald-500/6 text-xl rotate-[15deg] select-none pointer-events-none">🍂</div>
-            <div className="absolute bottom-[15%] right-[10%] text-emerald-500/10 text-2xl rotate-[-35deg] select-none pointer-events-none">🍃</div>
-            <div className="absolute top-[55%] left-[60%] text-emerald-500/5 text-lg rotate-[60deg] select-none pointer-events-none">🌱</div>
-
-            {/* Subtle glow */}
+            {/* Decorative elements */}
             <div
-              className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl opacity-15"
+              className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-30"
               style={{ background: "radial-gradient(circle, #22c55e 0%, transparent 70%)" }}
             />
             <div
-              className="absolute bottom-0 left-0 w-36 h-36 rounded-full blur-3xl opacity-10"
+              className="absolute bottom-0 left-0 w-32 h-32 rounded-full blur-3xl opacity-20"
               style={{ background: "radial-gradient(circle, #10b981 0%, transparent 70%)" }}
             />
 
             {/* Header */}
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-2">
-                <img src={leafIcon} alt="" className="w-7 h-7 rounded-lg" />
+                <img src={leafIcon} alt="" className="w-8 h-8 rounded-lg" />
                 <div>
-                  <p className="text-white text-xs font-bold tracking-tight">ReforestWallet</p>
-                  <p className="text-emerald-400/60 text-[9px]">Proof of Impact</p>
+                  <p className="text-white text-sm font-bold tracking-tight">ReforestWallet</p>
+                  <p className="text-emerald-400/70 text-[10px]">Proof of Impact</p>
                 </div>
               </div>
-              <div className="px-2.5 py-0.5 rounded-full border border-emerald-500/20 bg-emerald-500/10">
-                <span className="text-emerald-400 text-[10px] font-bold">Lv.{currentLvl}</span>
+              <div className="px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10">
+                <span className="text-emerald-400 text-xs font-bold">Level {currentLvl}</span>
               </div>
             </div>
 
-            {/* Main stat - centered */}
+            {/* Main stat */}
             <div className="text-center relative z-10 flex-1 flex flex-col items-center justify-center">
-              <TreePine className="w-8 h-8 text-emerald-400/80 mb-2" />
-              <p className="text-5xl font-black text-white tracking-tight tabular-nums leading-none">
+              <TreePine className="w-6 h-6 text-emerald-400 mb-1" />
+              <p className="text-4xl font-black text-white tracking-tight tabular-nums">
                 {treesPlanted.toLocaleString(undefined, { maximumFractionDigits: treesPlanted < 10 ? 2 : 0 })}
               </p>
-              <p className="text-emerald-400/70 text-xs font-medium mt-2 uppercase tracking-widest">trees planted</p>
+              <p className="text-emerald-400/80 text-sm font-medium mt-1">trees planted</p>
             </div>
 
             {/* Stats grid */}
-            <div className="relative z-10 space-y-2">
-              <div className="grid grid-cols-3 gap-1.5">
-                <div className="text-center p-2.5 rounded-xl border border-white/5" style={{ background: "rgba(255,255,255,0.03)" }}>
-                  <p className="text-white text-sm font-bold tabular-nums">${totalDonationsUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                  <p className="text-gray-500 text-[9px] mt-0.5">Donated</p>
-                </div>
-                <div className="text-center p-2.5 rounded-xl border border-white/5" style={{ background: "rgba(255,255,255,0.03)" }}>
-                  <p className="text-white text-sm font-bold tabular-nums">{totalSwaps.toLocaleString()}</p>
-                  <p className="text-gray-500 text-[9px] mt-0.5">Swaps</p>
-                </div>
-                <div className="text-center p-2.5 rounded-xl border border-white/5" style={{ background: "rgba(255,255,255,0.03)" }}>
-                  <p className="text-white text-sm font-bold tabular-nums">{Math.floor(co2Absorbed).toLocaleString()} kg</p>
-                  <p className="text-gray-500 text-[9px] mt-0.5">CO₂/year</p>
-                </div>
+            <div className="grid grid-cols-3 gap-2 relative z-10">
+              <div className="text-center p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <p className="text-white text-lg font-bold tabular-nums">${totalDonationsUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="text-gray-400 text-[10px]">Donated</p>
               </div>
-
-              {/* Separator line */}
-              <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
-
-              {/* Bottom branding */}
-              <div className="flex items-center justify-center gap-1.5 pt-1">
-                <img src={leafIcon} alt="" className="w-4 h-4 rounded-sm opacity-60" />
-                <span className="text-gray-500 text-[9px] tracking-wider uppercase">ReforestWallet</span>
+              <div className="text-center p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <p className="text-white text-lg font-bold tabular-nums">{totalSwaps.toLocaleString()}</p>
+                <p className="text-gray-400 text-[10px]">Swaps</p>
+              </div>
+              <div className="text-center p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <p className="text-white text-lg font-bold tabular-nums">{Math.floor(co2Absorbed).toLocaleString()} kg</p>
+                <p className="text-gray-400 text-[10px]">CO₂/year</p>
               </div>
             </div>
           </div>
