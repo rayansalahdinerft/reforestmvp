@@ -11,6 +11,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
 import NotFound from "./pages/NotFound";
 import AIChatbot from "./components/AIChatbot";
+import MobileBottomNav from "./components/MobileBottomNav";
 
 const App = () => (
   <WalletProvider>
@@ -18,16 +19,19 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/impact" element={<Impact />} />
-          <Route path="/market" element={<Market />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/card" element={<Card />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="pb-16 md:pb-0">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/impact" element={<Impact />} />
+            <Route path="/market" element={<Market />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/card" element={<Card />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+        <MobileBottomNav />
         <AIChatbot />
       </BrowserRouter>
     </TooltipProvider>
