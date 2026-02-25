@@ -56,19 +56,19 @@ const Market = () => {
       <Header />
       <NewsTicker />
 
-      <main className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero */}
-        <div className="text-center mb-10 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
+        <div className="text-center mb-6 sm:mb-10 animate-fade-in">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2 sm:mb-4 tracking-tight">
             <span className="text-primary">Market</span> Overview
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-sm sm:text-lg text-muted-foreground">
             Live prices with 1-year sparkline charts
           </p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8 animate-slide-up">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 animate-slide-up">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input

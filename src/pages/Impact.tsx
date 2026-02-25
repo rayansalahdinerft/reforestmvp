@@ -81,16 +81,16 @@ const Impact = () => {
       <Header />
       <NewsTicker />
 
-      <main className="max-w-4xl mx-auto px-4 py-12 relative z-10">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero */}
-        <div className="text-center mb-10 animate-fade-in">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm border border-green-500/20">
-            <Sprout className="w-8 h-8 text-green-500" />
+        <div className="text-center mb-6 sm:mb-10 animate-fade-in">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm border border-green-500/20">
+            <Sprout className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
             Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Impact</span>
           </h1>
-          <p className="text-muted-foreground max-w-md mx-auto mb-4">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto mb-3 sm:mb-4">
             Every swap levels you up and plants trees.
           </p>
           {isConnected && (
@@ -105,9 +105,9 @@ const Impact = () => {
 
         {/* Connect Wallet CTA */}
         {!isConnected && (
-          <div className="swap-card p-8 text-center mb-10 animate-slide-up backdrop-blur-sm">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-muted/50 flex items-center justify-center">
-              <Globe className="w-7 h-7 text-muted-foreground" />
+          <div className="swap-card p-5 sm:p-8 text-center mb-6 sm:mb-10 animate-slide-up backdrop-blur-sm">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-4 rounded-2xl bg-muted/50 flex items-center justify-center">
+              <Globe className="w-6 h-6 sm:w-7 sm:h-7 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">Connect your wallet</h3>
             <p className="text-muted-foreground text-sm">
@@ -117,9 +117,9 @@ const Impact = () => {
         )}
 
         {isConnected && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
               {impactCards.map((card, index) => (
                 <ImpactCard
                   key={card.label}
@@ -144,8 +144,8 @@ const Impact = () => {
 
             {/* Current Quest NFT */}
             <div>
-              <h2 className="text-lg font-bold text-foreground mb-2">Current Quest</h2>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-foreground mb-2">Current Quest</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                 Plant {currentQuest.milestone.toLocaleString()} trees to earn the <span className="font-semibold text-foreground">{currentQuest.label}</span> certificate
               </p>
               <div className="flex justify-center">
@@ -203,22 +203,22 @@ const Impact = () => {
 
             {/* Environmental summary */}
             {showEnvironmentalImpact && (
-              <div className="p-5 rounded-2xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-lime-500/10 border border-green-500/20 backdrop-blur-sm animate-slide-up" style={{ animationDelay: "0.25s" }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-9 h-9 rounded-xl bg-green-500/20 flex items-center justify-center">
-                    <Globe className="w-4.5 h-4.5 text-green-400" />
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-lime-500/10 border border-green-500/20 backdrop-blur-sm animate-slide-up" style={{ animationDelay: "0.25s" }}>
+                <div className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-green-500/20 flex items-center justify-center">
+                    <Globe className="w-4 h-4 text-green-400" />
                   </div>
-                  <span className="font-semibold text-foreground">Environmental Impact</span>
+                  <span className="text-sm sm:text-base font-semibold text-foreground">Environmental Impact</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="p-3 rounded-xl bg-card/50 border border-green-500/10">
-                    <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-card/50 border border-green-500/10">
+                    <p className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
                       {Math.floor(co2Absorbed).toLocaleString()} kg
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">CO₂ absorbed/year</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-card/50 border border-blue-500/10">
-                    <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-card/50 border border-blue-500/10">
+                    <p className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
                       {Math.floor(oxygenProduced).toLocaleString()} kg
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">O₂ produced/year</p>
