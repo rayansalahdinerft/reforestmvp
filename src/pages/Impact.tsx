@@ -7,6 +7,7 @@ import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
 import NftCertificate from "@/components/impact/NftCertificate";
+import ShareImpactCard from "@/components/impact/ShareImpactCard";
 
 const NFT_CERTS = [
   { milestone: 1_000, label: "Forest Steel", description: "1,000 trees planted", rarity: "uncommon" as const },
@@ -89,9 +90,17 @@ const Impact = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
             Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Impact</span>
           </h1>
-          <p className="text-muted-foreground max-w-md mx-auto">
+          <p className="text-muted-foreground max-w-md mx-auto mb-4">
             Every swap levels you up and plants trees.
           </p>
+          {isConnected && (
+            <ShareImpactCard
+              treesPlanted={treesPlanted}
+              totalDonationsUsd={stats.totalDonationsUsd}
+              totalSwaps={stats.totalSwaps}
+              co2Absorbed={co2Absorbed}
+            />
+          )}
         </div>
 
         {/* Connect Wallet CTA */}
