@@ -1,30 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu } from 'lucide-react';
-import { useState } from 'react';
 import Logo from './Logo';
 import ConnectButton from './ConnectButton';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { useSwipeGesture } from '@/hooks/useSwipeGesture';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const Header = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const [open, setOpen] = useState(false);
-  const isMobile = useIsMobile();
-
-  // Swipe from right edge to open menu on mobile
-  useSwipeGesture({
-    onSwipeLeft: () => {
-      if (isMobile) setOpen(true);
-    },
-  });
 
   const navItems = [
     { path: '/', label: 'Swap' },
@@ -61,36 +41,6 @@ const Header = () => {
         
         <div className="flex items-center gap-3">
           <ConnectButton />
-          
-          {/* Mobile Menu */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <button className="p-2 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors">
-                <Menu className="w-5 h-5 text-foreground" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-background border-border">
-              <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
-              </SheetHeader>
-              <nav className="flex flex-col gap-2 mt-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setOpen(false)}
-                    className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                      currentPath === item.path
-                        ? 'bg-primary/10 text-primary border border-primary/30'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
     </header>
