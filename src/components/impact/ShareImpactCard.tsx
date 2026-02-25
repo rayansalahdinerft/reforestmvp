@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { Share2, Download, X, TreePine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
-import leafIcon from "@/assets/leaf-icon.png";
+import reforestLogo from "@/assets/reforest-logo-green.png";
 
 const LEVELS = [
   { level: 1, target: 1 },
