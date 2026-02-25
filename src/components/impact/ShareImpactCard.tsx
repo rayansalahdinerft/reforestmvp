@@ -1,9 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Share2, Download, X, TreePine } from "lucide-react";
+import { Share2, Download, X, TreePine, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
-import reforestLogo from "@/assets/reforest-logo-green.png";
 
 const LEVELS = [
   { level: 1, target: 1 },
@@ -136,7 +135,9 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
             {/* Header with logo */}
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">
-                <img src={reforestLogo} alt="" className="w-12 h-12" />
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+                  <Leaf className="w-6 h-6 text-emerald-400" />
+                </div>
                 <div>
                   <p className="text-white text-base font-bold tracking-tight">Reforest<span className="text-emerald-400">Wallet</span></p>
                   <p className="text-emerald-400/70 text-[11px]">Proof of Impact</p>
