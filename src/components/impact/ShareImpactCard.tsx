@@ -86,19 +86,18 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center bg-background overflow-y-auto">
-      {/* Top bar */}
-      <div className="w-full max-w-sm mx-auto flex items-center justify-between px-4 py-4 sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
-        <h2 className="text-foreground font-bold text-lg">Share my Impact</h2>
-        <button
-          onClick={() => setOpen(false)}
-          className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="w-full max-w-sm mx-auto px-4 pb-8 space-y-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)}>
+      <div className="w-full max-w-sm mx-auto px-4 space-y-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        {/* Top bar */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-foreground font-bold text-lg">Share my Impact</h2>
+          <button
+            onClick={() => setOpen(false)}
+            className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
         {/* The card — original style */}
         <div
           ref={cardRef}
