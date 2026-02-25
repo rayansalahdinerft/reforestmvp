@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { donationUsd, txHash, walletAddress } = await req.json();
+    const { donationUsd, txHash, walletAddress, sellToken, buyToken, sellAmount, buyAmount, chainId } = await req.json();
 
     if (!walletAddress || typeof walletAddress !== "string" || !walletAddress.startsWith("0x")) {
       return new Response(
@@ -41,6 +41,27 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Insert into swap_history
+    if (sellToken && buyToken) {
+      const { error: historyError } = await supabase
+        .from("swap_history")
+        .insert({
+          wallet_address: normalizedAddress,
+          sell_token: sellToken,
+          buy_token: buyToken,
+          sell_amount: sellAmount || "0",
+          buy_amount: buyAmount || "0",
+          tx_hash: txHash,
+          chain_id: chainId || 1,
+          status: "success",
+          donation_usd: donationUsd,
+          trees_planted: treesPlanted,
+        });
+      if (historyError) {
+        console.error("Error inserting swap history:", historyError);
+      }
+    }
 
     // Update global tree_counter
     const { data: currentStats, error: fetchError } = await supabase
@@ -86,7 +107,7 @@ Deno.serve(async (req) => {
       console.error("Error fetching wallet stats:", walletFetchError);
     }
 
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0];
 
     if (!walletStats) {
       const { error: walletInsertError } = await supabase
@@ -104,7 +125,6 @@ Deno.serve(async (req) => {
         console.error("Error inserting wallet stats:", walletInsertError);
       }
 
-      // Award first_swap badge
       await supabase.from("badges").upsert({
         wallet_address: normalizedAddress,
         badge_type: "first_swap",
@@ -112,7 +132,6 @@ Deno.serve(async (req) => {
         badge_description: "Completed your first swap",
       }, { onConflict: "wallet_address,badge_type" });
     } else {
-      // Calculate streak
       const lastSwapDate = walletStats.last_swap_date;
       let newStreak = walletStats.current_streak || 0;
 
@@ -124,7 +143,7 @@ Deno.serve(async (req) => {
         if (lastSwapDate === yesterdayStr) {
           newStreak += 1;
         } else if (lastSwapDate !== today) {
-          newStreak = 1; // Reset streak
+          newStreak = 1;
         }
       }
 
@@ -148,7 +167,6 @@ Deno.serve(async (req) => {
         console.error("Error updating wallet stats:", walletUpdateError);
       }
 
-      // Award badges based on milestones
       const badgesToAward: { type: string; name: string; desc: string }[] = [];
 
       if (newTotalSwaps >= 10) badgesToAward.push({ type: "swaps_10", name: "10 Swaps", desc: "Completed 10 swaps" });

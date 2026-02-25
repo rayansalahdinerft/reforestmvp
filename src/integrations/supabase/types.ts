@@ -41,6 +41,51 @@ export type Database = {
         }
         Relationships: []
       }
+      swap_history: {
+        Row: {
+          buy_amount: string
+          buy_token: string
+          chain_id: number
+          created_at: string
+          donation_usd: number
+          id: string
+          sell_amount: string
+          sell_token: string
+          status: string
+          trees_planted: number
+          tx_hash: string
+          wallet_address: string
+        }
+        Insert: {
+          buy_amount: string
+          buy_token: string
+          chain_id?: number
+          created_at?: string
+          donation_usd?: number
+          id?: string
+          sell_amount: string
+          sell_token: string
+          status?: string
+          trees_planted?: number
+          tx_hash: string
+          wallet_address: string
+        }
+        Update: {
+          buy_amount?: string
+          buy_token?: string
+          chain_id?: number
+          created_at?: string
+          donation_usd?: number
+          id?: string
+          sell_amount?: string
+          sell_token?: string
+          status?: string
+          trees_planted?: number
+          tx_hash?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       tree_counter: {
         Row: {
           id: string

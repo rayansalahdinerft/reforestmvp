@@ -240,6 +240,11 @@ const SwapCard = () => {
             donationUsd: donationAmount > 0 ? donationAmount : 0.01, // Minimum $0.01
             txHash: result.hash,
             walletAddress: address,
+            sellToken: sellToken.symbol,
+            buyToken: buyToken.symbol,
+            sellAmount: actualSellAmount,
+            buyAmount: result.dstAmount || buyAmount || '0',
+            chainId: CHAIN_ID,
           };
 
           console.log('[REFOREST] Calling update-tree-counter with:', payload);
