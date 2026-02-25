@@ -16,7 +16,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="w-full py-3 px-6 glass-effect sticky top-0 z-50 border-b border-border/50">
+    <header className="w-full py-2 px-3 md:py-3 md:px-6 glass-effect sticky top-0 z-50 border-b border-border/50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link to="/" className="transition-all">
