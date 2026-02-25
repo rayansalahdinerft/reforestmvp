@@ -36,6 +36,10 @@ createAppKit({
   ],
   features: {
     analytics: true,
+    onramp: false,
+    swaps: false,
+    send: false,
+    receive: false,
   },
   themeMode: 'dark',
   themeVariables: {
