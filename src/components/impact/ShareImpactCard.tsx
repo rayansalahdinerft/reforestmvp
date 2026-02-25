@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { Share2, Download, X, TreePine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
-import leafIcon from "@/assets/leaf-icon.png";
+import reforestLogo from "@/assets/reforest-logo-green.png";
 
 const LEVELS = [
   { level: 1, target: 1 },
@@ -133,13 +133,13 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
               style={{ background: "radial-gradient(circle, #10b981 0%, transparent 70%)" }}
             />
 
-            {/* Header */}
+            {/* Header with logo */}
             <div className="flex items-center justify-between relative z-10">
-              <div className="flex items-center gap-2">
-                <img src={leafIcon} alt="" className="w-8 h-8 rounded-lg" />
+              <div className="flex items-center gap-3">
+                <img src={reforestLogo} alt="" className="w-12 h-12 rounded-xl" />
                 <div>
-                  <p className="text-white text-sm font-bold tracking-tight">ReforestWallet</p>
-                  <p className="text-emerald-400/70 text-[10px]">Proof of Impact</p>
+                  <p className="text-white text-base font-bold tracking-tight">ReforestWallet</p>
+                  <p className="text-emerald-400/70 text-[11px]">Proof of Impact</p>
                 </div>
               </div>
               <div className="px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10">
@@ -147,13 +147,13 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
               </div>
             </div>
 
-            {/* Main stat */}
-            <div className="text-center relative z-10 flex-1 flex flex-col items-center justify-center">
-              <TreePine className="w-6 h-6 text-emerald-400 mb-1" />
-              <p className="text-4xl font-black text-white tracking-tight tabular-nums">
+            {/* Main stat — higher & bigger */}
+            <div className="text-center relative z-10 flex-1 flex flex-col items-center justify-center -mt-4">
+              <TreePine className="w-8 h-8 text-emerald-400 mb-2" />
+              <p className="text-5xl font-black text-white tracking-tight tabular-nums leading-none">
                 {treesPlanted.toLocaleString(undefined, { maximumFractionDigits: treesPlanted < 10 ? 2 : 0 })}
               </p>
-              <p className="text-emerald-400/80 text-sm font-medium mt-1">trees planted</p>
+              <p className="text-emerald-400/80 text-base font-medium mt-2">trees planted</p>
             </div>
 
             {/* Stats grid */}
