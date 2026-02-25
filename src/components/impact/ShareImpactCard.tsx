@@ -96,9 +96,8 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={() => setOpen(false)}>
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-md pointer-events-none" />
-      <div className="relative z-10 w-full max-w-sm space-y-5 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center bg-background overflow-y-auto" onClick={() => setOpen(false)}>
+      <div className="w-full max-w-sm mx-auto px-4 py-6 space-y-6" onClick={(e) => e.stopPropagation()}>
         {/* Top bar */}
         <div className="flex items-center justify-between">
           <h2 className="text-foreground font-bold text-lg">Share my Impact</h2>
@@ -112,14 +111,14 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
         {/* The card — original style */}
         <div
           ref={cardRef}
-          className="relative overflow-hidden rounded-3xl"
+          className="relative overflow-hidden rounded-3xl aspect-[9/16]"
           style={{
             background: "linear-gradient(145deg, #0a1a0f 0%, #0d2818 30%, #122d1a 60%, #0a1a0f 100%)",
             padding: "2px",
           }}
         >
           <div
-            className="relative rounded-[22px] p-6 overflow-hidden"
+            className="relative rounded-[22px] p-6 overflow-hidden h-full flex flex-col justify-between"
             style={{
               background: "linear-gradient(160deg, #0c1f12 0%, #0f2a18 40%, #0a1a0f 100%)",
             }}
