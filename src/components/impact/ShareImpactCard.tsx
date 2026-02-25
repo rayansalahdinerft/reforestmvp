@@ -113,14 +113,14 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
           ref={cardRef}
           className="relative overflow-hidden rounded-3xl aspect-[9/16]"
           style={{
-            background: "linear-gradient(145deg, #0a1a0f 0%, #0d2818 30%, #122d1a 60%, #0a1a0f 100%)",
+            background: "linear-gradient(145deg, rgba(10,26,15,0.85) 0%, rgba(13,40,24,0.9) 30%, rgba(18,45,26,0.85) 60%, rgba(10,26,15,0.85) 100%)",
             padding: "2px",
           }}
         >
           <div
             className="relative rounded-[22px] p-6 overflow-hidden h-full flex flex-col justify-between"
             style={{
-              background: "linear-gradient(160deg, #0c1f12 0%, #0f2a18 40%, #0a1a0f 100%)",
+              background: "linear-gradient(160deg, rgba(8,8,8,0.92) 0%, rgba(13,13,13,0.88) 40%, rgba(6,6,6,0.92) 100%)",
             }}
           >
             {/* Decorative elements */}
@@ -136,9 +136,9 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
             {/* Header with logo */}
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">
-                <img src={reforestLogo} alt="" className="w-12 h-12 rounded-xl" />
+                <img src={reforestLogo} alt="" className="w-12 h-12" />
                 <div>
-                  <p className="text-white text-base font-bold tracking-tight">ReforestWallet</p>
+                  <p className="text-white text-base font-bold tracking-tight">Reforest<span className="text-emerald-400">Wallet</span></p>
                   <p className="text-emerald-400/70 text-[11px]">Proof of Impact</p>
                 </div>
               </div>
