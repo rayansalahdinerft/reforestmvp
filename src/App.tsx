@@ -9,7 +9,6 @@ import Impact from "./pages/Impact";
 import Market from "./pages/Market";
 import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
-import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 import AIChatbot from "./components/AIChatbot";
 
@@ -26,7 +25,6 @@ const App = () => (
           <Route path="/market" element={<Market />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/card" element={<Card />} />
-          <Route path="/history" element={<History />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
