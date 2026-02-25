@@ -6,7 +6,7 @@ const Logo = () => {
       <img src={leafIcon} alt="ReforestWallet logo" className="w-9 h-9 md:w-[46px] md:h-[46px] rounded-xl" />
       <span className="text-lg md:text-[22px] font-bold tracking-tight leading-none">
         <span className="text-foreground">Reforest</span>
-        <span className="text-primary">Wal</span>
+        <span className="text-primary">Wallet</span>
       </span>
     </div>
   );
