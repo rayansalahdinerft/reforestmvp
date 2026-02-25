@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Share2, Download, X, TreePine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
@@ -33,6 +34,15 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
 
   const achievedLevel = [...LEVELS].reverse().find((l) => treesPlanted >= l.target);
   const currentLvl = achievedLevel ? achievedLevel.level : 0;
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   const captureCard = useCallback(async () => {
     if (!cardRef.current) return null;
@@ -85,11 +95,9 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
     );
   }
 
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4" onClick={() => setOpen(false)}>
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-      {/* Content */}
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={() => setOpen(false)}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md pointer-events-none" />
       <div className="relative z-10 w-full max-w-sm space-y-5 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Top bar */}
         <div className="flex items-center justify-between">
@@ -129,7 +137,7 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
             {/* Header */}
             <div className="flex items-center justify-between mb-6 relative z-10">
               <div className="flex items-center gap-2">
-                <img src={leafIcon} alt="" className="w-8 h-8 rounded-lg" />
+                <img src={leafIcon} alt="Leaf icon" className="w-8 h-8 rounded-lg" />
                 <div>
                   <p className="text-white text-sm font-bold tracking-tight">ReforestWallet</p>
                   <p className="text-emerald-400/70 text-[10px]">Proof of Impact</p>
@@ -223,7 +231,8 @@ const ShareImpactCard = ({ treesPlanted, totalDonationsUsd, totalSwaps, co2Absor
           {generating ? "Generating..." : "Download Image"}
         </Button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
