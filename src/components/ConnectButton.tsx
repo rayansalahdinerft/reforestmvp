@@ -1,31 +1,54 @@
-import { Wallet, LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { Wallet, LogOut, Copy, Check, ChevronDown } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 const ConnectButton = () => {
   const { address, isConnected, openConnect, disconnect } = useWallet();
+  const [copied, setCopied] = useState(false);
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
+  const handleCopy = () => {
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success('Address copied!');
+    }
+  };
+
   if (isConnected && address) {
     return (
-      <div className="flex items-center gap-2">
-        <button
-          onClick={openConnect}
-          className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 border border-border transition-all group"
-        >
-          <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-          <span className="font-semibold text-sm">{formatAddress(address)}</span>
-        </button>
-        <button
-          onClick={disconnect}
-          className="p-2 rounded-xl hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
-          title="Disconnect"
-        >
-          <LogOut className="w-4 h-4" />
-        </button>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 border border-border transition-all">
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            <span className="font-semibold text-sm text-foreground">{formatAddress(address)}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuItem onClick={handleCopy} className="gap-2 cursor-pointer">
+            {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+            Copy Address
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={disconnect} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+            <LogOut className="w-4 h-4" />
+            Disconnect
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 
