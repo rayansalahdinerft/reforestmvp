@@ -1,43 +1,43 @@
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useCallback } from 'react';
 
 /**
- * Unified wallet hook wrapping wagmi native connectors.
- * Drop-in replacement for the old useAppKitAccount / useAppKit pattern.
+ * Unified wallet hook wrapping Privy.
  */
 export const useWallet = () => {
-  const { address, isConnected, chain } = useAccount();
-  const { connectors, connectAsync, isPending } = useConnect();
-  const { disconnectAsync } = useDisconnect();
+  const { ready, authenticated, login, logout } = usePrivy();
+  const { wallets } = useWallets();
 
-  const chainId = chain?.id;
+  const activeWallet = wallets[0] ?? null;
+  const address = activeWallet?.address ?? null;
+  const isConnected = ready && authenticated && !!address;
+  const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
 
-  const openConnect = useCallback(async (connectorId?: string) => {
-    if (connectorId) {
-      const connector = connectors.find(c => c.id === connectorId || c.name === connectorId);
-      if (connector) {
-        await connectAsync({ connector });
-        return;
-      }
-    }
-    // If no specific connector, try injected first (MetaMask)
-    const injected = connectors.find(c => c.id === 'injected');
-    if (injected) {
-      await connectAsync({ connector: injected });
-    }
-  }, [connectors, connectAsync]);
+  const openConnect = useCallback(async () => {
+    login();
+  }, [login]);
 
   const disconnect = useCallback(async () => {
-    await disconnectAsync();
-  }, [disconnectAsync]);
+    await logout();
+  }, [logout]);
+
+  const getProvider = useCallback(async () => {
+    if (!activeWallet) return null;
+    return await activeWallet.getEthereumProvider();
+  }, [activeWallet]);
 
   return {
-    address: address ?? null,
+    address,
     isConnected,
+    ready,
+    authenticated,
     chainId,
-    connectors,
-    isPending,
+    activeWallet,
+    wallets,
+    connectors: [], // kept for compatibility
+    isPending: !ready,
     openConnect,
     disconnect,
+    getProvider,
   };
 };
