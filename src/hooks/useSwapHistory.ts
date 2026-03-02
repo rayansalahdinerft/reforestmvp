@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 
 export interface SwapHistoryRow {
   id: string;
@@ -20,7 +20,7 @@ export interface SwapHistoryRow {
 export const useSwapHistory = () => {
   const [history, setHistory] = useState<SwapHistoryRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const { address } = useAppKitAccount();
+  const { address } = useWallet();
 
   useEffect(() => {
     if (!address) {

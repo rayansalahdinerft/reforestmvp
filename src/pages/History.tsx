@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useSwapHistory } from "@/hooks/useSwapHistory";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useWallet } from '@/hooks/useWallet';
 import { Wallet, ArrowRightLeft, ExternalLink, TreePine, DollarSign, Clock, Leaf } from "lucide-react";
 import { format } from "date-fns";
 
@@ -11,7 +11,7 @@ const getExplorerUrl = (txHash: string, chainId: number) => {
 };
 
 const History = () => {
-  const { isConnected } = useAppKitAccount();
+  const { isConnected } = useWallet();
   const { history, loading, totalStats } = useSwapHistory();
 
   return (

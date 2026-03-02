@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 
 interface WalletStats {
   totalTrees: number;
@@ -11,7 +11,7 @@ interface WalletStats {
 }
 
 export const useWalletStats = () => {
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useWallet();
   const [stats, setStats] = useState<WalletStats>({
     totalTrees: 0,
     totalDonationsUsd: 0,

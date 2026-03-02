@@ -1,9 +1,8 @@
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
-import { ChevronDown, Wallet } from 'lucide-react';
+import { ChevronDown, Wallet, LogOut } from 'lucide-react';
+import { useWallet } from '@/hooks/useWallet';
 
 const ConnectButton = () => {
-  const { open } = useAppKit();
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected, openConnect, disconnect } = useWallet();
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -11,20 +10,29 @@ const ConnectButton = () => {
 
   if (isConnected && address) {
     return (
-      <button
-        onClick={() => open({ view: 'Account' })}
-        className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 border border-border transition-all group"
-      >
-        <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-        <span className="font-semibold text-sm">{formatAddress(address)}</span>
-        <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={openConnect}
+          className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 border border-border transition-all group"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+          <span className="font-semibold text-sm">{formatAddress(address)}</span>
+          <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+        </button>
+        <button
+          onClick={disconnect}
+          className="p-2 rounded-xl hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+          title="Disconnect"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
+      </div>
     );
   }
 
   return (
     <button 
-      onClick={() => open()}
+      onClick={openConnect}
       className="connect-wallet-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
     >
       <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />

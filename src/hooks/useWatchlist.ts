@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 
 export const useWatchlist = () => {
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useWallet();
   const [watchlist, setWatchlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 

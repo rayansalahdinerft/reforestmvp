@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trophy, TreePine, Edit2, Check, X, Crown, Medal, Award } from 'lucide-react';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 import Header from '@/components/Header';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import AvatarPicker from '@/components/AvatarPicker';
@@ -62,7 +62,7 @@ const Leaderboard = () => {
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState('');
   const [savingName, setSavingName] = useState(false);
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useWallet();
 
   const fetchLeaderboard = async () => {
     setLoading(true);

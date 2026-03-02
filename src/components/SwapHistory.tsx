@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, ArrowRightLeft, Clock, ChevronDown, ChevronUp } from 'lucide-react';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 
 export interface SwapHistoryEntry {
   id: string;
@@ -61,7 +61,7 @@ const formatTimeAgo = (timestamp: number) => {
 const SwapHistory = () => {
   const [history, setHistory] = useState<SwapHistoryEntry[]>([]);
   const [expanded, setExpanded] = useState(false);
-  const { address } = useAppKitAccount();
+  const { address } = useWallet();
 
   useEffect(() => {
     const all = getSwapHistory();
