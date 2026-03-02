@@ -4,11 +4,13 @@ import NftGallery from "@/components/impact/NftGallery";
 import SwapHistory from "@/components/SwapHistory";
 import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { useWalletStats } from "@/hooks/useWalletStats";
+import { useWallet } from "@/hooks/useWallet";
 import { Wallet, RefreshCw } from "lucide-react";
 
 const Portfolio = () => {
   const { balances, totalValue, loading, isConnected, refetch, priceError } = useWalletBalance();
   const { stats } = useWalletStats();
+  const { openConnect } = useWallet();
   const treesPlanted = stats.totalTrees;
 
   return (
@@ -30,10 +32,13 @@ const Portfolio = () => {
         </div>
 
         {!isConnected ? (
-          <div className="swap-card p-5 sm:p-8 text-center animate-slide-up">
+          <div className="swap-card p-5 sm:p-8 text-center animate-slide-up cursor-pointer hover:border-primary/30 transition-all" onClick={() => openConnect()}>
             <Wallet className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-3 sm:mb-4" />
             <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Connect Your Wallet</h2>
-            <p className="text-muted-foreground">Connect your wallet to view your portfolio</p>
+            <p className="text-muted-foreground text-sm">Connect your wallet to view your portfolio</p>
+            <button className="mt-4 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all">
+              Connect Wallet
+            </button>
           </div>
         ) : (
           <div className="space-y-6">
