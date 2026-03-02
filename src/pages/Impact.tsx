@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import NewsTicker from "@/components/NewsTicker";
 import { useWalletStats } from "@/hooks/useWalletStats";
+import { useWallet } from "@/hooks/useWallet";
 import { DollarSign, Users, Leaf, Sprout, Globe, ChevronDown } from "lucide-react";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import ImpactCard from "@/components/impact/ImpactCard";
@@ -20,6 +21,7 @@ const NFT_CERTS = [
 
 const Impact = () => {
   const { stats, loading, isConnected } = useWalletStats();
+  const { openConnect } = useWallet();
   const [showMore, setShowMore] = useState(false);
 
   const treesPlanted = stats.totalTrees;
@@ -105,13 +107,13 @@ const Impact = () => {
 
         {/* Connect Wallet CTA */}
         {!isConnected && (
-          <div className="swap-card p-5 sm:p-8 text-center mb-6 sm:mb-10 animate-slide-up backdrop-blur-sm">
+          <div className="swap-card p-5 sm:p-8 text-center mb-6 sm:mb-10 animate-slide-up backdrop-blur-sm cursor-pointer hover:border-primary/30 transition-all" onClick={() => openConnect()}>
             <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-4 rounded-2xl bg-muted/50 flex items-center justify-center">
               <Globe className="w-6 h-6 sm:w-7 sm:h-7 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">Connect your wallet</h3>
             <p className="text-muted-foreground text-sm">
-              Connect your wallet to see your personal impact.
+              Tap here to connect and see your personal impact.
             </p>
           </div>
         )}
