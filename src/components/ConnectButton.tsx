@@ -1,22 +1,40 @@
-import { Wallet, LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { Wallet, LogOut, Copy, Check } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
+import { toast } from 'sonner';
 
 const ConnectButton = () => {
   const { address, isConnected, openConnect, disconnect } = useWallet();
+  const [copied, setCopied] = useState(false);
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  const handleCopyAddress = () => {
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success('Address copied!');
+    }
   };
 
   if (isConnected && address) {
     return (
       <div className="flex items-center gap-2">
         <button
-          onClick={openConnect}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 border border-border transition-all"
+          onClick={handleCopyAddress}
+          className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 border border-border transition-all group"
+          title="Copy address"
         >
           <div className="w-2 h-2 rounded-full bg-primary" />
           <span className="font-semibold text-sm text-foreground">{formatAddress(address)}</span>
+          {copied ? (
+            <Check className="w-3.5 h-3.5 text-primary" />
+          ) : (
+            <Copy className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
+          )}
         </button>
         <button
           onClick={disconnect}
