@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X, CreditCard, ArrowLeftRight, Send } from 'lucide-react';
-import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 import { useBalance, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther, parseUnits, isAddress } from 'viem';
 import TokenSelectorModal from './TokenSelectorModal';
@@ -38,8 +38,7 @@ const SwapCard = () => {
   const [sendToken, setSendToken] = useState<Token | null>(null);
   const slippageRef = useRef<HTMLDivElement>(null);
 
-  const { isConnected, address } = useAppKitAccount();
-  const { open } = useAppKit();
+  const { isConnected, address, openConnect } = useWallet();
 
   const chainInfo = CHAIN_INFO[CHAIN_ID];
 
@@ -164,7 +163,7 @@ const SwapCard = () => {
 
   const handleSwap = async () => {
     if (!isConnected) {
-      open();
+      openConnect();
       return;
     }
 
@@ -1053,7 +1052,7 @@ const SwapCard = () => {
               <button
                 onClick={() => {
                   if (!isConnected) {
-                    open();
+                    openConnect();
                     return;
                   }
                   if (!sendRecipient || !isAddress(sendRecipient)) {

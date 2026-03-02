@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 import { useBalance } from 'wagmi';
 import { createPublicClient, http, formatUnits } from 'viem';
 import { mainnet } from 'viem/chains';
@@ -51,8 +51,7 @@ const CACHE_DURATION = 30000; // 30 seconds
 const BALANCE_OF_SELECTOR = '0x70a08231';
 
 export const useWalletBalance = () => {
-  const { address, isConnected } = useAppKitAccount();
-  const { chainId } = useAppKitNetwork();
+  const { address, isConnected, chainId } = useWallet();
   const [balances, setBalances] = useState<TokenBalance[]>([]);
   const [totalValue, setTotalValue] = useState(0);
   const [loading, setLoading] = useState(false);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useWallet } from '@/hooks/useWallet';
 
 interface Badge {
   badge_type: string;
@@ -18,7 +18,7 @@ interface StreakData {
 }
 
 export const useStreaksAndBadges = () => {
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useWallet();
   const [data, setData] = useState<StreakData>({
     currentStreak: 0,
     longestStreak: 0,
