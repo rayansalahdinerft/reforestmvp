@@ -19,8 +19,9 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       config={{
         appearance: {
           theme: 'dark',
-          accentColor: '#4ade80',
+          accentColor: '#22c55e',
           showWalletLoginFirst: true,
+          logo: 'https://reforestmvp.lovable.app/icon.png',
         },
         loginMethods: ['wallet'],
         embeddedWallets: {
