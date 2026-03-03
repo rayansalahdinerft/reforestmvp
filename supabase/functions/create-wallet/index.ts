@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { profileId, walletAddress, walletName, chain } = await req.json();
+    const { profileId, walletAddress, walletName, chain, walletType } = await req.json();
 
     if (!profileId || !walletAddress) {
       return new Response(
@@ -57,7 +57,7 @@ serve(async (req) => {
         profile_id: profileId,
         wallet_address: walletAddress,
         wallet_name: name,
-        wallet_type: "mpc",
+        wallet_type: walletType || "mpc",
         chain: chain || "ethereum",
         is_primary: false,
       })
