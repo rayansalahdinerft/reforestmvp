@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Wallet, LogOut, Copy, Check } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { toast } from 'sonner';
 
 const ConnectButton = () => {
   const { address, isConnected, openConnect, disconnect } = useWallet();
+  const { onboardingCompleted } = useOnboarding();
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const formatAddress = (addr: string) => {
@@ -21,11 +25,16 @@ const ConnectButton = () => {
   };
 
   const handleConnect = () => {
-    const isInIframe = window.self !== window.top;
+    // If not onboarded, go to onboarding flow first
+    if (onboardingCompleted === false || onboardingCompleted === null) {
+      navigate('/onboarding');
+      return;
+    }
 
+    const isInIframe = window.self !== window.top;
     if (isInIframe) {
       window.open(window.location.href, '_blank', 'noopener,noreferrer');
-      toast.info('Connexion ouverte dans un nouvel onglet pour finaliser la création du wallet natif.');
+      toast.info('Connexion ouverte dans un nouvel onglet');
       return;
     }
 
