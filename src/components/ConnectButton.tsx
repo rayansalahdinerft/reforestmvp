@@ -20,6 +20,18 @@ const ConnectButton = () => {
     }
   };
 
+  const handleConnect = () => {
+    const isInIframe = window.self !== window.top;
+
+    if (isInIframe) {
+      window.open(window.location.href, '_blank', 'noopener,noreferrer');
+      toast.info('Connexion ouverte dans un nouvel onglet pour finaliser la création du wallet natif.');
+      return;
+    }
+
+    openConnect();
+  };
+
   if (isConnected && address) {
     return (
       <div className="flex items-center gap-2">
@@ -49,7 +61,7 @@ const ConnectButton = () => {
 
   return (
     <button 
-      onClick={openConnect}
+      onClick={handleConnect}
       className="connect-wallet-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
     >
       <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
