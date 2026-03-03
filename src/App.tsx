@@ -10,6 +10,7 @@ import Market from "./pages/Market";
 import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
 import NotFound from "./pages/NotFound";
+import Onboarding from "./pages/Onboarding";
 import AIChatbot from "./components/AIChatbot";
 import MobileBottomNav from "./components/MobileBottomNav";
 
@@ -22,6 +23,7 @@ const App = () => (
         <div className="pb-16 md:pb-0">
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/impact" element={<Impact />} />
             <Route path="/market" element={<Market />} />

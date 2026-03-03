@@ -110,6 +110,80 @@ export type Database = {
         }
         Relationships: []
       }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          dynamic_user_id: string
+          first_name: string
+          id: string
+          onboarding_completed: boolean
+          pseudo: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          dynamic_user_id: string
+          first_name: string
+          id?: string
+          onboarding_completed?: boolean
+          pseudo: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          dynamic_user_id?: string
+          first_name?: string
+          id?: string
+          onboarding_completed?: boolean
+          pseudo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_wallets: {
+        Row: {
+          chain: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          profile_id: string
+          wallet_address: string
+          wallet_name: string
+          wallet_type: string
+        }
+        Insert: {
+          chain?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          profile_id: string
+          wallet_address: string
+          wallet_name?: string
+          wallet_type?: string
+        }
+        Update: {
+          chain?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          profile_id?: string
+          wallet_address?: string
+          wallet_name?: string
+          wallet_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_wallets_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wallet_stats: {
         Row: {
           avatar_url: string | null
