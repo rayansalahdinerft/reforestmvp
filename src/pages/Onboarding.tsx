@@ -4,18 +4,23 @@ import { useWallet } from '@/hooks/useWallet';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
-import { ArrowRight, Check, Loader2, TreePine, User, AtSign, Camera, Wallet } from 'lucide-react';
+import { ArrowRight, Check, Loader2, TreePine, User, AtSign, Camera, Wallet, Lock, Calendar, Eye, EyeOff } from 'lucide-react';
 import Logo from '@/components/Logo';
 
-type Step = 'welcome' | 'name' | 'pseudo' | 'avatar' | 'connect' | 'complete';
+type Step = 'welcome' | 'name' | 'pseudo' | 'birthday' | 'avatar' | 'password' | 'connect' | 'complete';
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, isConnected, ready, openConnect, activeWallet } = useWallet();
   const [step, setStep] = useState<Step>('welcome');
   const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [pseudo, setPseudo] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
   const [waitingForWallet, setWaitingForWallet] = useState(false);
@@ -23,7 +28,6 @@ const Onboarding = () => {
   const dynamicUserId = (user as any)?.userId ?? (user as any)?.id ?? '';
   const walletAddress = activeWallet?.address ?? null;
 
-  // When user connects and we're on the connect step, auto-save
   useEffect(() => {
     if (step === 'connect' && isConnected && dynamicUserId && walletAddress) {
       setWaitingForWallet(false);
@@ -43,9 +47,12 @@ const Onboarding = () => {
         body: {
           dynamicUserId,
           firstName: firstName.trim(),
+          lastName: lastName.trim(),
           pseudo: pseudo.trim(),
+          dateOfBirth,
           avatarUrl: `preset:${selectedAvatar}`,
           walletAddress,
+          password,
         },
       });
       if (error) throw error;
@@ -66,12 +73,10 @@ const Onboarding = () => {
 
   const handleConnectStep = () => {
     setWaitingForWallet(true);
-    // If in iframe, open in new tab
     const isInIframe = window.self !== window.top;
     if (isInIframe) {
-      // Store onboarding data in sessionStorage so the new tab can pick it up
       sessionStorage.setItem('onboarding_data', JSON.stringify({
-        firstName, pseudo, selectedAvatar,
+        firstName, lastName, pseudo, selectedAvatar, dateOfBirth,
       }));
       window.open(window.location.href, '_blank', 'noopener,noreferrer');
       toast.info('Complete the connection in the new tab');
@@ -80,19 +85,21 @@ const Onboarding = () => {
     openConnect();
   };
 
-  const canProceedName = firstName.trim().length >= 2;
+  const canProceedName = firstName.trim().length >= 2 && lastName.trim().length >= 2;
   const canProceedPseudo = pseudo.trim().length >= 3 && pseudo.trim().length <= 20;
+  const canProceedBirthday = dateOfBirth.length === 10;
+  const canProceedPassword = password.length >= 6 && password === confirmPassword;
+
+  const allSteps: Step[] = ['welcome', 'name', 'pseudo', 'birthday', 'avatar', 'password', 'connect'];
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
-      {/* Background effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute -top-[300px] -right-[200px] w-[800px] h-[800px] bg-primary/8 rounded-full blur-[150px]" />
         <div className="absolute -bottom-[200px] -left-[200px] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Logo />
         </div>
@@ -117,7 +124,7 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Step: First Name */}
+        {/* Step: First & Last Name */}
         {step === 'name' && (
           <div className="animate-fade-in space-y-6">
             <div className="text-center">
@@ -127,15 +134,25 @@ const Onboarding = () => {
               <h2 className="text-2xl font-bold text-foreground mb-1">What's your name?</h2>
               <p className="text-sm text-muted-foreground">To personalize your experience</p>
             </div>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Your first name"
-              maxLength={30}
-              autoFocus
-              className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-            />
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                maxLength={30}
+                autoFocus
+                className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              />
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                maxLength={30}
+                className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              />
+            </div>
             <button
               onClick={() => setStep('pseudo')}
               disabled={!canProceedName}
@@ -176,8 +193,36 @@ const Onboarding = () => {
               <p className="text-xs text-muted-foreground text-center mt-2">3-20 characters, letters, numbers, underscores</p>
             </div>
             <button
-              onClick={() => setStep('avatar')}
+              onClick={() => setStep('birthday')}
               disabled={!canProceedPseudo}
+              className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Continue
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Step: Date of Birth */}
+        {step === 'birthday' && (
+          <div className="animate-fade-in space-y-6">
+            <div className="text-center">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <Calendar className="w-7 h-7 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground mb-1">Date of birth</h2>
+              <p className="text-sm text-muted-foreground">For identity verification</p>
+            </div>
+            <input
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+            />
+            <button
+              onClick={() => setStep('avatar')}
+              disabled={!canProceedBirthday}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Continue
@@ -214,7 +259,7 @@ const Onboarding = () => {
             </div>
 
             <button
-              onClick={() => setStep('connect')}
+              onClick={() => setStep('password')}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all"
             >
               Continue
@@ -223,7 +268,57 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Step: Connect — create wallet */}
+        {/* Step: Password */}
+        {step === 'password' && (
+          <div className="animate-fade-in space-y-6">
+            <div className="text-center">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <Lock className="w-7 h-7 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground mb-1">Secure your wallet</h2>
+              <p className="text-sm text-muted-foreground">Create a password to protect your account</p>
+            </div>
+            <div className="space-y-3">
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password (min 6 characters)"
+                  autoFocus
+                  className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password"
+                className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              />
+              {password && confirmPassword && password !== confirmPassword && (
+                <p className="text-destructive text-sm text-center">Passwords don't match</p>
+              )}
+            </div>
+            <button
+              onClick={() => setStep('connect')}
+              disabled={!canProceedPassword}
+              className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Continue
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Step: Connect */}
         {step === 'connect' && (
           <div className="animate-fade-in space-y-6">
             <div className="text-center">
@@ -282,7 +377,7 @@ const Onboarding = () => {
 
         {/* Progress dots */}
         <div className="flex justify-center gap-2 mt-8">
-          {['welcome', 'name', 'pseudo', 'avatar', 'connect'].map((s) => (
+          {allSteps.map((s) => (
             <div
               key={s}
               className={`w-2 h-2 rounded-full transition-all ${

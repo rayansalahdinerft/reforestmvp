@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { dynamicUserId, firstName, pseudo, avatarUrl, walletAddress } = await req.json();
+    const { dynamicUserId, firstName, lastName, pseudo, dateOfBirth, avatarUrl, walletAddress, password } = await req.json();
 
     if (!dynamicUserId || !firstName?.trim() || !pseudo?.trim()) {
       return new Response(
@@ -35,6 +35,16 @@ serve(async (req) => {
         JSON.stringify({ error: "Pseudo contains invalid characters" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Simple password hash (SHA-256)
+    let pinHash: string | null = null;
+    if (password && password.length >= 6) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password + dynamicUserId); // salt with userId
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      pinHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     const supabase = createClient(
@@ -63,8 +73,11 @@ serve(async (req) => {
         {
           dynamic_user_id: dynamicUserId,
           first_name: firstName.trim(),
+          last_name: lastName?.trim() || null,
           pseudo: pseudoClean,
+          date_of_birth: dateOfBirth || null,
           avatar_url: avatarUrl || null,
+          pin_hash: pinHash,
           onboarding_completed: true,
         },
         { onConflict: "dynamic_user_id" }
