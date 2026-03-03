@@ -33,7 +33,7 @@ const Onboarding = () => {
 
   const handleComplete = async () => {
     if (!dynamicUserId) {
-      toast.error('Veuillez vous connecter');
+      toast.error('Please connect first');
       return;
     }
 
@@ -49,15 +49,15 @@ const Onboarding = () => {
         },
       });
       if (error) throw error;
-      toast.success('Bienvenue sur ReforestWallet ! 🌱');
+      toast.success('Welcome to ReforestWallet! 🌱');
       setStep('complete');
       setTimeout(() => navigate('/'), 1500);
     } catch (err: any) {
       if (err?.message?.includes('pseudo')) {
-        setPseudoError('Ce pseudo est déjà pris');
+        setPseudoError('This username is already taken');
         setStep('pseudo');
       } else {
-        toast.error('Erreur lors de la création du profil');
+        toast.error('Error creating profile');
         console.error(err);
       }
     }
@@ -74,7 +74,7 @@ const Onboarding = () => {
         firstName, pseudo, selectedAvatar,
       }));
       window.open(window.location.href, '_blank', 'noopener,noreferrer');
-      toast.info('Finalisez la connexion dans le nouvel onglet');
+      toast.info('Complete the connection in the new tab');
       return;
     }
     openConnect();
@@ -104,14 +104,14 @@ const Onboarding = () => {
               <TreePine className="w-10 h-10 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Bienvenue sur ReforestWallet</h1>
-              <p className="text-muted-foreground">Créez votre compte pour sauver la planète à chaque transaction.</p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Welcome to ReforestWallet</h1>
+              <p className="text-muted-foreground">Create your account and save the planet with every transaction.</p>
             </div>
             <button
               onClick={() => setStep('name')}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all"
             >
-              Commencer
+              Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
@@ -124,14 +124,14 @@ const Onboarding = () => {
               <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
                 <User className="w-7 h-7 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-1">Comment tu t'appelles ?</h2>
-              <p className="text-sm text-muted-foreground">Pour personnaliser ton expérience</p>
+              <h2 className="text-2xl font-bold text-foreground mb-1">What's your name?</h2>
+              <p className="text-sm text-muted-foreground">To personalize your experience</p>
             </div>
             <input
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Ton prénom"
+              placeholder="Your first name"
               maxLength={30}
               autoFocus
               className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
@@ -141,7 +141,7 @@ const Onboarding = () => {
               disabled={!canProceedName}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Continuer
+              Continue
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
@@ -154,8 +154,8 @@ const Onboarding = () => {
               <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
                 <AtSign className="w-7 h-7 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-1">Choisis ton pseudo</h2>
-              <p className="text-sm text-muted-foreground">C'est comme ça que les autres te verront</p>
+              <h2 className="text-2xl font-bold text-foreground mb-1">Choose your username</h2>
+              <p className="text-sm text-muted-foreground">This is how others will see you</p>
             </div>
             <div>
               <input
@@ -165,7 +165,7 @@ const Onboarding = () => {
                   setPseudo(e.target.value.replace(/[^a-zA-Z0-9_.-]/g, ''));
                   setPseudoError('');
                 }}
-                placeholder="ton_pseudo"
+                placeholder="your_username"
                 maxLength={20}
                 autoFocus
                 className="w-full px-4 py-3.5 rounded-2xl bg-card border border-border text-foreground text-center text-lg font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
@@ -173,14 +173,14 @@ const Onboarding = () => {
               {pseudoError && (
                 <p className="text-destructive text-sm text-center mt-2">{pseudoError}</p>
               )}
-              <p className="text-xs text-muted-foreground text-center mt-2">3-20 caractères, lettres, chiffres, underscores</p>
+              <p className="text-xs text-muted-foreground text-center mt-2">3-20 characters, letters, numbers, underscores</p>
             </div>
             <button
               onClick={() => setStep('avatar')}
               disabled={!canProceedPseudo}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Continuer
+              Continue
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
@@ -193,8 +193,8 @@ const Onboarding = () => {
               <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
                 <Camera className="w-7 h-7 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-1">Choisis ton avatar</h2>
-              <p className="text-sm text-muted-foreground">Ton personnage préféré</p>
+              <h2 className="text-2xl font-bold text-foreground mb-1">Pick your avatar</h2>
+              <p className="text-sm text-muted-foreground">Your favorite character</p>
             </div>
 
             <div className="grid grid-cols-4 gap-3">
@@ -217,7 +217,7 @@ const Onboarding = () => {
               onClick={() => setStep('connect')}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all"
             >
-              Continuer
+              Continue
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
@@ -230,21 +230,21 @@ const Onboarding = () => {
               <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
                 <Wallet className="w-7 h-7 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-1">Crée ton ReforestWallet</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-1">Create your ReforestWallet</h2>
               <p className="text-sm text-muted-foreground">
-                Connecte-toi avec ton email pour créer ton wallet natif sécurisé par MPC. Aucune seed phrase nécessaire.
+                Sign in with your email to create your secure MPC-powered wallet. No seed phrase needed.
               </p>
             </div>
 
             {saving ? (
               <div className="flex flex-col items-center gap-3 py-4">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground">Création de ton ReforestWallet...</p>
+                <p className="text-sm text-muted-foreground">Creating your ReforestWallet...</p>
               </div>
             ) : waitingForWallet && !walletAddress ? (
               <div className="flex flex-col items-center gap-3 py-4">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground">Initialisation du wallet MPC...</p>
+                <p className="text-sm text-muted-foreground">Initializing MPC wallet...</p>
               </div>
             ) : (
               <button
@@ -252,12 +252,12 @@ const Onboarding = () => {
                 className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary/90 transition-all"
               >
                 <Wallet className="w-5 h-5" />
-                Créer mon ReforestWallet
+                Create my ReforestWallet
               </button>
             )}
 
             <p className="text-xs text-center text-muted-foreground">
-              Un wallet sécurisé sera automatiquement créé pour toi via email.
+              A secure wallet will be automatically created for you via email.
             </p>
           </div>
         )}
@@ -269,8 +269,8 @@ const Onboarding = () => {
               <Check className="w-10 h-10 text-primary" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Bienvenue, {firstName} ! 🌱</h2>
-              <p className="text-muted-foreground">Ton ReforestWallet est prêt. Chaque swap plante des arbres.</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Welcome, {firstName}! 🌱</h2>
+              <p className="text-muted-foreground">Your ReforestWallet is ready. Every swap plants trees.</p>
               {walletAddress && (
                 <p className="text-xs text-primary mt-2 font-mono">
                   {walletAddress.slice(0, 10)}...{walletAddress.slice(-8)}
