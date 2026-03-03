@@ -36,16 +36,23 @@ serve(async (req) => {
     const walletNumber = (count ?? 0) + 1;
     const name = walletName?.trim() || `ReforestWallet ${walletNumber}`;
 
-    // Check if wallet address already exists
+    // Check if wallet address already exists for this profile
     const { data: existing } = await supabase
       .from("user_wallets")
-      .select("id")
+      .select("id, profile_id")
       .eq("wallet_address", walletAddress)
       .maybeSingle();
 
     if (existing) {
+      // If same profile, just return success (idempotent)
+      if (existing.profile_id === profileId) {
+        return new Response(
+          JSON.stringify({ success: true, wallet: existing }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
       return new Response(
-        JSON.stringify({ error: "This wallet address is already registered" }),
+        JSON.stringify({ error: "This wallet address is already registered to another account" }),
         { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
