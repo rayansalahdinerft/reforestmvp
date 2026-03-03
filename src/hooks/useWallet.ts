@@ -1,41 +1,47 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useDynamicContext, useIsLoggedIn, useUserWallets } from '@dynamic-labs/sdk-react-core';
 import { useCallback } from 'react';
 
 /**
- * Unified wallet hook wrapping Privy.
+ * Unified wallet hook wrapping Dynamic.xyz
  */
 export const useWallet = () => {
-  const { ready, authenticated, login, logout } = usePrivy();
-  const { wallets } = useWallets();
+  const { setShowAuthFlow, handleLogOut, user, sdkHasLoaded, primaryWallet } = useDynamicContext();
+  const isLoggedIn = useIsLoggedIn();
+  const userWallets = useUserWallets();
 
-  const activeWallet = wallets[0] ?? null;
+  const activeWallet = primaryWallet ?? userWallets[0] ?? null;
   const address = activeWallet?.address ?? null;
-  const isConnected = ready && authenticated && !!address;
-  const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
+  const isConnected = sdkHasLoaded && isLoggedIn && !!address;
+  const chainId = activeWallet?.chain ? Number(activeWallet.chain) : undefined;
 
-  const openConnect = useCallback(async () => {
-    login();
-  }, [login]);
+  const openConnect = useCallback(() => {
+    setShowAuthFlow(true);
+  }, [setShowAuthFlow]);
 
   const disconnect = useCallback(async () => {
-    await logout();
-  }, [logout]);
+    await handleLogOut();
+  }, [handleLogOut]);
 
   const getProvider = useCallback(async () => {
     if (!activeWallet) return null;
-    return await activeWallet.getEthereumProvider();
+    try {
+      return await (activeWallet as any).getWalletClient();
+    } catch {
+      return null;
+    }
   }, [activeWallet]);
 
   return {
     address,
     isConnected,
-    ready,
-    authenticated,
+    ready: sdkHasLoaded,
+    authenticated: isLoggedIn,
     chainId,
     activeWallet,
-    wallets,
-    connectors: [], // kept for compatibility
-    isPending: !ready,
+    wallets: userWallets,
+    user,
+    connectors: [],
+    isPending: !sdkHasLoaded,
     openConnect,
     disconnect,
     getProvider,

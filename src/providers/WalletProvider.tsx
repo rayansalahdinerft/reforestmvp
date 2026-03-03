@@ -1,12 +1,16 @@
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PrivyProvider } from '@privy-io/react-auth';
+import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core';
+import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
+import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
 import { WagmiProvider } from 'wagmi';
 import { config } from '@/config/wallet';
 
 const queryClient = new QueryClient();
 
-const PRIVY_APP_ID = 'cmm96j8ng01oa0cjp846ak29q';
+// Dynamic Environment ID (publishable key)
+// Replace with your actual Environment ID from https://app.dynamic.xyz
+const DYNAMIC_ENVIRONMENT_ID = import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'YOUR_DYNAMIC_ENVIRONMENT_ID';
 
 interface WalletProviderProps {
   children: ReactNode;
@@ -14,25 +18,25 @@ interface WalletProviderProps {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   return (
-    <PrivyProvider
-      appId={PRIVY_APP_ID}
-      config={{
-        appearance: {
-          theme: 'dark',
-          accentColor: '#22c55e',
-          showWalletLoginFirst: true,
-        },
-        loginMethods: ['wallet'],
-        embeddedWallets: {
-          ethereum: { createOnLogin: 'off' },
-        },
+    <DynamicContextProvider
+      settings={{
+        environmentId: DYNAMIC_ENVIRONMENT_ID,
+        walletConnectors: [EthereumWalletConnectors],
+        appName: 'ReforestWallet',
+        appLogoUrl: '/icon.png',
+        cssOverrides: `
+          .dynamic-widget-inline-controls { background: transparent; }
+          .dynamic-widget-card { border-radius: 1rem; }
+        `,
       }}
     >
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <DynamicWagmiConnector>
+            {children}
+          </DynamicWagmiConnector>
         </QueryClientProvider>
       </WagmiProvider>
-    </PrivyProvider>
+    </DynamicContextProvider>
   );
 };
