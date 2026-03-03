@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useWallet } from '@/hooks/useWallet';
+import { useEmbeddedWallet } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
-import { ChevronDown, Plus, Check, Wallet, Loader2 } from 'lucide-react';
+import { ChevronDown, Plus, Check, Wallet, Loader2, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WalletBalanceCache {
@@ -11,10 +12,14 @@ interface WalletBalanceCache {
 
 const WalletSwitcher = () => {
   const { wallets, activeAddress, switchWallet, refreshWallets, profileId } = useActiveWallet();
-  const { address: connectedAddress, wallets: dynamicWallets } = useWallet();
+  const { address: connectedAddress } = useWallet();
+  const { createEmbeddedWallet } = useEmbeddedWallet();
   const [open, setOpen] = useState(false);
   const [balances, setBalances] = useState<WalletBalanceCache>({});
   const [creating, setCreating] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [importAddress, setImportAddress] = useState('');
+  const [importing, setImporting] = useState(false);
 
   // Fetch simple ETH balance for each wallet
   useEffect(() => {
@@ -30,7 +35,6 @@ const WalletSwitcher = () => {
         const data = await res.json();
         if (data.status === '1') {
           const ethBalance = parseFloat(data.result) / 1e18;
-          // Get ETH price from cache or simple fetch
           let ethPrice = 0;
           try {
             const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
@@ -51,6 +55,20 @@ const WalletSwitcher = () => {
     });
   }, [wallets]);
 
+  const registerWallet = async (address: string, type: string) => {
+    const { data, error } = await supabase.functions.invoke('create-wallet', {
+      body: {
+        profileId,
+        walletAddress: address,
+        chain: 'ethereum',
+        walletType: type,
+      },
+    });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    return data;
+  };
+
   const handleCreateWallet = async () => {
     if (!profileId) {
       toast.error('Profile not found');
@@ -59,40 +77,48 @@ const WalletSwitcher = () => {
 
     setCreating(true);
     try {
-      // Use a Dynamic wallet that isn't already registered, or generate a placeholder
-      const existingAddresses = wallets.map(w => w.wallet_address.toLowerCase());
-      const availableDynamicWallet = dynamicWallets.find(
-        dw => dw.address && !existingAddresses.includes(dw.address.toLowerCase())
-      );
-
-      if (!availableDynamicWallet?.address) {
-        // No new Dynamic wallet available — instruct user
-        toast.error('Connect a new wallet in Dynamic first, then add it here.');
+      // Create a new embedded MPC wallet via Dynamic SDK
+      const newWallet = await createEmbeddedWallet();
+      
+      if (!newWallet?.address) {
+        toast.error('Failed to create wallet. Please try again.');
         setCreating(false);
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('create-wallet', {
-        body: {
-          profileId,
-          walletAddress: availableDynamicWallet.address,
-          chain: 'ethereum',
-        },
-      });
-
-      if (error) throw error;
-      if (data?.error) {
-        toast.error(data.error);
-      } else {
-        toast.success('New ReforestWallet added! 🌱');
-        await refreshWallets();
-      }
+      await registerWallet(newWallet.address, 'mpc');
+      toast.success('New ReforestWallet created! 🌱');
+      await refreshWallets();
     } catch (err: any) {
-      toast.error('Failed to create wallet');
-      console.error(err);
+      console.error('Create wallet error:', err);
+      toast.error(err?.message || 'Failed to create wallet');
     }
     setCreating(false);
-    setOpen(false);
+  };
+
+  const handleImportWallet = async () => {
+    const addr = importAddress.trim();
+    if (!profileId) {
+      toast.error('Profile not found');
+      return;
+    }
+    if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
+      toast.error('Invalid Ethereum address');
+      return;
+    }
+
+    setImporting(true);
+    try {
+      await registerWallet(addr, 'imported');
+      toast.success('Wallet imported! 🌱');
+      setImportAddress('');
+      setShowImport(false);
+      await refreshWallets();
+    } catch (err: any) {
+      console.error('Import wallet error:', err);
+      toast.error(err?.message || 'Failed to import wallet');
+    }
+    setImporting(false);
   };
 
   const formatAddr = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -121,7 +147,7 @@ const WalletSwitcher = () => {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setShowImport(false); }} />
           <div className="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-card border border-border shadow-xl z-50 overflow-hidden">
             <div className="p-2 space-y-1">
               <p className="text-xs text-muted-foreground px-3 py-1.5 font-medium">My Wallets</p>
@@ -171,7 +197,30 @@ const WalletSwitcher = () => {
                 );
               })}
             </div>
-            <div className="border-t border-border p-2">
+
+            {/* Import wallet inline form */}
+            {showImport && (
+              <div className="px-3 pb-2">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={importAddress}
+                    onChange={(e) => setImportAddress(e.target.value)}
+                    placeholder="0x... ETH address"
+                    className="flex-1 px-3 py-2 rounded-xl bg-secondary border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    onClick={handleImportWallet}
+                    disabled={importing}
+                    className="px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+                  >
+                    {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="border-t border-border p-2 space-y-1">
               <button
                 className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
                 onClick={handleCreateWallet}
@@ -182,7 +231,14 @@ const WalletSwitcher = () => {
                 ) : (
                   <Plus className="w-4 h-4" />
                 )}
-                Create a new ReforestWallet
+                Create new ReforestWallet
+              </button>
+              <button
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => setShowImport(!showImport)}
+              >
+                <Download className="w-4 h-4" />
+                Import wallet
               </button>
             </div>
           </div>
