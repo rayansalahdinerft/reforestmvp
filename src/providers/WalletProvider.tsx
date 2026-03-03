@@ -9,8 +9,7 @@ import { config } from '@/config/wallet';
 const queryClient = new QueryClient();
 
 // Dynamic Environment ID (publishable key)
-// Replace with your actual Environment ID from https://app.dynamic.xyz
-const DYNAMIC_ENVIRONMENT_ID = import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || 'YOUR_DYNAMIC_ENVIRONMENT_ID';
+const DYNAMIC_ENVIRONMENT_ID = '2bb7aefa-6c1b-4790-9960-30cac2bcf32b';
 
 interface WalletProviderProps {
   children: ReactNode;
