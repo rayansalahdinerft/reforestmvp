@@ -13,7 +13,7 @@ interface WalletBalanceCache {
 const WalletSwitcher = () => {
   const { wallets, activeAddress, switchWallet, refreshWallets, profileId } = useActiveWallet();
   const { address: connectedAddress } = useWallet();
-  const { createEmbeddedWallet } = useEmbeddedWallet();
+  const { createEmbeddedWallet, userHasEmbeddedWallet } = useEmbeddedWallet();
   const [open, setOpen] = useState(false);
   const [balances, setBalances] = useState<WalletBalanceCache>({});
   const [creating, setCreating] = useState(false);
@@ -56,42 +56,59 @@ const WalletSwitcher = () => {
   }, [wallets]);
 
   const registerWallet = async (address: string, type: string) => {
-    const { data, error } = await supabase.functions.invoke('create-wallet', {
-      body: {
-        profileId,
-        walletAddress: address,
-        chain: 'ethereum',
-        walletType: type,
-      },
-    });
-    if (error) throw error;
-    if (data?.error) throw new Error(data.error);
-    return data;
+    try {
+      const { data, error } = await supabase.functions.invoke('create-wallet', {
+        body: {
+          profileId,
+          walletAddress: address,
+          chain: 'ethereum',
+          walletType: type,
+        },
+      });
+      if (error) {
+        console.error('Register wallet error:', error);
+        throw new Error(error.message || 'Failed to register wallet');
+      }
+      if (data?.error) throw new Error(data.error);
+      return data;
+    } catch (err: any) {
+      console.error('Register wallet catch:', err);
+      throw err;
+    }
   };
 
   const handleCreateWallet = async () => {
     if (!profileId) {
-      toast.error('Profile not found');
+      toast.error('Profile not found. Complete onboarding first.');
       return;
     }
 
     setCreating(true);
     try {
-      // Create a new embedded MPC wallet via Dynamic SDK
+      console.log('Creating embedded wallet...');
       const newWallet = await createEmbeddedWallet();
+      console.log('createEmbeddedWallet result:', newWallet);
       
-      if (!newWallet?.address) {
-        toast.error('Failed to create wallet. Please try again.');
+      // Dynamic returns a Wallet object — get address
+      const address = (newWallet as any)?.address;
+      
+      if (!address) {
+        toast.error('Wallet created but no address returned. Please try again.');
         setCreating(false);
         return;
       }
 
-      await registerWallet(newWallet.address, 'mpc');
+      await registerWallet(address, 'mpc');
       toast.success('New ReforestWallet created! 🌱');
       await refreshWallets();
     } catch (err: any) {
       console.error('Create wallet error:', err);
-      toast.error(err?.message || 'Failed to create wallet');
+      const msg = err?.message || String(err);
+      if (msg.includes('already')) {
+        toast.error('You already have an embedded wallet on this chain.');
+      } else {
+        toast.error(msg || 'Failed to create wallet');
+      }
     }
     setCreating(false);
   };
@@ -99,11 +116,17 @@ const WalletSwitcher = () => {
   const handleImportWallet = async () => {
     const addr = importAddress.trim();
     if (!profileId) {
-      toast.error('Profile not found');
+      toast.error('Profile not found. Complete onboarding first.');
       return;
     }
     if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
-      toast.error('Invalid Ethereum address');
+      toast.error('Invalid Ethereum address. Must start with 0x and be 42 characters.');
+      return;
+    }
+
+    // Check if already in list
+    if (wallets.some(w => w.wallet_address.toLowerCase() === addr.toLowerCase())) {
+      toast.error('This wallet is already in your list.');
       return;
     }
 
@@ -116,7 +139,12 @@ const WalletSwitcher = () => {
       await refreshWallets();
     } catch (err: any) {
       console.error('Import wallet error:', err);
-      toast.error(err?.message || 'Failed to import wallet');
+      const msg = err?.message || String(err);
+      if (msg.includes('already registered')) {
+        toast.error('This wallet address is already registered.');
+      } else {
+        toast.error(msg || 'Failed to import wallet');
+      }
     }
     setImporting(false);
   };
@@ -139,7 +167,7 @@ const WalletSwitcher = () => {
         className="flex items-center gap-2 px-3 py-2 rounded-xl bg-secondary/50 border border-border hover:bg-secondary transition-all text-sm"
       >
         <Wallet className="w-3.5 h-3.5 text-primary" />
-        <span className="font-medium text-foreground">
+        <span className="font-medium text-foreground truncate max-w-[100px]">
           {currentWallet?.wallet_name || 'Wallet'}
         </span>
         <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -149,7 +177,7 @@ const WalletSwitcher = () => {
         <>
           <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setShowImport(false); }} />
           <div className="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-card border border-border shadow-xl z-50 overflow-hidden">
-            <div className="p-2 space-y-1">
+            <div className="p-2 space-y-1 max-h-[50vh] overflow-y-auto">
               <p className="text-xs text-muted-foreground px-3 py-1.5 font-medium">My Wallets</p>
               {wallets.map((w) => {
                 const isActive = w.wallet_address === activeAddress;
@@ -167,7 +195,7 @@ const WalletSwitcher = () => {
                       setOpen(false);
                     }}
                   >
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
                       isActive ? 'bg-primary/20' : 'bg-secondary'
                     }`}>
                       <Wallet className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -176,7 +204,7 @@ const WalletSwitcher = () => {
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-foreground truncate">{w.wallet_name}</p>
                         {w.is_primary && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-medium">Main</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-medium flex-shrink-0">Main</span>
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
