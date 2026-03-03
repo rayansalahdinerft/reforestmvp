@@ -41,6 +41,44 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string
+          device: string | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device?: string | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       swap_history: {
         Row: {
           buy_amount: string
@@ -54,6 +92,7 @@ export type Database = {
           status: string
           trees_planted: number
           tx_hash: string
+          tx_type: string
           wallet_address: string
         }
         Insert: {
@@ -68,6 +107,7 @@ export type Database = {
           status?: string
           trees_planted?: number
           tx_hash: string
+          tx_type?: string
           wallet_address: string
         }
         Update: {
@@ -82,6 +122,7 @@ export type Database = {
           status?: string
           trees_planted?: number
           tx_hash?: string
+          tx_type?: string
           wallet_address?: string
         }
         Relationships: []
@@ -116,6 +157,8 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           dynamic_user_id: string
+          email: string | null
+          face_id_enabled: boolean
           first_name: string
           id: string
           last_name: string | null
@@ -129,6 +172,8 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           dynamic_user_id: string
+          email?: string | null
+          face_id_enabled?: boolean
           first_name: string
           id?: string
           last_name?: string | null
@@ -142,6 +187,8 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           dynamic_user_id?: string
+          email?: string | null
+          face_id_enabled?: boolean
           first_name?: string
           id?: string
           last_name?: string | null
@@ -156,7 +203,9 @@ export type Database = {
         Row: {
           chain: string
           created_at: string
+          encrypted_private_key: string | null
           id: string
+          import_method: string | null
           is_primary: boolean
           profile_id: string
           wallet_address: string
@@ -166,7 +215,9 @@ export type Database = {
         Insert: {
           chain?: string
           created_at?: string
+          encrypted_private_key?: string | null
           id?: string
+          import_method?: string | null
           is_primary?: boolean
           profile_id: string
           wallet_address: string
@@ -176,7 +227,9 @@ export type Database = {
         Update: {
           chain?: string
           created_at?: string
+          encrypted_private_key?: string | null
           id?: string
+          import_method?: string | null
           is_primary?: boolean
           profile_id?: string
           wallet_address?: string
@@ -189,6 +242,44 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_balances: {
+        Row: {
+          balance: number
+          balance_usd: number
+          id: string
+          token_address: string | null
+          token_symbol: string
+          updated_at: string
+          wallet_id: string
+        }
+        Insert: {
+          balance?: number
+          balance_usd?: number
+          id?: string
+          token_address?: string | null
+          token_symbol: string
+          updated_at?: string
+          wallet_id: string
+        }
+        Update: {
+          balance?: number
+          balance_usd?: number
+          id?: string
+          token_address?: string | null
+          token_symbol?: string
+          updated_at?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_balances_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "user_wallets"
             referencedColumns: ["id"]
           },
         ]
