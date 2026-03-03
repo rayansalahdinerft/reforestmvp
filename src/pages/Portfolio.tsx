@@ -5,10 +5,12 @@ import SwapHistory from "@/components/SwapHistory";
 import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { useWallet } from "@/hooks/useWallet";
+import { useActiveWallet } from "@/contexts/ActiveWalletContext";
 import { Wallet, RefreshCw } from "lucide-react";
 
 const Portfolio = () => {
-  const { balances, totalValue, loading, isConnected, refetch, priceError } = useWalletBalance();
+  const { activeAddress } = useActiveWallet();
+  const { balances, totalValue, loading, isConnected, refetch, priceError } = useWalletBalance(activeAddress);
   const { stats } = useWalletStats();
   const { openConnect } = useWallet();
   const treesPlanted = stats.totalTrees;
