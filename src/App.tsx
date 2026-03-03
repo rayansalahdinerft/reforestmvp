@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { WalletProvider } from "@/providers/WalletProvider";
 import { ActiveWalletProvider } from "@/contexts/ActiveWalletContext";
 import Index from "./pages/Index";
@@ -15,30 +15,40 @@ import Onboarding from "./pages/Onboarding";
 import AIChatbot from "./components/AIChatbot";
 import MobileBottomNav from "./components/MobileBottomNav";
 
+const AppLayout = () => {
+  const { pathname } = useLocation();
+  const isOnboarding = pathname === '/onboarding';
+
+  return (
+    <>
+      <div className={isOnboarding ? '' : 'pb-16 md:pb-0'}>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/impact" element={<Impact />} />
+          <Route path="/market" element={<Market />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/card" element={<Card />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      {!isOnboarding && <MobileBottomNav />}
+      {!isOnboarding && <AIChatbot />}
+    </>
+  );
+};
+
 const App = () => (
   <WalletProvider>
     <ActiveWalletProvider>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="pb-16 md:pb-0">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/impact" element={<Impact />} />
-            <Route path="/market" element={<Market />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/card" element={<Card />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-        <MobileBottomNav />
-        <AIChatbot />
-      </BrowserRouter>
-    </TooltipProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppLayout />
+        </BrowserRouter>
+      </TooltipProvider>
     </ActiveWalletProvider>
   </WalletProvider>
 );
