@@ -1,10 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import ConnectButton from './ConnectButton';
+import WalletSwitcher from './WalletSwitcher';
+import { useWallet } from '@/hooks/useWallet';
 
 const Header = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { isConnected } = useWallet();
 
   const navItems = [
     { path: '/', label: 'Swap' },
@@ -40,6 +43,7 @@ const Header = () => {
         </div>
         
         <div className="flex items-center gap-3">
+          {isConnected && <WalletSwitcher />}
           <ConnectButton />
         </div>
       </div>
