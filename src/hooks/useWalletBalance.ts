@@ -50,8 +50,9 @@ const CACHE_DURATION = 30000; // 30 seconds
 // ERC20 balanceOf ABI encoded function
 const BALANCE_OF_SELECTOR = '0x70a08231';
 
-export const useWalletBalance = () => {
-  const { address, isConnected, chainId } = useWallet();
+export const useWalletBalance = (overrideAddress?: string | null) => {
+  const { address: connectedAddress, isConnected, chainId } = useWallet();
+  const address = overrideAddress ?? connectedAddress;
   const [balances, setBalances] = useState<TokenBalance[]>([]);
   const [totalValue, setTotalValue] = useState(0);
   const [loading, setLoading] = useState(false);

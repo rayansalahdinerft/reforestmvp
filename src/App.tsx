@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/providers/WalletProvider";
+import { ActiveWalletProvider } from "@/contexts/ActiveWalletContext";
 import Index from "./pages/Index";
 import Portfolio from "./pages/Portfolio";
 import Impact from "./pages/Impact";
@@ -16,6 +17,7 @@ import MobileBottomNav from "./components/MobileBottomNav";
 
 const App = () => (
   <WalletProvider>
+    <ActiveWalletProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -37,6 +39,7 @@ const App = () => (
         <AIChatbot />
       </BrowserRouter>
     </TooltipProvider>
+    </ActiveWalletProvider>
   </WalletProvider>
 );
 
