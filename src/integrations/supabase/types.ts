@@ -114,30 +114,39 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          date_of_birth: string | null
           dynamic_user_id: string
           first_name: string
           id: string
+          last_name: string | null
           onboarding_completed: boolean
+          pin_hash: string | null
           pseudo: string
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          date_of_birth?: string | null
           dynamic_user_id: string
           first_name: string
           id?: string
+          last_name?: string | null
           onboarding_completed?: boolean
+          pin_hash?: string | null
           pseudo: string
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          date_of_birth?: string | null
           dynamic_user_id?: string
           first_name?: string
           id?: string
+          last_name?: string | null
           onboarding_completed?: boolean
+          pin_hash?: string | null
           pseudo?: string
           updated_at?: string
         }
