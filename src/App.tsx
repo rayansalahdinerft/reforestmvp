@@ -12,16 +12,18 @@ import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
+import Admin from "./pages/Admin";
 import AIChatbot from "./components/AIChatbot";
 import MobileBottomNav from "./components/MobileBottomNav";
 
 const AppLayout = () => {
   const { pathname } = useLocation();
   const isOnboarding = pathname === '/onboarding';
+  const isAdmin = pathname === '/admin';
 
   return (
     <>
-      <div className={isOnboarding ? '' : 'pb-16 md:pb-0'}>
+      <div className={(isOnboarding || isAdmin) ? '' : 'pb-16 md:pb-0'}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/onboarding" element={<Onboarding />} />
@@ -30,11 +32,12 @@ const AppLayout = () => {
           <Route path="/market" element={<Market />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/card" element={<Card />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      {!isOnboarding && <MobileBottomNav />}
-      {!isOnboarding && <AIChatbot />}
+      {!isOnboarding && !isAdmin && <MobileBottomNav />}
+      {!isOnboarding && !isAdmin && <AIChatbot />}
     </>
   );
 };
