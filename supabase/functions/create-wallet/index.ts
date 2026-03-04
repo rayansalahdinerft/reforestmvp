@@ -7,13 +7,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const ETH_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { profileId, walletAddress, walletName, chain, walletType } = await req.json();
+    const { profileId, walletAddress, walletName, chain, walletType, importMethod } = await req.json();
 
     if (!profileId || !walletAddress) {
       return new Response(
@@ -21,6 +23,20 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const normalizedAddress = String(walletAddress).toLowerCase().trim();
+    if (!ETH_ADDRESS_REGEX.test(normalizedAddress)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid Ethereum wallet address" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const normalizedWalletType = walletType === "imported" ? "imported" : "mpc";
+    const normalizedImportMethod =
+      normalizedWalletType === "imported"
+        ? (importMethod === "private_key" ? "private_key" : "address")
+        : null;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -36,15 +52,15 @@ serve(async (req) => {
     const walletNumber = (count ?? 0) + 1;
     const name = walletName?.trim() || `ReforestWallet ${walletNumber}`;
 
-    // Check if wallet address already exists for this profile
+    // Check if wallet address already exists globally
     const { data: existing } = await supabase
       .from("user_wallets")
       .select("id, profile_id")
-      .eq("wallet_address", walletAddress)
+      .eq("wallet_address", normalizedAddress)
       .maybeSingle();
 
     if (existing) {
-      // If same profile, just return success (idempotent)
+      // If same profile, idempotent success
       if (existing.profile_id === profileId) {
         return new Response(
           JSON.stringify({ success: true, wallet: existing }),
@@ -62,11 +78,12 @@ serve(async (req) => {
       .from("user_wallets")
       .insert({
         profile_id: profileId,
-        wallet_address: walletAddress,
+        wallet_address: normalizedAddress,
         wallet_name: name,
-        wallet_type: walletType || "mpc",
+        wallet_type: normalizedWalletType,
         chain: chain || "ethereum",
-        is_primary: false,
+        import_method: normalizedImportMethod,
+        is_primary: (count ?? 0) === 0,
       })
       .select()
       .single();
@@ -79,11 +96,10 @@ serve(async (req) => {
       );
     }
 
-    // Also create wallet_stats entry
     await supabase
       .from("wallet_stats")
       .upsert(
-        { wallet_address: walletAddress },
+        { wallet_address: normalizedAddress },
         { onConflict: "wallet_address" }
       );
 

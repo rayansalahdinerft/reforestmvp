@@ -59,7 +59,11 @@ const Onboarding = () => {
       setStep('complete');
       setTimeout(() => navigate('/'), 1500);
     } catch (err: any) {
-      if (err?.message?.includes('pseudo')) {
+      const rawMessage = err?.message || '';
+      const contextMessage = err?.context?.error || '';
+      const fullMessage = `${rawMessage} ${contextMessage}`.toLowerCase();
+
+      if (fullMessage.includes('pseudo') || fullMessage.includes('username')) {
         setPseudoError('This username is already taken');
         setStep('pseudo');
       } else {

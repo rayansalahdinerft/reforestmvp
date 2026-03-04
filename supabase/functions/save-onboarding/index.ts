@@ -37,11 +37,10 @@ serve(async (req) => {
       );
     }
 
-    // Simple password hash (SHA-256)
     let pinHash: string | null = null;
     if (password && password.length >= 6) {
       const encoder = new TextEncoder();
-      const data = encoder.encode(password + dynamicUserId); // salt with userId
+      const data = encoder.encode(password + dynamicUserId);
       const hashBuffer = await crypto.subtle.digest("SHA-256", data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       pinHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -52,21 +51,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Check pseudo uniqueness (excluding current user)
-    const { data: existing } = await supabase
-      .from("user_profiles")
-      .select("id, dynamic_user_id")
-      .eq("pseudo", pseudoClean)
-      .maybeSingle();
+    // Pseudo uniqueness is enforced at DB level with a unique index on lower(pseudo)
 
-    if (existing && existing.dynamic_user_id !== dynamicUserId) {
-      return new Response(
-        JSON.stringify({ error: "This pseudo is already taken" }),
-        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Upsert profile
     const { data: profile, error: profileError } = await supabase
       .from("user_profiles")
       .upsert(
@@ -87,20 +73,30 @@ serve(async (req) => {
 
     if (profileError) {
       console.error("Error saving profile:", profileError);
+
+      const errorMessage = profileError.message?.toLowerCase() || "";
+      if (profileError.code === "23505" && errorMessage.includes("pseudo")) {
+        return new Response(
+          JSON.stringify({ error: "This pseudo is already taken" }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       return new Response(
         JSON.stringify({ error: profileError.message }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Save wallet if provided
     if (walletAddress && profile) {
+      const normalizedWalletAddress = String(walletAddress).toLowerCase();
+
       const { error: walletError } = await supabase
         .from("user_wallets")
         .upsert(
           {
             profile_id: profile.id,
-            wallet_address: walletAddress,
+            wallet_address: normalizedWalletAddress,
             wallet_name: "ReforestWallet",
             wallet_type: "mpc",
             chain: "ethereum",
@@ -113,12 +109,11 @@ serve(async (req) => {
         console.error("Error saving wallet:", walletError);
       }
 
-      // Also upsert wallet_stats
       await supabase
         .from("wallet_stats")
         .upsert(
           {
-            wallet_address: walletAddress,
+            wallet_address: normalizedWalletAddress,
             display_name: pseudoClean,
             avatar_url: avatarUrl || null,
           },

@@ -3,33 +3,36 @@ import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useWallet } from '@/hooks/useWallet';
 import { useEmbeddedWallet } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
-import { ChevronDown, Plus, Check, Wallet, Loader2, Download } from 'lucide-react';
+import { privateKeyToAddress } from 'viem/accounts';
+import { ChevronDown, Plus, Check, Wallet, Loader2, Download, KeyRound } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WalletBalanceCache {
   [address: string]: { total: number; loading: boolean };
 }
 
+const ETH_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
+const PRIVATE_KEY_REGEX = /^0x[a-fA-F0-9]{64}$/;
+
 const WalletSwitcher = () => {
   const { wallets, activeAddress, switchWallet, refreshWallets, profileId } = useActiveWallet();
-  const { address: connectedAddress } = useWallet();
+  const { address: connectedAddress, wallets: dynamicWallets } = useWallet();
   const { createEmbeddedWallet, userHasEmbeddedWallet } = useEmbeddedWallet();
   const [open, setOpen] = useState(false);
   const [balances, setBalances] = useState<WalletBalanceCache>({});
   const [creating, setCreating] = useState(false);
   const [showImport, setShowImport] = useState(false);
-  const [importAddress, setImportAddress] = useState('');
+  const [importPrivateKey, setImportPrivateKey] = useState('');
   const [importing, setImporting] = useState(false);
 
-  // Fetch simple ETH balance for each wallet
   useEffect(() => {
     if (wallets.length === 0) return;
-    
+
     wallets.forEach(async (w) => {
       if (balances[w.wallet_address]?.total !== undefined && !balances[w.wallet_address]?.loading) return;
-      
+
       setBalances(prev => ({ ...prev, [w.wallet_address]: { total: 0, loading: true } }));
-      
+
       try {
         const res = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${w.wallet_address}&tag=latest`);
         const data = await res.json();
@@ -40,11 +43,13 @@ const WalletSwitcher = () => {
             const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
             const priceData = await priceRes.json();
             ethPrice = priceData.ethereum?.usd || 0;
-          } catch { ethPrice = 0; }
-          
-          setBalances(prev => ({ 
-            ...prev, 
-            [w.wallet_address]: { total: ethBalance * ethPrice, loading: false } 
+          } catch {
+            ethPrice = 0;
+          }
+
+          setBalances(prev => ({
+            ...prev,
+            [w.wallet_address]: { total: ethBalance * ethPrice, loading: false }
           }));
         } else {
           setBalances(prev => ({ ...prev, [w.wallet_address]: { total: 0, loading: false } }));
@@ -53,26 +58,30 @@ const WalletSwitcher = () => {
         setBalances(prev => ({ ...prev, [w.wallet_address]: { total: 0, loading: false } }));
       }
     });
-  }, [wallets]);
+  }, [wallets, balances]);
 
-  const registerWallet = async (address: string, type: string) => {
+  const registerWallet = async (
+    address: string,
+    type: 'mpc' | 'imported',
+    options?: { importMethod?: 'private_key' | 'address' }
+  ) => {
+    const normalizedAddress = address.toLowerCase();
+
     try {
       const { data, error } = await supabase.functions.invoke('create-wallet', {
         body: {
           profileId,
-          walletAddress: address,
+          walletAddress: normalizedAddress,
           chain: 'ethereum',
           walletType: type,
+          importMethod: options?.importMethod,
         },
       });
-      if (error) {
-        console.error('Register wallet error:', error);
-        throw new Error(error.message || 'Failed to register wallet');
-      }
+
+      if (error) throw new Error(error.message || 'Failed to register wallet');
       if (data?.error) throw new Error(data.error);
       return data;
     } catch (err: any) {
-      console.error('Register wallet catch:', err);
       throw err;
     }
   };
@@ -85,16 +94,33 @@ const WalletSwitcher = () => {
 
     setCreating(true);
     try {
-      console.log('Creating embedded wallet...');
+      const alreadyRegistered = new Set(wallets.map(w => w.wallet_address.toLowerCase()));
+
+      if (userHasEmbeddedWallet) {
+        const existingDynamicAddress =
+          dynamicWallets.find((w: any) => w?.address && !alreadyRegistered.has(String(w.address).toLowerCase()))?.address ||
+          connectedAddress;
+
+        if (!existingDynamicAddress) {
+          toast.info('Your embedded wallet is already linked.');
+          return;
+        }
+
+        await registerWallet(existingDynamicAddress, 'mpc');
+        toast.success('Wallet linked successfully! 🌱');
+        await refreshWallets();
+        return;
+      }
+
       const newWallet = await createEmbeddedWallet();
-      console.log('createEmbeddedWallet result:', newWallet);
-      
-      // Dynamic returns a Wallet object — get address
-      const address = (newWallet as any)?.address;
-      
+      const address =
+        (newWallet as any)?.address ||
+        connectedAddress ||
+        dynamicWallets.find((w: any) => w?.address)?.address ||
+        null;
+
       if (!address) {
-        toast.error('Wallet created but no address returned. Please try again.');
-        setCreating(false);
+        toast.error('Wallet created but no address returned. Please retry.');
         return;
       }
 
@@ -102,51 +128,64 @@ const WalletSwitcher = () => {
       toast.success('New ReforestWallet created! 🌱');
       await refreshWallets();
     } catch (err: any) {
-      console.error('Create wallet error:', err);
       const msg = err?.message || String(err);
       if (msg.includes('already')) {
-        toast.error('You already have an embedded wallet on this chain.');
+        toast.error('This wallet is already registered.');
       } else {
         toast.error(msg || 'Failed to create wallet');
       }
+    } finally {
+      setCreating(false);
     }
-    setCreating(false);
   };
 
   const handleImportWallet = async () => {
-    const addr = importAddress.trim();
     if (!profileId) {
       toast.error('Profile not found. Complete onboarding first.');
       return;
     }
-    if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
-      toast.error('Invalid Ethereum address. Must start with 0x and be 42 characters.');
+
+    const raw = importPrivateKey.trim();
+    if (!raw) {
+      toast.error('Enter your private key.');
       return;
     }
 
-    // Check if already in list
-    if (wallets.some(w => w.wallet_address.toLowerCase() === addr.toLowerCase())) {
-      toast.error('This wallet is already in your list.');
+    const normalizedKey = raw.startsWith('0x') ? raw : `0x${raw}`;
+    if (!PRIVATE_KEY_REGEX.test(normalizedKey)) {
+      toast.error('Invalid private key format. Expected 64 hex characters.');
       return;
     }
 
     setImporting(true);
     try {
-      await registerWallet(addr, 'imported');
-      toast.success('Wallet imported! 🌱');
-      setImportAddress('');
+      const derivedAddress = privateKeyToAddress(normalizedKey as `0x${string}`).toLowerCase();
+
+      if (!ETH_ADDRESS_REGEX.test(derivedAddress)) {
+        toast.error('Unable to derive a valid Ethereum address from this key.');
+        return;
+      }
+
+      if (wallets.some(w => w.wallet_address.toLowerCase() === derivedAddress)) {
+        toast.error('This wallet is already in your list.');
+        return;
+      }
+
+      await registerWallet(derivedAddress, 'imported', { importMethod: 'private_key' });
+      toast.success('Wallet imported from private key! 🌱');
+      setImportPrivateKey('');
       setShowImport(false);
       await refreshWallets();
     } catch (err: any) {
-      console.error('Import wallet error:', err);
       const msg = err?.message || String(err);
       if (msg.includes('already registered')) {
         toast.error('This wallet address is already registered.');
       } else {
         toast.error(msg || 'Failed to import wallet');
       }
+    } finally {
+      setImporting(false);
     }
-    setImporting(false);
   };
 
   const formatAddr = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -226,25 +265,28 @@ const WalletSwitcher = () => {
               })}
             </div>
 
-            {/* Import wallet inline form */}
             {showImport && (
-              <div className="px-3 pb-2">
+              <div className="px-3 pb-2 space-y-1.5">
                 <div className="flex gap-2">
                   <input
-                    type="text"
-                    value={importAddress}
-                    onChange={(e) => setImportAddress(e.target.value)}
-                    placeholder="0x... ETH address"
+                    type="password"
+                    value={importPrivateKey}
+                    onChange={(e) => setImportPrivateKey(e.target.value)}
+                    placeholder="Private key (0x...)"
                     className="flex-1 px-3 py-2 rounded-xl bg-secondary border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    autoComplete="off"
                   />
                   <button
                     onClick={handleImportWallet}
                     disabled={importing}
                     className="px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
                   >
-                    {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add'}
+                    {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Import'}
                   </button>
                 </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Your private key is used only to derive the wallet address and is never stored.
+                </p>
               </div>
             )}
 
@@ -265,8 +307,8 @@ const WalletSwitcher = () => {
                 className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground"
                 onClick={() => setShowImport(!showImport)}
               >
-                <Download className="w-4 h-4" />
-                Import wallet
+                <KeyRound className="w-4 h-4" />
+                Import with private key
               </button>
             </div>
           </div>
