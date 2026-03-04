@@ -3,7 +3,6 @@ import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
-import MobileHomeWallet from "@/components/MobileHomeWallet";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
@@ -22,46 +21,40 @@ const Index = () => {
       <Header />
       <NewsTicker />
 
-      {isMobile ? (
-        <main className="relative z-10 pb-20">
-          <MobileHomeWallet />
-        </main>
-      ) : (
-        <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
-          <div className="text-center mb-8 sm:mb-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-5 tracking-tight leading-tight animate-hero-reveal">
-              <span className="block sm:inline">Every swap</span>{' '}
-              <span className="block sm:inline text-primary glow-text animate-glow-reveal">saves the world</span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto px-4 animate-fade-in" style={{ animationDelay: '0.6s', opacity: 0, animationFillMode: 'forwards' }}>
-              First wallet that makes your transactions useful for the planet. DeFi with purpose.
-            </p>
-          </div>
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-12 relative z-10 pb-20 md:pb-0">
+        <div className="text-center mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 sm:mb-5 tracking-tight leading-tight animate-hero-reveal">
+            <span className="block sm:inline">Every swap</span>{' '}
+            <span className="block sm:inline text-primary glow-text animate-glow-reveal">saves the world</span>
+          </h1>
+          <p className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto px-4 animate-fade-in" style={{ animationDelay: '0.6s', opacity: 0, animationFillMode: 'forwards' }}>
+            First wallet that makes your transactions useful for the planet. DeFi with purpose.
+          </p>
+        </div>
 
-          <div className="mb-6 sm:mb-8">
-            <TreeCounter />
-          </div>
+        <div className="mb-4 sm:mb-8">
+          <TreeCounter />
+        </div>
 
-          <div className="flex justify-center mb-4 sm:mb-6">
-            <SwapCard />
-          </div>
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <SwapCard />
+        </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 text-xs sm:text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
-              <span>Multi-chain support</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
-              <span>Best rates</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
-              <span>Eco-friendly</span>
-            </div>
+        <div className="hidden sm:flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 text-xs sm:text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <div className="flex items-center gap-2">
+            <div className="w-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+            <span>Multi-chain support</span>
           </div>
-        </main>
-      )}
+          <div className="flex items-center gap-2">
+            <div className="w-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+            <span>Best rates</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+            <span>Eco-friendly</span>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
