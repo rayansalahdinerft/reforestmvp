@@ -24,14 +24,12 @@ const Onboarding = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
-  const [waitingForWallet, setWaitingForWallet] = useState(false);
 
   const dynamicUserId = (user as any)?.userId ?? (user as any)?.id ?? '';
   const walletAddress = activeWallet?.address ?? null;
 
   useEffect(() => {
     if (step === 'connect' && isConnected && dynamicUserId && walletAddress) {
-      setWaitingForWallet(false);
       handleComplete();
     }
   }, [step, isConnected, dynamicUserId, walletAddress]);
