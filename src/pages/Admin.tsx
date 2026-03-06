@@ -1,67 +1,104 @@
 import { useState, useEffect } from 'react';
-import { Shield, Users, ArrowLeftRight, TreePine, TrendingUp, Activity, Lock, ChevronDown, RefreshCw, LogOut } from 'lucide-react';
+import { Shield, Users, ArrowLeftRight, TreePine, TrendingUp, Activity, Lock, ChevronDown, RefreshCw, LogOut, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useDynamicContext, useIsLoggedIn } from '@dynamic-labs/sdk-react-core';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 
-const ADMIN_PIN = 'reforest2024'; // Simple passphrase for now
+const AdminGate = ({ children }: { children: (dynamicUserId: string) => React.ReactNode }) => {
+  const { user, sdkHasLoaded, setShowAuthFlow } = useDynamicContext();
+  const isLoggedIn = useIsLoggedIn();
+  const [checking, setChecking] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const navigate = useNavigate();
 
-const AdminLogin = ({ onLogin }: { onLogin: (dynamicUserId: string) => void }) => {
-  const [dynamicId, setDynamicId] = useState('');
-  const [pin, setPin] = useState('');
-  const [loading, setLoading] = useState(false);
+  const dynamicUserId = (user as any)?.userId ?? (user as any)?.id ?? '';
 
-  const handleLogin = async () => {
-    if (!dynamicId || !pin) return;
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('admin-stats', {
-        body: { dynamicUserId: dynamicId }
-      });
-      if (error || data?.error) {
-        toast.error(data?.error || 'Accès refusé');
-      } else {
-        localStorage.setItem('admin_dynamic_id', dynamicId);
-        onLogin(dynamicId);
-      }
-    } catch {
-      toast.error('Erreur de connexion');
+  useEffect(() => {
+    if (!sdkHasLoaded) return;
+
+    if (!isLoggedIn || !dynamicUserId) {
+      setChecking(false);
+      return;
     }
-    setLoading(false);
-  };
 
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
-            <Shield className="w-8 h-8 text-primary" />
+    const verify = async () => {
+      try {
+        const { data } = await supabase.functions.invoke('admin-stats', {
+          body: { dynamicUserId }
+        });
+        if (data?.error) {
+          toast.error('Accès refusé — vous n\'êtes pas admin');
+          setAuthorized(false);
+        } else {
+          setAuthorized(true);
+        }
+      } catch {
+        toast.error('Erreur de vérification');
+      }
+      setChecking(false);
+    };
+    verify();
+  }, [sdkHasLoaded, isLoggedIn, dynamicUserId]);
+
+  if (!sdkHasLoaded || checking) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isLoggedIn || !dynamicUserId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-sm space-y-6 text-center">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center justify-center mb-4">
+            <Lock className="w-8 h-8 text-destructive" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">ReforestWallet — Accès restreint</p>
-        </div>
-        <div className="space-y-3">
-          <input
-            type="text"
-            value={dynamicId}
-            onChange={(e) => setDynamicId(e.target.value)}
-            placeholder="Dynamic User ID"
-            className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <h1 className="text-2xl font-bold text-foreground">Accès Restreint</h1>
+          <p className="text-sm text-muted-foreground">Connectez-vous avec votre compte ReforestWallet pour accéder au dashboard admin.</p>
           <button
-            onClick={handleLogin}
-            disabled={loading || !dynamicId}
-            className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+            onClick={() => setShowAuthFlow(true)}
+            className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
           >
-            {loading ? 'Vérification...' : 'Accéder au Dashboard'}
+            Se connecter
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            ← Retour à l'accueil
           </button>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-sm space-y-6 text-center">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center justify-center mb-4">
+            <Shield className="w-8 h-8 text-destructive" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">Accès Refusé</h1>
+          <p className="text-sm text-muted-foreground">Votre compte n'a pas les permissions admin requises.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="w-full py-3 rounded-xl bg-secondary text-foreground font-semibold text-sm hover:bg-secondary/80 transition-colors"
+          >
+            ← Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children(dynamicUserId)}</>;
 };
 
 const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
@@ -397,15 +434,11 @@ const AdminDashboard = ({ dynamicUserId }: { dynamicUserId: string }) => {
 };
 
 const Admin = () => {
-  const [dynamicUserId, setDynamicUserId] = useState<string | null>(
-    localStorage.getItem('admin_dynamic_id')
+  return (
+    <AdminGate>
+      {(dynamicUserId) => <AdminDashboard dynamicUserId={dynamicUserId} />}
+    </AdminGate>
   );
-
-  if (!dynamicUserId) {
-    return <AdminLogin onLogin={setDynamicUserId} />;
-  }
-
-  return <AdminDashboard dynamicUserId={dynamicUserId} />;
 };
 
 export default Admin;
