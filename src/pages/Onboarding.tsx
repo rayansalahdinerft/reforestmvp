@@ -24,6 +24,7 @@ const Onboarding = () => {
   const [pseudoError, setPseudoError] = useState('');
 
   const dynamicUserId = (user as any)?.userId ?? (user as any)?.id ?? '';
+  const dynamicEmail = (user as any)?.email ?? (user as any)?.verifiedCredentials?.[0]?.address ?? null;
   const walletAddress = activeWallet?.address ?? null;
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const Onboarding = () => {
           firstName: pseudo.trim(),
           lastName: '',
           pseudo: pseudo.trim(),
+          email: dynamicEmail,
           dateOfBirth,
           avatarUrl: `preset:${selectedAvatar}`,
           walletAddress,

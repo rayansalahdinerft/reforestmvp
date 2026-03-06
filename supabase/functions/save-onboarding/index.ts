@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { dynamicUserId, firstName, lastName, pseudo, dateOfBirth, avatarUrl, walletAddress, password } = await req.json();
+    const { dynamicUserId, firstName, lastName, pseudo, dateOfBirth, avatarUrl, walletAddress, password, email } = await req.json();
 
     if (!dynamicUserId || !firstName?.trim() || !pseudo?.trim()) {
       return new Response(
@@ -61,6 +61,7 @@ serve(async (req) => {
           first_name: firstName.trim(),
           last_name: lastName?.trim() || null,
           pseudo: pseudoClean,
+          email: email || null,
           date_of_birth: dateOfBirth || null,
           avatar_url: avatarUrl || null,
           pin_hash: pinHash,
