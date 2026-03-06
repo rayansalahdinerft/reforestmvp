@@ -5,17 +5,15 @@ import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
-import { ArrowRight, Check, Loader2, TreePine, User, AtSign, Camera, Wallet, Lock, Calendar, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Check, Loader2, TreePine, AtSign, Camera, Wallet, Lock, Calendar, Eye, EyeOff, Plus } from 'lucide-react';
 import Logo from '@/components/Logo';
 
-type Step = 'welcome' | 'name' | 'pseudo' | 'birthday' | 'avatar' | 'password' | 'connect' | 'complete';
+type Step = 'welcome' | 'pseudo' | 'birthday' | 'avatar' | 'password' | 'connect' | 'complete';
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, isConnected, ready, openConnect, activeWallet } = useWallet();
   const [step, setStep] = useState<Step>('welcome');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [pseudo, setPseudo] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -44,8 +42,8 @@ const Onboarding = () => {
       const { data, error } = await supabase.functions.invoke('save-onboarding', {
         body: {
           dynamicUserId,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
+          firstName: pseudo.trim(),
+          lastName: '',
           pseudo: pseudo.trim(),
           dateOfBirth,
           avatarUrl: `preset:${selectedAvatar}`,
@@ -74,12 +72,11 @@ const Onboarding = () => {
   };
 
 
-  const canProceedName = firstName.trim().length >= 2 && lastName.trim().length >= 2;
   const canProceedPseudo = pseudo.trim().length >= 3 && pseudo.trim().length <= 20;
   const canProceedBirthday = dateOfBirth.length === 10;
   const canProceedPassword = password.length >= 6 && password === confirmPassword;
 
-  const allSteps: Step[] = ['welcome', 'name', 'pseudo', 'birthday', 'avatar', 'password', 'connect'];
+  const allSteps: Step[] = ['welcome', 'pseudo', 'birthday', 'avatar', 'password', 'connect'];
 
   const iconBox = "w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-3 sm:mb-4";
   const iconClass = "w-6 h-6 sm:w-7 sm:h-7 text-primary";
@@ -113,27 +110,9 @@ const Onboarding = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Welcome to ReforestWallet</h1>
               <p className="text-sm sm:text-base text-muted-foreground px-2">Create your account and save the planet with every transaction.</p>
             </div>
-            <button onClick={() => setStep('name')} className={btnPrimary}>
+            <button onClick={() => setStep('pseudo')} className={btnPrimary}>
               Get Started
               <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-
-        {/* Step: First & Last Name */}
-        {step === 'name' && (
-          <div className="animate-fade-in space-y-4 sm:space-y-6">
-            <div className="text-center">
-              <div className={iconBox}><User className={iconClass} /></div>
-              <h2 className={heading}>What's your name?</h2>
-              <p className={subtitle}>To personalize your experience</p>
-            </div>
-            <div className="space-y-2.5 sm:space-y-3">
-              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" maxLength={30} autoFocus className={inputClass} />
-              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" maxLength={30} className={inputClass} />
-            </div>
-            <button onClick={() => setStep('pseudo')} disabled={!canProceedName} className={`${btnPrimary} ${btnDisabled}`}>
-              Continue <ArrowRight className="w-5 h-5" />
             </button>
           </div>
         )}
@@ -265,7 +244,7 @@ const Onboarding = () => {
               <Check className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Welcome, {firstName}! 🌱</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Welcome, {pseudo}! 🌱</h2>
               <p className="text-sm text-muted-foreground">Your ReforestWallet is ready. Every swap plants trees.</p>
               {walletAddress && (
                 <p className="text-[10px] sm:text-xs text-primary mt-2 font-mono">

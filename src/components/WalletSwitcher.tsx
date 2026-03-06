@@ -130,10 +130,21 @@ const WalletSwitcher = () => {
               })}
             </div>
 
-            <div className="border-t border-border p-2">
-              <p className="text-[10px] text-muted-foreground px-3 py-1">
-                Manage wallets via your Dynamic account settings.
-              </p>
+            <div className="border-t border-border p-2 space-y-1">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  // Open Dynamic widget to create/add a new wallet
+                  const dynamicBtn = document.querySelector('[data-testid="dynamic-widget"]') as HTMLElement;
+                  if (dynamicBtn) dynamicBtn.click();
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-left text-sm text-primary font-medium"
+              >
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Plus className="w-4 h-4 text-primary" />
+                </div>
+                Create a new wallet
+              </button>
             </div>
           </div>
         </>
