@@ -8,7 +8,7 @@ import { config } from '@/config/wallet';
 
 const queryClient = new QueryClient();
 
-// Dynamic Environment ID (publishable key)
+// Dynamic Environment ID (Sandbox)
 const DYNAMIC_ENVIRONMENT_ID = 'dc2e8664-6a00-4e89-bed9-3f98245356aa';
 
 interface WalletProviderProps {
@@ -26,6 +26,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         cssOverrides: `
           .dynamic-widget-inline-controls { background: transparent; }
           .dynamic-widget-card { border-radius: 1rem; }
+          .dynamic-widget { font-family: inherit; }
         `,
       }}
     >
