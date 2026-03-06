@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, LogOut, Copy, Check } from 'lucide-react';
+import { LogOut, Copy, Check } from 'lucide-react';
+import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { useWallet } from '@/hooks/useWallet';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { toast } from 'sonner';
 
 const ConnectButton = () => {
-  const { address, isConnected, openConnect, disconnect } = useWallet();
+  const { address, isConnected, disconnect } = useWallet();
   const { onboardingCompleted } = useOnboarding();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
@@ -22,23 +23,6 @@ const ConnectButton = () => {
       setTimeout(() => setCopied(false), 2000);
       toast.success('Address copied!');
     }
-  };
-
-  const handleConnect = () => {
-    // If not onboarded, go to onboarding flow first
-    if (onboardingCompleted === false || onboardingCompleted === null) {
-      navigate('/onboarding');
-      return;
-    }
-
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
-      window.open(window.location.href, '_blank', 'noopener,noreferrer');
-      toast.info('Connexion ouverte dans un nouvel onglet');
-      return;
-    }
-
-    openConnect();
   };
 
   if (isConnected && address) {
@@ -68,15 +52,20 @@ const ConnectButton = () => {
     );
   }
 
-  return (
-    <button 
-      onClick={handleConnect}
-      className="connect-wallet-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
-    >
-      <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-      <span>Connect</span>
-    </button>
-  );
+  // If not onboarded, redirect to onboarding
+  if (onboardingCompleted === false || onboardingCompleted === null) {
+    return (
+      <button
+        onClick={() => navigate('/onboarding')}
+        className="connect-wallet-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
+      >
+        <span>Get Started</span>
+      </button>
+    );
+  }
+
+  // Use DynamicWidget for connection (handles email, social, passkeys, external wallets)
+  return <DynamicWidget />;
 };
 
 export default ConnectButton;
