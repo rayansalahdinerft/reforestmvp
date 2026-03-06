@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useWallet } from '@/hooks/useWallet';
-import { useEmbeddedWallet } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
-import { privateKeyToAddress } from 'viem/accounts';
-import { ChevronDown, Plus, Check, Wallet, Loader2, Download, KeyRound } from 'lucide-react';
+import { ChevronDown, Check, Wallet, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WalletBalanceCache {
@@ -16,14 +14,9 @@ const PRIVATE_KEY_REGEX = /^0x[a-fA-F0-9]{64}$/;
 
 const WalletSwitcher = () => {
   const { wallets, activeAddress, switchWallet, refreshWallets, profileId } = useActiveWallet();
-  const { address: connectedAddress, wallets: dynamicWallets } = useWallet();
-  const { createEmbeddedWallet, userHasEmbeddedWallet } = useEmbeddedWallet();
+  const { address: connectedAddress } = useWallet();
   const [open, setOpen] = useState(false);
   const [balances, setBalances] = useState<WalletBalanceCache>({});
-  const [creating, setCreating] = useState(false);
-  const [showImport, setShowImport] = useState(false);
-  const [importPrivateKey, setImportPrivateKey] = useState('');
-  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     if (wallets.length === 0) return;
@@ -60,134 +53,6 @@ const WalletSwitcher = () => {
     });
   }, [wallets, balances]);
 
-  const registerWallet = async (
-    address: string,
-    type: 'mpc' | 'imported',
-    options?: { importMethod?: 'private_key' | 'address' }
-  ) => {
-    const normalizedAddress = address.toLowerCase();
-
-    try {
-      const { data, error } = await supabase.functions.invoke('create-wallet', {
-        body: {
-          profileId,
-          walletAddress: normalizedAddress,
-          chain: 'ethereum',
-          walletType: type,
-          importMethod: options?.importMethod,
-        },
-      });
-
-      if (error) throw new Error(error.message || 'Failed to register wallet');
-      if (data?.error) throw new Error(data.error);
-      return data;
-    } catch (err: any) {
-      throw err;
-    }
-  };
-
-  const handleCreateWallet = async () => {
-    if (!profileId) {
-      toast.error('Profile not found. Complete onboarding first.');
-      return;
-    }
-
-    setCreating(true);
-    try {
-      const alreadyRegistered = new Set(wallets.map(w => w.wallet_address.toLowerCase()));
-
-      if (userHasEmbeddedWallet) {
-        const existingDynamicAddress =
-          dynamicWallets.find((w: any) => w?.address && !alreadyRegistered.has(String(w.address).toLowerCase()))?.address ||
-          connectedAddress;
-
-        if (!existingDynamicAddress) {
-          toast.info('Your embedded wallet is already linked.');
-          return;
-        }
-
-        await registerWallet(existingDynamicAddress, 'mpc');
-        toast.success('Wallet linked successfully! 🌱');
-        await refreshWallets();
-        return;
-      }
-
-      const newWallet = await createEmbeddedWallet();
-      const address =
-        (newWallet as any)?.address ||
-        connectedAddress ||
-        dynamicWallets.find((w: any) => w?.address)?.address ||
-        null;
-
-      if (!address) {
-        toast.error('Wallet created but no address returned. Please retry.');
-        return;
-      }
-
-      await registerWallet(address, 'mpc');
-      toast.success('New ReforestWallet created! 🌱');
-      await refreshWallets();
-    } catch (err: any) {
-      const msg = err?.message || String(err);
-      if (msg.includes('already')) {
-        toast.error('This wallet is already registered.');
-      } else {
-        toast.error(msg || 'Failed to create wallet');
-      }
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  const handleImportWallet = async () => {
-    if (!profileId) {
-      toast.error('Profile not found. Complete onboarding first.');
-      return;
-    }
-
-    const raw = importPrivateKey.trim();
-    if (!raw) {
-      toast.error('Enter your private key.');
-      return;
-    }
-
-    const normalizedKey = raw.startsWith('0x') ? raw : `0x${raw}`;
-    if (!PRIVATE_KEY_REGEX.test(normalizedKey)) {
-      toast.error('Invalid private key format. Expected 64 hex characters.');
-      return;
-    }
-
-    setImporting(true);
-    try {
-      const derivedAddress = privateKeyToAddress(normalizedKey as `0x${string}`).toLowerCase();
-
-      if (!ETH_ADDRESS_REGEX.test(derivedAddress)) {
-        toast.error('Unable to derive a valid Ethereum address from this key.');
-        return;
-      }
-
-      if (wallets.some(w => w.wallet_address.toLowerCase() === derivedAddress)) {
-        toast.error('This wallet is already in your list.');
-        return;
-      }
-
-      await registerWallet(derivedAddress, 'imported', { importMethod: 'private_key' });
-      toast.success('Wallet imported from private key! 🌱');
-      setImportPrivateKey('');
-      setShowImport(false);
-      await refreshWallets();
-    } catch (err: any) {
-      const msg = err?.message || String(err);
-      if (msg.includes('already registered')) {
-        toast.error('This wallet address is already registered.');
-      } else {
-        toast.error(msg || 'Failed to import wallet');
-      }
-    } finally {
-      setImporting(false);
-    }
-  };
-
   const formatAddr = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   const formatUsd = (val: number) => {
     if (val === 0) return '$0.00';
@@ -214,7 +79,7 @@ const WalletSwitcher = () => {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setShowImport(false); }} />
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-card border border-border shadow-xl z-50 overflow-hidden">
             <div className="p-2 space-y-1 max-h-[50vh] overflow-y-auto">
               <p className="text-xs text-muted-foreground px-3 py-1.5 font-medium">My Wallets</p>
@@ -265,51 +130,10 @@ const WalletSwitcher = () => {
               })}
             </div>
 
-            {showImport && (
-              <div className="px-3 pb-2 space-y-1.5">
-                <div className="flex gap-2">
-                  <input
-                    type="password"
-                    value={importPrivateKey}
-                    onChange={(e) => setImportPrivateKey(e.target.value)}
-                    placeholder="Private key (0x...)"
-                    className="flex-1 px-3 py-2 rounded-xl bg-secondary border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    autoComplete="off"
-                  />
-                  <button
-                    onClick={handleImportWallet}
-                    disabled={importing}
-                    className="px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
-                  >
-                    {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Import'}
-                  </button>
-                </div>
-                <p className="text-[10px] text-muted-foreground">
-                  Your private key is used only to derive the wallet address and is never stored.
-                </p>
-              </div>
-            )}
-
-            <div className="border-t border-border p-2 space-y-1">
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
-                onClick={handleCreateWallet}
-                disabled={creating}
-              >
-                {creating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Plus className="w-4 h-4" />
-                )}
-                Create new ReforestWallet
-              </button>
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground"
-                onClick={() => setShowImport(!showImport)}
-              >
-                <KeyRound className="w-4 h-4" />
-                Import with private key
-              </button>
+            <div className="border-t border-border p-2">
+              <p className="text-[10px] text-muted-foreground px-3 py-1">
+                Manage wallets via your Dynamic account settings.
+              </p>
             </div>
           </div>
         </>

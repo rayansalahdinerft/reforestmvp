@@ -9,7 +9,7 @@ import { config } from '@/config/wallet';
 const queryClient = new QueryClient();
 
 // Dynamic Environment ID (publishable key)
-const DYNAMIC_ENVIRONMENT_ID = '2bb7aefa-6c1b-4790-9960-30cac2bcf32b';
+const DYNAMIC_ENVIRONMENT_ID = 'dc2e8664-6a00-4e89-bed9-3f98245356aa';
 
 interface WalletProviderProps {
   children: ReactNode;
