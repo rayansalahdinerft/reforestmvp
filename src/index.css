@@ -466,23 +466,36 @@
 .stagger-4 { animation-delay: 0.2s; }
 .stagger-5 { animation-delay: 0.25s; }
 
-/* Custom scrollbar - dark theme */
-::-webkit-scrollbar {
-  width: 6px;
+/* Custom scrollbar - dark theme (hidden on mobile) */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(0 0% 4%);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 20%);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: hsl(0 0% 4%);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(0 0% 20%);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.5);
+/* Hide scrollbar on mobile */
+@media (max-width: 767px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  * {
+    scrollbar-width: none;
+  }
 }
 
 /* Smooth transitions for interactive elements */
