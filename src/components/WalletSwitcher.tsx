@@ -265,51 +265,10 @@ const WalletSwitcher = () => {
               })}
             </div>
 
-            {showImport && (
-              <div className="px-3 pb-2 space-y-1.5">
-                <div className="flex gap-2">
-                  <input
-                    type="password"
-                    value={importPrivateKey}
-                    onChange={(e) => setImportPrivateKey(e.target.value)}
-                    placeholder="Private key (0x...)"
-                    className="flex-1 px-3 py-2 rounded-xl bg-secondary border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    autoComplete="off"
-                  />
-                  <button
-                    onClick={handleImportWallet}
-                    disabled={importing}
-                    className="px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
-                  >
-                    {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Import'}
-                  </button>
-                </div>
-                <p className="text-[10px] text-muted-foreground">
-                  Your private key is used only to derive the wallet address and is never stored.
-                </p>
-              </div>
-            )}
-
-            <div className="border-t border-border p-2 space-y-1">
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
-                onClick={handleCreateWallet}
-                disabled={creating}
-              >
-                {creating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Plus className="w-4 h-4" />
-                )}
-                Create new ReforestWallet
-              </button>
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground"
-                onClick={() => setShowImport(!showImport)}
-              >
-                <KeyRound className="w-4 h-4" />
-                Import with private key
-              </button>
+            <div className="border-t border-border p-2">
+              <p className="text-[10px] text-muted-foreground px-3 py-1">
+                Manage wallets via your Dynamic account settings.
+              </p>
             </div>
           </div>
         </>
