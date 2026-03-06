@@ -434,15 +434,11 @@ const AdminDashboard = ({ dynamicUserId }: { dynamicUserId: string }) => {
 };
 
 const Admin = () => {
-  const [dynamicUserId, setDynamicUserId] = useState<string | null>(
-    localStorage.getItem('admin_dynamic_id')
+  return (
+    <AdminGate>
+      {(dynamicUserId) => <AdminDashboard dynamicUserId={dynamicUserId} />}
+    </AdminGate>
   );
-
-  if (!dynamicUserId) {
-    return <AdminLogin onLogin={setDynamicUserId} />;
-  }
-
-  return <AdminDashboard dynamicUserId={dynamicUserId} />;
 };
 
 export default Admin;
