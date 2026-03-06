@@ -79,7 +79,7 @@ const WalletSwitcher = () => {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setShowImport(false); }} />
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-card border border-border shadow-xl z-50 overflow-hidden">
             <div className="p-2 space-y-1 max-h-[50vh] overflow-y-auto">
               <p className="text-xs text-muted-foreground px-3 py-1.5 font-medium">My Wallets</p>
