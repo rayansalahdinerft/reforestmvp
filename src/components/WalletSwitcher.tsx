@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useWallet } from '@/hooks/useWallet';
 import { supabase } from '@/integrations/supabase/client';
-import { ChevronDown, Check, Wallet, Loader2 } from 'lucide-react';
+import { ChevronDown, Check, Wallet, Loader2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WalletBalanceCache {
