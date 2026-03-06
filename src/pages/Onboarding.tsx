@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/hooks/useWallet';
+import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
@@ -23,14 +24,12 @@ const Onboarding = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
-  const [waitingForWallet, setWaitingForWallet] = useState(false);
 
   const dynamicUserId = (user as any)?.userId ?? (user as any)?.id ?? '';
   const walletAddress = activeWallet?.address ?? null;
 
   useEffect(() => {
     if (step === 'connect' && isConnected && dynamicUserId && walletAddress) {
-      setWaitingForWallet(false);
       handleComplete();
     }
   }, [step, isConnected, dynamicUserId, walletAddress]);
@@ -74,17 +73,6 @@ const Onboarding = () => {
     setSaving(false);
   };
 
-  const handleConnectStep = () => {
-    setWaitingForWallet(true);
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
-      sessionStorage.setItem('onboarding_data', JSON.stringify({ firstName, lastName, pseudo, selectedAvatar, dateOfBirth }));
-      window.open(window.location.href, '_blank', 'noopener,noreferrer');
-      toast.info('Complete the connection in the new tab');
-      return;
-    }
-    openConnect();
-  };
 
   const canProceedName = firstName.trim().length >= 2 && lastName.trim().length >= 2;
   const canProceedPseudo = pseudo.trim().length >= 3 && pseudo.trim().length <= 20;
@@ -252,26 +240,20 @@ const Onboarding = () => {
             <div className="text-center">
               <div className={iconBox}><Wallet className={iconClass} /></div>
               <h2 className={heading}>Create your ReforestWallet</h2>
-              <p className={subtitle}>Sign in with your email to create your secure MPC-powered wallet.</p>
+              <p className={subtitle}>Sign in to create your secure wallet — email, social, passkeys or external wallet.</p>
             </div>
             {saving ? (
               <div className="flex flex-col items-center gap-3 py-4">
                 <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
                 <p className="text-xs sm:text-sm text-muted-foreground">Creating your ReforestWallet...</p>
               </div>
-            ) : waitingForWallet && !walletAddress ? (
-              <div className="flex flex-col items-center gap-3 py-4">
-                <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
-                <p className="text-xs sm:text-sm text-muted-foreground">Initializing MPC wallet...</p>
-              </div>
             ) : (
-              <button onClick={handleConnectStep} className={btnPrimary}>
-                <Wallet className="w-5 h-5" />
-                Create my ReforestWallet
-              </button>
+              <div className="flex justify-center">
+                <DynamicWidget />
+              </div>
             )}
             <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
-              A secure wallet will be automatically created for you via email.
+              Email, Google, Apple, Face ID, MetaMask, WalletConnect & more.
             </p>
           </div>
         )}
