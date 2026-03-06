@@ -73,17 +73,6 @@ const Onboarding = () => {
     setSaving(false);
   };
 
-  const handleConnectStep = () => {
-    setWaitingForWallet(true);
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
-      sessionStorage.setItem('onboarding_data', JSON.stringify({ firstName, lastName, pseudo, selectedAvatar, dateOfBirth }));
-      window.open(window.location.href, '_blank', 'noopener,noreferrer');
-      toast.info('Complete the connection in the new tab');
-      return;
-    }
-    openConnect();
-  };
 
   const canProceedName = firstName.trim().length >= 2 && lastName.trim().length >= 2;
   const canProceedPseudo = pseudo.trim().length >= 3 && pseudo.trim().length <= 20;
