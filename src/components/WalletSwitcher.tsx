@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useWallet } from '@/hooks/useWallet';
-import { useEmbeddedWallet } from '@dynamic-labs/sdk-react-core';
 import { supabase } from '@/integrations/supabase/client';
-import { privateKeyToAddress } from 'viem/accounts';
-import { ChevronDown, Plus, Check, Wallet, Loader2, Download, KeyRound } from 'lucide-react';
+import { ChevronDown, Check, Wallet, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WalletBalanceCache {
@@ -16,8 +14,7 @@ const PRIVATE_KEY_REGEX = /^0x[a-fA-F0-9]{64}$/;
 
 const WalletSwitcher = () => {
   const { wallets, activeAddress, switchWallet, refreshWallets, profileId } = useActiveWallet();
-  const { address: connectedAddress, wallets: dynamicWallets } = useWallet();
-  const { createEmbeddedWallet, userHasEmbeddedWallet } = useEmbeddedWallet();
+  const { address: connectedAddress } = useWallet();
   const [open, setOpen] = useState(false);
   const [balances, setBalances] = useState<WalletBalanceCache>({});
   const [creating, setCreating] = useState(false);
