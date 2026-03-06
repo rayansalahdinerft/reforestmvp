@@ -253,26 +253,20 @@ const Onboarding = () => {
             <div className="text-center">
               <div className={iconBox}><Wallet className={iconClass} /></div>
               <h2 className={heading}>Create your ReforestWallet</h2>
-              <p className={subtitle}>Sign in with your email to create your secure MPC-powered wallet.</p>
+              <p className={subtitle}>Sign in to create your secure wallet — email, social, passkeys or external wallet.</p>
             </div>
             {saving ? (
               <div className="flex flex-col items-center gap-3 py-4">
                 <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
                 <p className="text-xs sm:text-sm text-muted-foreground">Creating your ReforestWallet...</p>
               </div>
-            ) : waitingForWallet && !walletAddress ? (
-              <div className="flex flex-col items-center gap-3 py-4">
-                <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
-                <p className="text-xs sm:text-sm text-muted-foreground">Initializing MPC wallet...</p>
-              </div>
             ) : (
-              <button onClick={handleConnectStep} className={btnPrimary}>
-                <Wallet className="w-5 h-5" />
-                Create my ReforestWallet
-              </button>
+              <div className="flex justify-center">
+                <DynamicWidget />
+              </div>
             )}
             <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
-              A secure wallet will be automatically created for you via email.
+              Email, Google, Apple, Face ID, MetaMask, WalletConnect & more.
             </p>
           </div>
         )}
