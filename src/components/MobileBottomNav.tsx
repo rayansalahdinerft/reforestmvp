@@ -1,13 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeftRight, BarChart3, Trophy, Briefcase, Leaf, CreditCard } from 'lucide-react';
+import { Home, ArrowLeftRight, Search, Leaf, BarChart3 } from 'lucide-react';
 
 const navItems = [
+  { path: '/home', label: 'Home', icon: Home },
   { path: '/', label: 'Swap', icon: ArrowLeftRight },
-  { path: '/market', label: 'Market', icon: BarChart3 },
-  { path: '/leaderboard', label: 'Board', icon: Trophy },
-  { path: '/portfolio', label: 'Portfolio', icon: Briefcase },
+  { path: '/market', label: 'Market', icon: Search },
   { path: '/impact', label: 'Impact', icon: Leaf },
-  { path: '/card', label: 'Card', icon: CreditCard },
+  { path: '/portfolio', label: 'Portfolio', icon: BarChart3 },
 ];
 
 const MobileBottomNav = () => {
