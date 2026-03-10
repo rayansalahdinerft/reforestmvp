@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { resolveAvatarUrl } from '@/utils/avatarResolver';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
