@@ -1,55 +1,45 @@
 import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { useWallet } from '@/hooks/useWallet';
+import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Search, Settings, Eye, EyeOff, TrendingUp } from 'lucide-react';
-import Logo from '@/components/Logo';
+import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Eye, EyeOff, TrendingUp, Copy, Check, X } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
-  const { openConnect } = useWallet();
+  const { openConnect, address } = useWallet();
   const navigate = useNavigate();
   const [hideBalance, setHideBalance] = useState(false);
-  const [search, setSearch] = useState('');
+  const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  const quickActions = [
-    { icon: Send, label: 'Send', action: () => navigate('/') },
-    { icon: ArrowDownToLine, label: 'Receive', action: () => {} },
-    { icon: ArrowLeftRight, label: 'Swap', action: () => navigate('/') },
-    { icon: DollarSign, label: 'Buy', action: () => navigate('/') },
-  ];
+  const sortedBalances = [...balances].sort((a, b) => b.balanceUsd - a.balanceUsd);
 
-  const filteredBalances = balances
-    .filter(t => !search || t.symbol.toLowerCase().includes(search.toLowerCase()) || t.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => b.balanceUsd - a.balanceUsd);
+  const copyAddress = () => {
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      toast.success('Address copied!');
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const truncatedAddress = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : '';
 
   return (
     <div className="min-h-[100dvh] bg-background relative">
-      {/* Top bar */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 px-4">
-        <div className="flex items-center gap-3">
-          <div className="flex-1 flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-card border border-border">
-            <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none w-full"
-            />
-          </div>
-          <button className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center">
-            <Settings className="w-4.5 h-4.5 text-muted-foreground" />
-          </button>
-        </div>
-      </div>
+      {/* Top spacing */}
+      <div className="pt-[max(0.75rem,env(safe-area-inset-top))]" />
 
       <div className="px-4 pb-4 space-y-5">
         {!isConnected ? (
           <div className="mt-4">
             <div
               className="rounded-3xl p-6 text-center active:scale-[0.98] transition-transform cursor-pointer"
-              style={{ background: 'linear-gradient(135deg, hsl(142 76% 25%), hsl(142 76% 15%))' }}
+              style={{ background: 'linear-gradient(135deg, #152012, #1A2917)' }}
               onClick={openConnect}
             >
               <Wallet className="w-12 h-12 text-primary mx-auto mb-3 opacity-60" />
@@ -62,16 +52,16 @@ const Home = () => {
             {/* Balance Card */}
             <div
               className="rounded-3xl p-5 relative overflow-hidden mt-2"
-              style={{ background: 'linear-gradient(145deg, hsl(142 40% 16%), hsl(150 30% 8%))' }}
+              style={{ background: 'linear-gradient(145deg, #152012, #1A2917)' }}
             >
-              {/* Decorative circle shape like reference */}
+              {/* Decorative circles */}
               <div
-                className="absolute -right-8 -top-8 w-40 h-40 rounded-full"
-                style={{ background: 'radial-gradient(circle, hsl(142 40% 22%), hsl(142 30% 12%) 70%, transparent 100%)' }}
+                className="absolute -right-6 -top-6 w-28 h-28 rounded-full opacity-60"
+                style={{ background: 'radial-gradient(circle, #1e3a1a 0%, #152012 60%, transparent 100%)' }}
               />
               <div
-                className="absolute -right-4 bottom-0 w-32 h-32 rounded-full"
-                style={{ background: 'radial-gradient(circle, hsl(142 35% 18%), transparent 70%)' }}
+                className="absolute -left-5 -bottom-5 w-24 h-24 rounded-full opacity-50"
+                style={{ background: 'radial-gradient(circle, #1e3a1a 0%, #1A2917 60%, transparent 100%)' }}
               />
 
               <div className="relative z-10">
@@ -99,18 +89,42 @@ const Home = () => {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-4 gap-2.5">
-              {quickActions.map(({ icon: Icon, label, action }) => (
-                <button
-                  key={label}
-                  onClick={action}
-                  className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <span className="text-xs font-medium text-muted-foreground">{label}</span>
-                </button>
-              ))}
+              <button
+                onClick={() => setActivePanel('send')}
+                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
+                  <Send className="w-5 h-5 text-foreground" />
+                </div>
+                <span className="text-xs font-medium text-muted-foreground">Send</span>
+              </button>
+              <button
+                onClick={() => setActivePanel('receive')}
+                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
+                  <ArrowDownToLine className="w-5 h-5 text-foreground" />
+                </div>
+                <span className="text-xs font-medium text-muted-foreground">Receive</span>
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
+                  <ArrowLeftRight className="w-5 h-5 text-foreground" />
+                </div>
+                <span className="text-xs font-medium text-muted-foreground">Swap</span>
+              </button>
+              <button
+                onClick={() => setActivePanel('buy')}
+                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-foreground" />
+                </div>
+                <span className="text-xs font-medium text-muted-foreground">Buy</span>
+              </button>
             </div>
 
             {/* My Assets */}
@@ -122,11 +136,11 @@ const Home = () => {
                     <div key={i} className="h-[72px] rounded-2xl bg-card border border-border animate-pulse" />
                   ))}
                 </div>
-              ) : filteredBalances.length === 0 ? (
+              ) : sortedBalances.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8 text-sm">No tokens found</p>
               ) : (
                 <div className="space-y-2">
-                  {filteredBalances.map((token) => (
+                  {sortedBalances.map((token) => (
                     <div
                       key={token.symbol}
                       className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-card border border-border active:bg-secondary transition-all"
@@ -159,6 +173,72 @@ const Home = () => {
           </>
         )}
       </div>
+
+      {/* Send Panel */}
+      {activePanel === 'send' && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col">
+          <div className="flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
+            <h2 className="text-lg font-bold text-foreground">Send</h2>
+            <button onClick={() => setActivePanel(null)} className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center">
+              <X className="w-5 h-5 text-foreground" />
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center px-6">
+            <p className="text-muted-foreground text-center text-sm">Send feature coming soon. You'll be able to send tokens to any address.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Receive Panel */}
+      {activePanel === 'receive' && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col">
+          <div className="flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
+            <h2 className="text-lg font-bold text-foreground">Receive</h2>
+            <button onClick={() => setActivePanel(null)} className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center">
+              <X className="w-5 h-5 text-foreground" />
+            </button>
+          </div>
+          <div className="flex-1 flex flex-col items-center justify-center px-6 gap-5">
+            <p className="text-sm text-muted-foreground text-center">Your Ethereum address</p>
+            <div className="w-full rounded-2xl bg-card border border-border p-4 text-center">
+              <p className="text-foreground font-mono text-sm break-all select-all">{address}</p>
+            </div>
+            <button
+              onClick={copyAddress}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm active:scale-95 transition-transform"
+            >
+              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? 'Copied!' : 'Copy Address'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Buy Panel */}
+      {activePanel === 'buy' && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col">
+          <div className="flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
+            <h2 className="text-lg font-bold text-foreground">Buy Crypto</h2>
+            <button onClick={() => setActivePanel(null)} className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center">
+              <X className="w-5 h-5 text-foreground" />
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center px-6">
+            <div className="text-center space-y-3">
+              <p className="text-muted-foreground text-sm">Buy crypto with fiat via Transak</p>
+              <a
+                href={`https://global.transak.com/?apiKey=demo&cryptoCurrencyCode=ETH&walletAddress=${address}&network=ethereum`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm active:scale-95 transition-transform"
+              >
+                <DollarSign className="w-4 h-4" />
+                Open Transak
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
