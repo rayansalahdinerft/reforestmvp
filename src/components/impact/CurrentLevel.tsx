@@ -36,8 +36,12 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
     <div className="swap-card p-5 animate-slide-up backdrop-blur-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Current</p>
-          <h3 className="text-xl font-bold text-foreground leading-tight">Level {currentLvlNum}</h3>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Current Class</p>
+          <h3 className="text-xl font-bold text-foreground leading-tight flex items-center gap-2">
+            <span>{achievedLevel ? currentLevel.emoji : "🔒"}</span>
+            {achievedLevel ? currentLevel.name : "Unranked"}
+          </h3>
+          <p className="text-xs text-muted-foreground">Level {currentLvlNum}</p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold gradient-text tabular-nums">
