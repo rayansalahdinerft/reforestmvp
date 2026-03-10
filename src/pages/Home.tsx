@@ -62,19 +62,35 @@ const Home = () => {
             {/* Balance Card */}
             <div
               className="rounded-3xl p-5 relative overflow-hidden mt-2"
-              style={{ background: 'linear-gradient(135deg, hsl(142 50% 22%), hsl(142 60% 12%))' }}
+              style={{ background: 'linear-gradient(145deg, hsl(142 40% 16%), hsl(150 30% 8%))' }}
             >
-              <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(ellipse at top right, hsl(142 76% 52% / 0.3), transparent 60%)' }} />
+              {/* Decorative circle shape like reference */}
+              <div
+                className="absolute -right-8 -top-8 w-40 h-40 rounded-full"
+                style={{ background: 'radial-gradient(circle, hsl(142 40% 22%), hsl(142 30% 12%) 70%, transparent 100%)' }}
+              />
+              <div
+                className="absolute -right-4 bottom-0 w-32 h-32 rounded-full"
+                style={{ background: 'radial-gradient(circle, hsl(142 35% 18%), transparent 70%)' }}
+              />
+
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm text-foreground/70 font-medium">Total Balance</p>
-                  <button onClick={() => setHideBalance(!hideBalance)} className="p-1 active:scale-90 transition-transform">
-                    {hideBalance ? <EyeOff className="w-4.5 h-4.5 text-foreground/50" /> : <Eye className="w-4.5 h-4.5 text-foreground/50" />}
+                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center active:scale-90 transition-transform">
+                    {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/60" /> : <Eye className="w-4 h-4 text-foreground/60" />}
                   </button>
                 </div>
-                <p className="text-3xl font-bold text-foreground tabular-nums tracking-tight">
+                <p className="text-3xl font-bold text-foreground tabular-nums tracking-tight mb-3">
                   {hideBalance ? '••••••' : `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </p>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                    <TrendingUp className="w-3 h-3" />
+                    +0.00%
+                  </span>
+                  <span className="text-xs text-foreground/50">Last 24h</span>
+                </div>
                 {priceError && (
                   <p className="text-xs text-yellow-500 mt-1">⚠️ Prices may be inaccurate</p>
                 )}
