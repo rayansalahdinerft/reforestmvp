@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/hooks/useWallet';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
@@ -11,7 +12,9 @@ type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, isConnected, ready, openConnect, activeWallet } = useWallet();
+  const { user, isConnected, ready, activeWallet } = useWallet();
+  const { authenticated, createWallet } = usePrivy();
+  const { wallets } = useWallets();
   const [step, setStep] = useState<Step>('welcome');
   const [pseudo, setPseudo] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -20,16 +23,36 @@ const Onboarding = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
+  const [creatingWallet, setCreatingWallet] = useState(false);
 
   const privyUserId = (user as any)?.id ?? '';
   const privyEmail = (user as any)?.email?.address ?? (user as any)?.google?.email ?? null;
-  const walletAddress = activeWallet?.address ?? null;
+  const walletAddress = activeWallet?.address ?? wallets?.[0]?.address ?? null;
 
+  // When we reach 'connect' step and user is already authenticated, create embedded wallet
   useEffect(() => {
-    if (step === 'connect' && isConnected && privyUserId && walletAddress) {
+    if (step === 'connect' && authenticated && !walletAddress && !creatingWallet) {
+      const createEmbeddedWallet = async () => {
+        setCreatingWallet(true);
+        setSaving(true);
+        try {
+          await createWallet();
+        } catch (err: any) {
+          console.log('Wallet creation result:', err?.message);
+          // If wallet already exists, that's fine
+        }
+        setCreatingWallet(false);
+      };
+      createEmbeddedWallet();
+    }
+  }, [step, authenticated, walletAddress, creatingWallet]);
+
+  // When wallet becomes available, complete onboarding
+  useEffect(() => {
+    if (step === 'connect' && walletAddress && privyUserId) {
       handleComplete();
     }
-  }, [step, isConnected, privyUserId, walletAddress]);
+  }, [step, walletAddress, privyUserId]);
 
   const handleComplete = async () => {
     if (!privyUserId) {
@@ -199,21 +222,12 @@ const Onboarding = () => {
             <div className="text-center">
               <div className={iconBox}><TreePine className={iconClass} /></div>
               <h2 className={heading}>Create your ReforestWallet</h2>
-              <p className={subtitle}>Sign in to create your secure wallet — email, social, passkeys or external wallet.</p>
+              <p className={subtitle}>Creating your secure wallet...</p>
             </div>
-            {saving ? (
-              <div className="flex flex-col items-center gap-3 py-4">
-                <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
-                <p className="text-xs sm:text-sm text-muted-foreground">Creating your ReforestWallet...</p>
-              </div>
-            ) : (
-              <button onClick={openConnect} className={btnPrimary}>
-                Connect Wallet <ArrowRight className="w-5 h-5" />
-              </button>
-            )}
-            <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
-              Email, Google, Apple, Passkeys, MetaMask, WalletConnect & more.
-            </p>
+            <div className="flex flex-col items-center gap-3 py-4">
+              <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
+              <p className="text-xs sm:text-sm text-muted-foreground">Creating your ReforestWallet...</p>
+            </div>
           </div>
         )}
 
