@@ -13,12 +13,19 @@ import { resolveAvatarUrl } from '@/utils/avatarResolver';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
-  const { openConnect, address } = useWallet();
+  const { openConnect, address, authenticated, embeddedWallet, ready } = useWallet();
   const { profile } = useOnboarding();
   const navigate = useNavigate();
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Lazy wallet creation: if user completed onboarding but has no embedded wallet yet
+  useEffect(() => {
+    if (ready && authenticated && !embeddedWallet) {
+      openConnect();
+    }
+  }, [ready, authenticated, embeddedWallet, openConnect]);
 
   const sortedBalances = [...balances].sort((a, b) => b.balanceUsd - a.balanceUsd);
 
