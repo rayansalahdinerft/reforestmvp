@@ -1,4 +1,4 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
 import { useCallback } from 'react';
 
 /**
@@ -7,15 +7,29 @@ import { useCallback } from 'react';
 export const useWallet = () => {
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { wallets } = useWallets();
+  const { createWallet } = useCreateWallet();
 
   const activeWallet = wallets[0] ?? null;
   const address = activeWallet?.address ?? null;
   const isConnected = ready && authenticated && !!address;
   const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
 
-  const openConnect = useCallback(() => {
+  const openConnect = useCallback(async () => {
+    if (!ready) return;
+
+    if (authenticated) {
+      if (wallets.length === 0) {
+        try {
+          await createWallet();
+        } catch (error) {
+          console.error('Failed to create embedded wallet:', error);
+        }
+      }
+      return;
+    }
+
     login();
-  }, [login]);
+  }, [ready, authenticated, wallets.length, createWallet, login]);
 
   const disconnect = useCallback(async () => {
     await logout();

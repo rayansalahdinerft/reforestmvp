@@ -40,13 +40,15 @@ const Onboarding = () => {
           await createWallet();
         } catch (err: any) {
           console.log('Wallet creation result:', err?.message);
-          // If wallet already exists, that's fine
+          toast.error('Unable to create wallet automatically');
+        } finally {
+          setCreatingWallet(false);
+          setSaving(false);
         }
-        setCreatingWallet(false);
       };
       createEmbeddedWallet();
     }
-  }, [step, authenticated, walletAddress, creatingWallet]);
+  }, [step, authenticated, walletAddress, creatingWallet, createWallet]);
 
   // When wallet becomes available, complete onboarding
   useEffect(() => {
