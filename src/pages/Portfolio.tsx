@@ -31,7 +31,15 @@ const Portfolio = () => {
       <NewsTicker />
 
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
-        <div className="text-center mb-6 sm:mb-12 animate-fade-in">
+        <div className="text-center mb-6 sm:mb-12 animate-fade-in relative">
+          {/* Settings button */}
+          <button
+            onClick={() => navigate('/settings')}
+            className="absolute right-0 top-0 w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center hover:bg-secondary transition-all"
+          >
+            <Settings className="w-5 h-5 text-muted-foreground" />
+          </button>
+
           {/* Profile display */}
           {isConnected && profile && (
             <div className="flex items-center justify-center gap-3 mb-4">

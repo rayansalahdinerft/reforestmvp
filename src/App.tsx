@@ -37,6 +37,7 @@ const AppLayout = () => {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/card" element={<Card />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

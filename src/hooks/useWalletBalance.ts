@@ -285,11 +285,9 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
 
       const erc20Balances = await Promise.all(erc20Promises);
       
-      // Only add tokens with non-zero balance
+      // Add all tokens (even zero balance)
       for (const balance of erc20Balances) {
-        if (parseFloat(balance.balance) > 0.001) {
-          tokenBalances.push(balance);
-        }
+        tokenBalances.push(balance);
       }
 
       setBalances(tokenBalances);
