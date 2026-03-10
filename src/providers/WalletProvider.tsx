@@ -22,7 +22,9 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         },
         loginMethods: ['email', 'wallet', 'google', 'apple', 'passkey'],
         embeddedWallets: {
-          createOnLogin: 'users-without-wallets',
+          ethereum: {
+            createOnLogin: 'users-without-wallets',
+          },
         },
       }}
     >
