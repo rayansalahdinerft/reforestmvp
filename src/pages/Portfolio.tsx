@@ -17,6 +17,7 @@ const Portfolio = () => {
   const { stats } = useWalletStats();
   const { openConnect } = useWallet();
   const { profile } = useOnboarding();
+  const navigate = useNavigate();
   const treesPlanted = stats.totalTrees;
 
   return (
