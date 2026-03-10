@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { WalletProvider } from "@/providers/WalletProvider";
 import { ActiveWalletProvider } from "@/contexts/ActiveWalletContext";
 import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Impact from "./pages/Impact";
 import Market from "./pages/Market";
@@ -26,6 +27,7 @@ const AppLayout = () => {
       <div className={(isOnboarding || isAdmin) ? '' : 'pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0'}>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/impact" element={<Impact />} />
