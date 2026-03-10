@@ -13,8 +13,9 @@ type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, isConnected, ready, activeWallet } = useWallet();
-  const { authenticated, createWallet } = usePrivy();
+  const { authenticated } = usePrivy();
   const { wallets } = useWallets();
+  const { createWallet } = useCreateWallet();
   const [step, setStep] = useState<Step>('welcome');
   const [pseudo, setPseudo] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
