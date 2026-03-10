@@ -6,9 +6,10 @@ import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { useWalletStats } from "@/hooks/useWalletStats";
 import { useWallet } from "@/hooks/useWallet";
 import { useActiveWallet } from "@/contexts/ActiveWalletContext";
-import { Wallet, RefreshCw } from "lucide-react";
+import { Wallet, RefreshCw, Settings } from "lucide-react";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { resolveAvatarUrl } from "@/utils/avatarResolver";
+import { useNavigate } from "react-router-dom";
 
 const Portfolio = () => {
   const { activeAddress } = useActiveWallet();
