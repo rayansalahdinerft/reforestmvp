@@ -77,7 +77,7 @@ const Home = () => {
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm text-foreground/70 font-medium">Total Balance</p>
+                  <p className="text-sm text-primary/70 font-medium">Total Balance</p>
                   <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center active:scale-90 transition-transform">
                     {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/60" /> : <Eye className="w-4 h-4 text-foreground/60" />}
                   </button>
