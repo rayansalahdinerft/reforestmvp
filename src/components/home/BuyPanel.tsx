@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 
 interface BuyPanelProps {
   onClose: () => void;
@@ -6,7 +6,7 @@ interface BuyPanelProps {
 }
 
 const BuyPanel = ({ onClose, address }: BuyPanelProps) => {
-  const transakUrl = `https://global.transak.com/?apiKey=demo&cryptoCurrencyCode=ETH&walletAddress=${address ?? ''}&network=ethereum&hideMenu=true&themeColor=22c55e`;
+  const transakUrl = `https://global.transak.com/?apiKey=af3a8236-5c7e-4dcd-b25c-c15a0e2ef74e&cryptoCurrencyCode=ETH&walletAddress=${address ?? ''}&network=ethereum&hideMenu=true&themeColor=22c55e&disableWalletAddressForm=true`;
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -24,7 +24,7 @@ const BuyPanel = ({ onClose, address }: BuyPanelProps) => {
           src={transakUrl}
           className="w-full h-full rounded-2xl border border-border"
           allow="camera;microphone;payment"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation allow-popups-to-escape-sandbox"
           title="Buy Crypto with Transak"
         />
       </div>
