@@ -208,7 +208,11 @@ const Home = () => {
             </button>
           </div>
           <div className="flex-1 flex flex-col items-center justify-center px-6 gap-5">
-            <p className="text-sm text-muted-foreground text-center">Your Ethereum address</p>
+            <div
+              className="w-48 h-48 rounded-2xl bg-white p-3 flex items-center justify-center"
+              dangerouslySetInnerHTML={{ __html: qrSvg }}
+            />
+            <p className="text-sm text-muted-foreground text-center">Scan to receive tokens</p>
             <div className="w-full rounded-2xl bg-card border border-border p-4 text-center">
               <p className="text-foreground font-mono text-sm break-all select-all">{address}</p>
             </div>

@@ -52,7 +52,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AppLayout />
+          <AuthGate>
+            <AppLayout />
+          </AuthGate>
         </BrowserRouter>
       </TooltipProvider>
     </ActiveWalletProvider>
