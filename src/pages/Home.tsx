@@ -79,35 +79,39 @@ const Home = () => {
           <>
             {/* Balance Card */}
             <div
-              className="rounded-3xl p-5 relative overflow-hidden mt-2"
+              className="rounded-3xl p-5 relative overflow-hidden"
               style={{ background: 'linear-gradient(145deg, #152012, #1A2917)' }}
             >
               {/* Decorative circles */}
               <div
-                className="absolute -right-6 -top-6 w-28 h-28 rounded-full opacity-60"
-                style={{ background: 'radial-gradient(circle, #1e3a1a 0%, #152012 60%, transparent 100%)' }}
+                className="absolute right-4 top-4 w-32 h-32 rounded-full opacity-40"
+                style={{ background: 'radial-gradient(circle, #2d5a27 0%, transparent 70%)' }}
               />
               <div
-                className="absolute -left-5 -bottom-5 w-24 h-24 rounded-full opacity-50"
-                style={{ background: 'radial-gradient(circle, #1e3a1a 0%, #1A2917 60%, transparent 100%)' }}
+                className="absolute right-16 top-8 w-24 h-24 rounded-full opacity-30"
+                style={{ background: 'radial-gradient(circle, #1e4a1a 0%, transparent 70%)' }}
+              />
+              <div
+                className="absolute -left-4 -bottom-4 w-20 h-20 rounded-full opacity-25"
+                style={{ background: 'radial-gradient(circle, #2d5a27 0%, transparent 70%)' }}
               />
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm text-foreground/50 font-medium">Total Balance</p>
-                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center active:scale-90 transition-transform">
-                    {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/60" /> : <Eye className="w-4 h-4 text-foreground/60" />}
+                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform">
+                    {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/50" /> : <Eye className="w-4 h-4 text-foreground/50" />}
                   </button>
                 </div>
-                <p className="text-3xl font-bold text-foreground tabular-nums tracking-tight mb-3">
-                  {hideBalance ? '••••••' : `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                <p className="text-[2.25rem] font-bold text-foreground tabular-nums tracking-tight mb-3 leading-none">
+                  {hideBalance ? '••••••' : `€${totalValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold">
                     <TrendingUp className="w-3 h-3" />
                     +0.00%
                   </span>
-                  <span className="text-xs text-foreground/50">Last 24h</span>
+                  <span className="text-xs text-foreground/40">Last 24h</span>
                 </div>
                 {priceError && (
                   <p className="text-xs text-yellow-500 mt-1">⚠️ Prices may be inaccurate</p>
@@ -116,43 +120,24 @@ const Home = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-4 gap-2.5">
-              <button
-                onClick={() => setActivePanel('send')}
-                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
-                  <Send className="w-5 h-5 text-foreground" />
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Send</span>
-              </button>
-              <button
-                onClick={() => setActivePanel('receive')}
-                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
-                  <ArrowDownToLine className="w-5 h-5 text-foreground" />
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Receive</span>
-              </button>
-              <button
-                onClick={() => navigate('/')}
-                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
-                  <ArrowLeftRight className="w-5 h-5 text-foreground" />
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Swap</span>
-              </button>
-              <button
-                onClick={() => setActivePanel('buy')}
-                className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border active:scale-95 active:bg-secondary transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-foreground" />
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Buy</span>
-              </button>
+            <div className="grid grid-cols-4 gap-3">
+              {[
+                { icon: Send, label: 'Envoyer', action: () => setActivePanel('send') },
+                { icon: ArrowDownToLine, label: 'Recevoir', action: () => setActivePanel('receive') },
+                { icon: ArrowLeftRight, label: 'Échanger', action: () => navigate('/') },
+                { icon: DollarSign, label: 'Acheter', action: () => setActivePanel('buy') },
+              ].map(({ icon: Icon, label, action }) => (
+                <button
+                  key={label}
+                  onClick={action}
+                  className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border/50 active:scale-95 active:bg-secondary transition-all"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-secondary/80 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-foreground" />
+                  </div>
+                  <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+                </button>
+              ))}
             </div>
 
             {/* My Assets */}
