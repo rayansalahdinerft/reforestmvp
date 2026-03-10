@@ -30,6 +30,14 @@ const Home = () => {
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : '';
 
+  const qrSvg = useMemo(() => {
+    if (!address) return '';
+    const qr = qrcode(0, 'M');
+    qr.addData(address);
+    qr.make();
+    return qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+  }, [address]);
+
   return (
     <div className="min-h-[100dvh] bg-background relative">
       {/* Top spacing */}
