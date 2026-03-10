@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Copy, Check } from 'lucide-react';
-import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { useWallet } from '@/hooks/useWallet';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { toast } from 'sonner';
 
 const ConnectButton = () => {
-  const { address, isConnected, disconnect } = useWallet();
+  const { address, isConnected, disconnect, openConnect } = useWallet();
   const { onboardingCompleted } = useOnboarding();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
@@ -64,8 +63,15 @@ const ConnectButton = () => {
     );
   }
 
-  // Use DynamicWidget for connection (handles email, social, passkeys, external wallets)
-  return <DynamicWidget />;
+  // Use Privy login
+  return (
+    <button
+      onClick={openConnect}
+      className="connect-wallet-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
+    >
+      <span>Connect</span>
+    </button>
+  );
 };
 
 export default ConnectButton;

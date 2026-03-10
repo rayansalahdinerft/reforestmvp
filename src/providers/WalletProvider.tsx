@@ -1,15 +1,10 @@
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core';
-import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
-import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
-import { WagmiProvider } from 'wagmi';
-import { config } from '@/config/wallet';
+import { PrivyProvider } from '@privy-io/react-auth';
 
 const queryClient = new QueryClient();
 
-// Dynamic Environment ID (Sandbox)
-const DYNAMIC_ENVIRONMENT_ID = 'dc2e8664-6a00-4e89-bed9-3f98245356aa';
+const PRIVY_APP_ID = 'cmm96j8ng01oa0cjp846ak29q';
 
 interface WalletProviderProps {
   children: ReactNode;
@@ -17,26 +12,25 @@ interface WalletProviderProps {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   return (
-    <DynamicContextProvider
-      settings={{
-        environmentId: DYNAMIC_ENVIRONMENT_ID,
-        walletConnectors: [EthereumWalletConnectors],
-        appName: 'ReforestWallet',
-        appLogoUrl: '/icon.png',
-        cssOverrides: `
-          .dynamic-widget-inline-controls { background: transparent; }
-          .dynamic-widget-card { border-radius: 1rem; }
-          .dynamic-widget { font-family: inherit; }
-        `,
+    <PrivyProvider
+      appId={PRIVY_APP_ID}
+      config={{
+        appearance: {
+          theme: 'dark',
+          accentColor: '#22c55e',
+          logo: '/icon.png',
+        },
+        loginMethods: ['email', 'wallet', 'google', 'apple', 'passkey'],
+        embeddedWallets: {
+          ethereum: {
+            createOnLogin: 'users-without-wallets',
+          },
+        },
       }}
     >
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <DynamicWagmiConnector>
-            {children}
-          </DynamicWagmiConnector>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </DynamicContextProvider>
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    </PrivyProvider>
   );
 };

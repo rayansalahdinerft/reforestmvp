@@ -1,31 +1,30 @@
-import { useDynamicContext, useIsLoggedIn, useUserWallets } from '@dynamic-labs/sdk-react-core';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useCallback } from 'react';
 
 /**
- * Unified wallet hook wrapping Dynamic.xyz
+ * Unified wallet hook wrapping Privy
  */
 export const useWallet = () => {
-  const { setShowAuthFlow, handleLogOut, user, sdkHasLoaded, primaryWallet } = useDynamicContext();
-  const isLoggedIn = useIsLoggedIn();
-  const userWallets = useUserWallets();
+  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { wallets } = useWallets();
 
-  const activeWallet = primaryWallet ?? userWallets[0] ?? null;
+  const activeWallet = wallets[0] ?? null;
   const address = activeWallet?.address ?? null;
-  const isConnected = sdkHasLoaded && isLoggedIn && !!address;
-  const chainId = activeWallet?.chain ? Number(activeWallet.chain) : undefined;
+  const isConnected = ready && authenticated && !!address;
+  const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
 
   const openConnect = useCallback(() => {
-    setShowAuthFlow(true);
-  }, [setShowAuthFlow]);
+    login();
+  }, [login]);
 
   const disconnect = useCallback(async () => {
-    await handleLogOut();
-  }, [handleLogOut]);
+    await logout();
+  }, [logout]);
 
   const getProvider = useCallback(async () => {
     if (!activeWallet) return null;
     try {
-      return await (activeWallet as any).getWalletClient();
+      return await activeWallet.getEthereumProvider();
     } catch {
       return null;
     }
@@ -34,14 +33,14 @@ export const useWallet = () => {
   return {
     address,
     isConnected,
-    ready: sdkHasLoaded,
-    authenticated: isLoggedIn,
+    ready,
+    authenticated,
     chainId,
     activeWallet,
-    wallets: userWallets,
+    wallets,
     user,
     connectors: [],
-    isPending: !sdkHasLoaded,
+    isPending: !ready,
     openConnect,
     disconnect,
     getProvider,
