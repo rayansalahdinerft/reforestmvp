@@ -6,6 +6,8 @@ import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Eye, EyeOff,
 import { useState, useMemo } from 'react';
 import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
+import SendPanel from '@/components/home/SendPanel';
+import BuyPanel from '@/components/home/BuyPanel';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
