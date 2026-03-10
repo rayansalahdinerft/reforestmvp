@@ -12,7 +12,9 @@ type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, isConnected, ready, openConnect, activeWallet } = useWallet();
+  const { user, isConnected, ready, activeWallet } = useWallet();
+  const { authenticated, createWallet } = usePrivy();
+  const { wallets } = useWallets();
   const [step, setStep] = useState<Step>('welcome');
   const [pseudo, setPseudo] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -21,16 +23,36 @@ const Onboarding = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
+  const [creatingWallet, setCreatingWallet] = useState(false);
 
   const privyUserId = (user as any)?.id ?? '';
   const privyEmail = (user as any)?.email?.address ?? (user as any)?.google?.email ?? null;
-  const walletAddress = activeWallet?.address ?? null;
+  const walletAddress = activeWallet?.address ?? wallets?.[0]?.address ?? null;
 
+  // When we reach 'connect' step and user is already authenticated, create embedded wallet
   useEffect(() => {
-    if (step === 'connect' && isConnected && privyUserId && walletAddress) {
+    if (step === 'connect' && authenticated && !walletAddress && !creatingWallet) {
+      const createEmbeddedWallet = async () => {
+        setCreatingWallet(true);
+        setSaving(true);
+        try {
+          await createWallet();
+        } catch (err: any) {
+          console.log('Wallet creation result:', err?.message);
+          // If wallet already exists, that's fine
+        }
+        setCreatingWallet(false);
+      };
+      createEmbeddedWallet();
+    }
+  }, [step, authenticated, walletAddress, creatingWallet]);
+
+  // When wallet becomes available, complete onboarding
+  useEffect(() => {
+    if (step === 'connect' && walletAddress && privyUserId) {
       handleComplete();
     }
-  }, [step, isConnected, privyUserId, walletAddress]);
+  }, [step, walletAddress, privyUserId]);
 
   const handleComplete = async () => {
     if (!privyUserId) {
