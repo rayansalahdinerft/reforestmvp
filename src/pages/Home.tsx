@@ -8,10 +8,12 @@ import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
   const { openConnect, address } = useWallet();
+  const { profile } = useOnboarding();
   const navigate = useNavigate();
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
@@ -42,8 +44,18 @@ const Home = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background relative">
-      {/* Top spacing */}
+      {/* Top bar with pseudo */}
       <div className="pt-[max(0.75rem,env(safe-area-inset-top))]" />
+      {isConnected && profile && (
+        <div className="flex items-center justify-end px-4 py-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
+            {profile.avatar_url && (
+              <span className="text-lg">{profile.avatar_url}</span>
+            )}
+            <span className="text-sm font-semibold text-foreground">{profile.pseudo}</span>
+          </div>
+        </div>
+      )}
 
       <div className="px-4 pb-4 space-y-5">
         {!isConnected ? (
@@ -77,7 +89,7 @@ const Home = () => {
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm text-primary/70 font-medium">Total Balance</p>
+                  <p className="text-sm text-foreground/50 font-medium">Total Balance</p>
                   <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center active:scale-90 transition-transform">
                     {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/60" /> : <Eye className="w-4 h-4 text-foreground/60" />}
                   </button>

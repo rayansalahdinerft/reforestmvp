@@ -1,14 +1,14 @@
 import { Sparkles } from "lucide-react";
 
 const LEVELS = [
-  { level: 1, target: 1 },
-  { level: 2, target: 100 },
-  { level: 3, target: 1_000 },
-  { level: 4, target: 10_000 },
-  { level: 5, target: 100_000 },
-  { level: 6, target: 1_000_000 },
-  { level: 7, target: 10_000_000 },
-  { level: 8, target: 100_000_000 },
+  { level: 1, target: 1, name: "Seed", emoji: "🌱" },
+  { level: 2, target: 100, name: "Sprout", emoji: "🌿" },
+  { level: 3, target: 1_000, name: "Roots", emoji: "🌳" },
+  { level: 4, target: 10_000, name: "Forest", emoji: "🌲" },
+  { level: 5, target: 100_000, name: "Canopy", emoji: "🍃" },
+  { level: 6, target: 1_000_000, name: "Explorer", emoji: "🏔️" },
+  { level: 7, target: 10_000_000, name: "Legend", emoji: "⭐" },
+  { level: 8, target: 100_000_000, name: "Infinity", emoji: "♾️" },
 ];
 
 interface CurrentLevelProps {
@@ -36,8 +36,12 @@ const CurrentLevel = ({ treesPlanted }: CurrentLevelProps) => {
     <div className="swap-card p-5 animate-slide-up backdrop-blur-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Current</p>
-          <h3 className="text-xl font-bold text-foreground leading-tight">Level {currentLvlNum}</h3>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Current Class</p>
+          <h3 className="text-xl font-bold text-foreground leading-tight flex items-center gap-2">
+            <span>{achievedLevel ? currentLevel.emoji : "🔒"}</span>
+            {achievedLevel ? currentLevel.name : "Unranked"}
+          </h3>
+          <p className="text-xs text-muted-foreground">Level {currentLvlNum}</p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold gradient-text tabular-nums">
