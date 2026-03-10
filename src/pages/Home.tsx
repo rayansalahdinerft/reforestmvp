@@ -3,7 +3,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Eye, EyeOff, TrendingUp, Copy, Check, X } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
@@ -13,12 +13,19 @@ import { resolveAvatarUrl } from '@/utils/avatarResolver';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
-  const { openConnect, address } = useWallet();
+  const { openConnect, address, authenticated, embeddedWallet, ready } = useWallet();
   const { profile } = useOnboarding();
   const navigate = useNavigate();
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Lazy wallet creation: if user completed onboarding but has no embedded wallet yet
+  useEffect(() => {
+    if (ready && authenticated && !embeddedWallet) {
+      openConnect();
+    }
+  }, [ready, authenticated, embeddedWallet, openConnect]);
 
   const sortedBalances = [...balances].sort((a, b) => b.balanceUsd - a.balanceUsd);
 
