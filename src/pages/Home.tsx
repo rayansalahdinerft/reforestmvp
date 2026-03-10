@@ -3,7 +3,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Eye, EyeOff, TrendingUp, Copy, Check, X } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
