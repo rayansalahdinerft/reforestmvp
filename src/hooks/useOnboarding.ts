@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useWallet } from '@/hooks/useWallet';
 
 export const useOnboarding = () => {
-  const { user, isConnected, ready } = useWallet();
+  const { user, authenticated, ready } = useWallet();
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
@@ -13,7 +13,8 @@ export const useOnboarding = () => {
   useEffect(() => {
     if (!ready) return;
 
-    if (!isConnected || !dynamicUserId) {
+    if (!authenticated || !dynamicUserId) {
+      setProfile(null);
       setOnboardingCompleted(null);
       setLoading(false);
       return;
@@ -28,21 +29,23 @@ export const useOnboarding = () => {
           .eq('dynamic_user_id', dynamicUserId)
           .maybeSingle();
 
-        if (data && data.onboarding_completed) {
-          setOnboardingCompleted(true);
+        if (data) {
           setProfile(data);
+          setOnboardingCompleted(Boolean(data.onboarding_completed));
         } else {
+          setProfile(null);
           setOnboardingCompleted(false);
         }
       } catch (err) {
         console.error('Error checking onboarding:', err);
+        setProfile(null);
         setOnboardingCompleted(false);
       }
       setLoading(false);
     };
 
     checkOnboarding();
-  }, [dynamicUserId, isConnected, ready]);
+  }, [dynamicUserId, authenticated, ready]);
 
   return { onboardingCompleted, loading, profile, dynamicUserId };
 };

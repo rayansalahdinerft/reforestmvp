@@ -1,5 +1,5 @@
 import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 /**
  * Unified wallet hook wrapping Privy
@@ -9,7 +9,17 @@ export const useWallet = () => {
   const { wallets } = useWallets();
   const { createWallet } = useCreateWallet();
 
-  const activeWallet = wallets[0] ?? null;
+  const embeddedWallet = useMemo(
+    () => wallets.find((wallet: any) => wallet.walletClientType === 'privy') ?? null,
+    [wallets]
+  );
+
+  const externalWallet = useMemo(
+    () => wallets.find((wallet: any) => wallet.walletClientType !== 'privy') ?? null,
+    [wallets]
+  );
+
+  const activeWallet = embeddedWallet ?? externalWallet ?? null;
   const address = activeWallet?.address ?? null;
   const isConnected = ready && authenticated && !!address;
   const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
@@ -18,7 +28,7 @@ export const useWallet = () => {
     if (!ready) return;
 
     if (authenticated) {
-      if (wallets.length === 0) {
+      if (!embeddedWallet) {
         try {
           await createWallet();
         } catch (error) {
@@ -29,7 +39,7 @@ export const useWallet = () => {
     }
 
     login();
-  }, [ready, authenticated, wallets.length, createWallet, login]);
+  }, [ready, authenticated, embeddedWallet, createWallet, login]);
 
   const disconnect = useCallback(async () => {
     await logout();
@@ -51,6 +61,8 @@ export const useWallet = () => {
     authenticated,
     chainId,
     activeWallet,
+    embeddedWallet,
+    externalWallet,
     wallets,
     user,
     connectors: [],

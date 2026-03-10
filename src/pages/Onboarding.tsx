@@ -256,11 +256,15 @@ const Onboarding = () => {
             <div className="text-center">
               <div className={iconBox}><TreePine className={iconClass} /></div>
               <h2 className={heading}>Create your ReforestWallet</h2>
-              <p className={subtitle}>Creating your secure wallet...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Creating your secure wallet...</p>
             </div>
             <div className="flex flex-col items-center gap-3 py-4">
               <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
-              <p className="text-xs sm:text-sm text-muted-foreground">Creating your ReforestWallet...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {connectedAddress && !walletAddress
+                  ? 'Detected an external wallet, creating your embedded ReforestWallet...'
+                  : 'Creating your ReforestWallet...'}
+              </p>
             </div>
           </div>
         )}
