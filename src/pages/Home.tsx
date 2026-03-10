@@ -44,8 +44,18 @@ const Home = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background relative">
-      {/* Top spacing */}
+      {/* Top bar with pseudo */}
       <div className="pt-[max(0.75rem,env(safe-area-inset-top))]" />
+      {isConnected && profile && (
+        <div className="flex items-center justify-end px-4 py-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
+            {profile.avatar_url && (
+              <span className="text-lg">{profile.avatar_url}</span>
+            )}
+            <span className="text-sm font-semibold text-foreground">{profile.pseudo}</span>
+          </div>
+        </div>
+      )}
 
       <div className="px-4 pb-4 space-y-5">
         {!isConnected ? (
