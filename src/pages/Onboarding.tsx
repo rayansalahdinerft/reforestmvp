@@ -9,7 +9,7 @@ import { PRESET_AVATARS } from '@/utils/avatarResolver';
 import { ArrowRight, Check, Loader2, TreePine, AtSign, Camera, Lock, Eye, EyeOff } from 'lucide-react';
 import Logo from '@/components/Logo';
 
-type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete';
+type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'complete';
 
 const Onboarding = () => {
   const navigate = useNavigate();
