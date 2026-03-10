@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/hooks/useWallet';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
@@ -13,8 +13,9 @@ type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, isConnected, ready, activeWallet } = useWallet();
-  const { authenticated, createWallet } = usePrivy();
+  const { authenticated } = usePrivy();
   const { wallets } = useWallets();
+  const { createWallet } = useCreateWallet();
   const [step, setStep] = useState<Step>('welcome');
   const [pseudo, setPseudo] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -39,13 +40,15 @@ const Onboarding = () => {
           await createWallet();
         } catch (err: any) {
           console.log('Wallet creation result:', err?.message);
-          // If wallet already exists, that's fine
+          toast.error('Unable to create wallet automatically');
+        } finally {
+          setCreatingWallet(false);
+          setSaving(false);
         }
-        setCreatingWallet(false);
       };
       createEmbeddedWallet();
     }
-  }, [step, authenticated, walletAddress, creatingWallet]);
+  }, [step, authenticated, walletAddress, creatingWallet, createWallet]);
 
   // When wallet becomes available, complete onboarding
   useEffect(() => {
