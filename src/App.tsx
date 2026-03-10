@@ -23,7 +23,7 @@ const AppLayout = () => {
 
   return (
     <>
-      <div className={(isOnboarding || isAdmin) ? '' : 'pb-16 md:pb-0'}>
+      <div className={(isOnboarding || isAdmin) ? '' : 'pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0'}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/onboarding" element={<Onboarding />} />
