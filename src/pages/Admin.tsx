@@ -3,24 +3,23 @@ import { Shield, Users, ArrowLeftRight, TreePine, TrendingUp, Activity, Lock, Ch
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useDynamicContext, useIsLoggedIn } from '@dynamic-labs/sdk-react-core';
+import { useWallet } from '@/hooks/useWallet';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 
 const AdminGate = ({ children }: { children: (dynamicUserId: string) => React.ReactNode }) => {
-  const { user, sdkHasLoaded, setShowAuthFlow } = useDynamicContext();
-  const isLoggedIn = useIsLoggedIn();
+  const { user, ready, authenticated, openConnect } = useWallet();
   const [checking, setChecking] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const navigate = useNavigate();
 
-  const dynamicUserId = (user as any)?.userId ?? (user as any)?.id ?? '';
+  const dynamicUserId = (user as any)?.id ?? '';
 
   useEffect(() => {
-    if (!sdkHasLoaded) return;
+    if (!ready) return;
 
-    if (!isLoggedIn || !dynamicUserId) {
+    if (!authenticated || !dynamicUserId) {
       setChecking(false);
       return;
     }
@@ -42,9 +41,9 @@ const AdminGate = ({ children }: { children: (dynamicUserId: string) => React.Re
       setChecking(false);
     };
     verify();
-  }, [sdkHasLoaded, isLoggedIn, dynamicUserId]);
+  }, [ready, authenticated, dynamicUserId]);
 
-  if (!sdkHasLoaded || checking) {
+  if (!ready || checking) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -52,7 +51,7 @@ const AdminGate = ({ children }: { children: (dynamicUserId: string) => React.Re
     );
   }
 
-  if (!isLoggedIn || !dynamicUserId) {
+  if (!authenticated || !dynamicUserId) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="w-full max-w-sm space-y-6 text-center">
@@ -62,7 +61,7 @@ const AdminGate = ({ children }: { children: (dynamicUserId: string) => React.Re
           <h1 className="text-2xl font-bold text-foreground">Accès Restreint</h1>
           <p className="text-sm text-muted-foreground">Connectez-vous avec votre compte ReforestWallet pour accéder au dashboard admin.</p>
           <button
-            onClick={() => setShowAuthFlow(true)}
+            onClick={() => openConnect()}
             className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
           >
             Se connecter

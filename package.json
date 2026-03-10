@@ -19,7 +19,6 @@
     "@capacitor/ios": "^8.1.0",
     "@dynamic-labs/ethereum": "^4.66.0",
     "@dynamic-labs/sdk-react-core": "^4.66.0",
-    "@dynamic-labs/wagmi-connector": "^4.66.0",
     "@hookform/resolvers": "^3.10.0",
     "@privy-io/react-auth": "^3.15.0",
     "@radix-ui/react-accordion": "^1.2.11",
