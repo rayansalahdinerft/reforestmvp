@@ -12,6 +12,7 @@ import Market from "./pages/Market";
 import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import Admin from "./pages/Admin";
 import AIChatbot from "./components/AIChatbot";
@@ -36,6 +37,7 @@ const AppLayout = () => {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/card" element={<Card />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
