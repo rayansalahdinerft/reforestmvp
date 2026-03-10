@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { resolveAvatarUrl } from '@/utils/avatarResolver';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -50,7 +51,11 @@ const Home = () => {
         <div className="flex items-center justify-end px-4 py-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
             {profile.avatar_url && (
-              <span className="text-lg">{profile.avatar_url}</span>
+              <img
+                src={resolveAvatarUrl(profile.avatar_url, '')}
+                alt=""
+                className="w-6 h-6 rounded-full object-cover"
+              />
             )}
             <span className="text-sm font-semibold text-foreground">{profile.pseudo}</span>
           </div>

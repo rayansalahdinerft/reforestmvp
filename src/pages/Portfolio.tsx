@@ -7,12 +7,15 @@ import { useWalletStats } from "@/hooks/useWalletStats";
 import { useWallet } from "@/hooks/useWallet";
 import { useActiveWallet } from "@/contexts/ActiveWalletContext";
 import { Wallet, RefreshCw } from "lucide-react";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import { resolveAvatarUrl } from "@/utils/avatarResolver";
 
 const Portfolio = () => {
   const { activeAddress } = useActiveWallet();
   const { balances, totalValue, loading, isConnected, refetch, priceError } = useWalletBalance(activeAddress);
   const { stats } = useWalletStats();
   const { openConnect } = useWallet();
+  const { profile } = useOnboarding();
   const treesPlanted = stats.totalTrees;
 
   return (
@@ -27,6 +30,19 @@ const Portfolio = () => {
 
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         <div className="text-center mb-6 sm:mb-12 animate-fade-in">
+          {/* Profile display */}
+          {isConnected && profile && (
+            <div className="flex items-center justify-center gap-3 mb-4">
+              {profile.avatar_url && (
+                <img
+                  src={resolveAvatarUrl(profile.avatar_url, '')}
+                  alt=""
+                  className="w-12 h-12 rounded-full object-cover border-2 border-primary/30"
+                />
+              )}
+              <span className="text-lg font-bold text-foreground">{profile.pseudo}</span>
+            </div>
+          )}
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2 sm:mb-4 tracking-tight">
             Your <span className="text-primary">Portfolio</span>
           </h1>
