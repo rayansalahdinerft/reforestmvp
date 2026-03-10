@@ -16,6 +16,7 @@ import Onboarding from "./pages/Onboarding";
 import Admin from "./pages/Admin";
 import AIChatbot from "./components/AIChatbot";
 import MobileBottomNav from "./components/MobileBottomNav";
+import AuthGate from "./components/AuthGate";
 
 const AppLayout = () => {
   const { pathname } = useLocation();
@@ -51,7 +52,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AppLayout />
+          <AuthGate>
+            <AppLayout />
+          </AuthGate>
         </BrowserRouter>
       </TooltipProvider>
     </ActiveWalletProvider>
