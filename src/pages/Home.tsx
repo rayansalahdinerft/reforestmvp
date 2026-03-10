@@ -8,10 +8,12 @@ import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
   const { openConnect, address } = useWallet();
+  const { profile } = useOnboarding();
   const navigate = useNavigate();
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
