@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/hooks/useWallet';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
