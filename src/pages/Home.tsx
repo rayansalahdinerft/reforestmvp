@@ -6,6 +6,8 @@ import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Eye, EyeOff,
 import { useState, useMemo } from 'react';
 import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
+import SendPanel from '@/components/home/SendPanel';
+import BuyPanel from '@/components/home/BuyPanel';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -75,7 +77,7 @@ const Home = () => {
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm text-foreground/70 font-medium">Total Balance</p>
+                  <p className="text-sm text-primary/70 font-medium">Total Balance</p>
                   <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center active:scale-90 transition-transform">
                     {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/60" /> : <Eye className="w-4 h-4 text-foreground/60" />}
                   </button>
@@ -185,17 +187,7 @@ const Home = () => {
 
       {/* Send Panel */}
       {activePanel === 'send' && (
-        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col">
-          <div className="flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
-            <h2 className="text-lg font-bold text-foreground">Send</h2>
-            <button onClick={() => setActivePanel(null)} className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center">
-              <X className="w-5 h-5 text-foreground" />
-            </button>
-          </div>
-          <div className="flex-1 flex items-center justify-center px-6">
-            <p className="text-muted-foreground text-center text-sm">Send feature coming soon. You'll be able to send tokens to any address.</p>
-          </div>
-        </div>
+        <SendPanel onClose={() => setActivePanel(null)} address={address} />
       )}
 
       {/* Receive Panel */}
@@ -229,28 +221,7 @@ const Home = () => {
 
       {/* Buy Panel */}
       {activePanel === 'buy' && (
-        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col">
-          <div className="flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
-            <h2 className="text-lg font-bold text-foreground">Buy Crypto</h2>
-            <button onClick={() => setActivePanel(null)} className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center">
-              <X className="w-5 h-5 text-foreground" />
-            </button>
-          </div>
-          <div className="flex-1 flex items-center justify-center px-6">
-            <div className="text-center space-y-3">
-              <p className="text-muted-foreground text-sm">Buy crypto with fiat via Transak</p>
-              <a
-                href={`https://global.transak.com/?apiKey=demo&cryptoCurrencyCode=ETH&walletAddress=${address}&network=ethereum`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm active:scale-95 transition-transform"
-              >
-                <DollarSign className="w-4 h-4" />
-                Open Transak
-              </a>
-            </div>
-          </div>
-        </div>
+        <BuyPanel onClose={() => setActivePanel(null)} address={address} />
       )}
     </div>
   );
