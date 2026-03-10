@@ -7,12 +7,15 @@ import { useWalletStats } from "@/hooks/useWalletStats";
 import { useWallet } from "@/hooks/useWallet";
 import { useActiveWallet } from "@/contexts/ActiveWalletContext";
 import { Wallet, RefreshCw } from "lucide-react";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import { resolveAvatarUrl } from "@/utils/avatarResolver";
 
 const Portfolio = () => {
   const { activeAddress } = useActiveWallet();
   const { balances, totalValue, loading, isConnected, refetch, priceError } = useWalletBalance(activeAddress);
   const { stats } = useWalletStats();
   const { openConnect } = useWallet();
+  const { profile } = useOnboarding();
   const treesPlanted = stats.totalTrees;
 
   return (
