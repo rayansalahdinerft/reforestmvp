@@ -2,20 +2,17 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/hooks/useWallet';
 import { useOnboarding } from '@/hooks/useOnboarding';
-import { usePrivy, useCreateWallet } from '@privy-io/react-auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
 import { ArrowRight, Check, Loader2, TreePine, AtSign, Camera, Lock, Eye, EyeOff } from 'lucide-react';
 import Logo from '@/components/Logo';
 
-type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete';
+type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'saving' | 'complete';
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, ready, activeWallet, embeddedWallet, wallets } = useWallet();
-  const { authenticated } = usePrivy();
-  const { createWallet } = useCreateWallet();
+  const { user, ready } = useWallet();
   const { onboardingCompleted, loading: onboardingLoading } = useOnboarding();
   const [step, setStep] = useState<Step>('welcome');
   const [pseudo, setPseudo] = useState('');
@@ -25,61 +22,25 @@ const Onboarding = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
-  const [creatingWallet, setCreatingWallet] = useState(false);
 
   const privyUserId = (user as any)?.id ?? '';
   const privyEmail = (user as any)?.email?.address ?? (user as any)?.google?.email ?? null;
-  const externalWallet = wallets.find((wallet: any) => wallet.walletClientType !== 'privy') ?? null;
-  const walletAddress = embeddedWallet?.address ?? null;
-  const connectedAddress = activeWallet?.address ?? externalWallet?.address ?? null;
 
   useEffect(() => {
     if (!ready || onboardingLoading) return;
-
     if (onboardingCompleted) {
       navigate('/', { replace: true });
     }
   }, [ready, onboardingLoading, onboardingCompleted, navigate]);
 
-  // When we reach 'connect' step and user is already authenticated, create embedded wallet
-  useEffect(() => {
-    if (step === 'connect' && authenticated && !walletAddress && !creatingWallet) {
-      const createEmbeddedWallet = async () => {
-        setCreatingWallet(true);
-        setSaving(true);
-        try {
-          await createWallet();
-        } catch (err: any) {
-          console.log('Wallet creation result:', err?.message);
-          toast.error('Unable to create your ReforestWallet');
-        } finally {
-          setCreatingWallet(false);
-          setSaving(false);
-        }
-      };
-      createEmbeddedWallet();
-    }
-  }, [step, authenticated, walletAddress, creatingWallet, createWallet]);
-
-  // When embedded wallet becomes available, complete onboarding
-  useEffect(() => {
-    if (step === 'connect' && walletAddress && privyUserId) {
-      handleComplete();
-    }
-  }, [step, walletAddress, privyUserId]);
-
-  const handleComplete = async () => {
+  const handleSaveProfile = async () => {
     if (!privyUserId) {
       toast.error('Please connect first');
       return;
     }
 
-    if (!walletAddress) {
-      toast.error('Wallet creation is still in progress');
-      return;
-    }
-
     setSaving(true);
+    setStep('saving');
     try {
       const { data, error } = await supabase.functions.invoke('save-onboarding', {
         body: {
@@ -90,7 +51,7 @@ const Onboarding = () => {
           email: privyEmail,
           dateOfBirth: null,
           avatarUrl: `preset:${selectedAvatar}`,
-          walletAddress,
+          walletAddress: null,
           password,
         },
       });
@@ -99,29 +60,26 @@ const Onboarding = () => {
 
       if (error) {
         const errorText = `${error.message ?? ''} ${(error as any)?.context?.error ?? ''} ${responseError}`.toLowerCase();
-
         if (errorText.includes('pseudo') || errorText.includes('username') || errorText.includes('already taken') || (error as any)?.status === 409) {
           setPseudoError('This username is already taken');
           setStep('pseudo');
+          setSaving(false);
           return;
         }
-
         throw error;
       }
 
       toast.success('Welcome to ReforestWallet! 🌱');
       setStep('complete');
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate('/', { replace: true }), 1200);
     } catch (err: any) {
-      const rawMessage = err?.message || '';
-      const contextMessage = err?.context?.error || '';
-      const fullMessage = `${rawMessage} ${contextMessage}`.toLowerCase();
-
+      const fullMessage = `${err?.message || ''} ${err?.context?.error || ''}`.toLowerCase();
       if (fullMessage.includes('pseudo') || fullMessage.includes('username') || fullMessage.includes('already taken')) {
         setPseudoError('This username is already taken');
         setStep('pseudo');
       } else {
         toast.error('Error creating profile');
+        setStep('password');
         console.error(err);
       }
     }
@@ -131,7 +89,7 @@ const Onboarding = () => {
   const canProceedPseudo = pseudo.trim().length >= 3 && pseudo.trim().length <= 20;
   const canProceedPassword = password.length >= 6 && password === confirmPassword;
 
-  const allSteps: Step[] = ['welcome', 'pseudo', 'avatar', 'password', 'connect'];
+  const allSteps: Step[] = ['welcome', 'pseudo', 'avatar', 'password'];
 
   const iconBox = "w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-3 sm:mb-4";
   const iconClass = "w-6 h-6 sm:w-7 sm:h-7 text-primary";
@@ -244,27 +202,22 @@ const Onboarding = () => {
                 <p className="text-destructive text-xs text-center">Passwords don't match</p>
               )}
             </div>
-            <button onClick={() => setStep('connect')} disabled={!canProceedPassword} className={`${btnPrimary} ${btnDisabled}`}>
-              Continue <ArrowRight className="w-5 h-5" />
+            <button onClick={handleSaveProfile} disabled={!canProceedPassword || saving} className={`${btnPrimary} ${btnDisabled}`}>
+              {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Create Account <ArrowRight className="w-5 h-5" /></>}
             </button>
           </div>
         )}
 
-        {/* Connect */}
-        {step === 'connect' && (
+        {/* Saving */}
+        {step === 'saving' && (
           <div className="animate-fade-in space-y-4 sm:space-y-6">
             <div className="text-center">
               <div className={iconBox}><TreePine className={iconClass} /></div>
-              <h2 className={heading}>Create your ReforestWallet</h2>
-              <p className="text-xs sm:text-sm text-muted-foreground">Creating your secure wallet...</p>
+              <h2 className={heading}>Creating your account...</h2>
             </div>
             <div className="flex flex-col items-center gap-3 py-4">
               <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                {connectedAddress && !walletAddress
-                  ? 'Detected an external wallet, creating your embedded ReforestWallet...'
-                  : 'Creating your ReforestWallet...'}
-              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Setting up your ReforestWallet...</p>
             </div>
           </div>
         )}
@@ -278,11 +231,6 @@ const Onboarding = () => {
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Welcome, {pseudo}! 🌱</h2>
               <p className="text-sm text-muted-foreground">Your ReforestWallet is ready. Every swap plants trees.</p>
-              {walletAddress && (
-                <p className="text-[10px] sm:text-xs text-primary mt-2 font-mono">
-                  {walletAddress.slice(0, 10)}...{walletAddress.slice(-8)}
-                </p>
-              )}
             </div>
           </div>
         )}
@@ -293,7 +241,9 @@ const Onboarding = () => {
             <div
               key={s}
               className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                s === step ? 'bg-primary w-5 sm:w-6' : 'bg-muted-foreground/30 w-1.5 sm:w-2'
+                s === step || (step === 'saving' && s === 'password') || (step === 'complete' && s === 'password')
+                  ? 'bg-primary w-5 sm:w-6'
+                  : 'bg-muted-foreground/30 w-1.5 sm:w-2'
               }`}
             />
           ))}
