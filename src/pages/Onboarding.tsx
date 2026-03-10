@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/hooks/useWallet';
-import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { usePrivy, useCreateWallet } from '@privy-io/react-auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PRESET_AVATARS } from '@/utils/avatarResolver';
@@ -12,10 +13,10 @@ type Step = 'welcome' | 'pseudo' | 'avatar' | 'password' | 'connect' | 'complete
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, isConnected, ready, activeWallet } = useWallet();
+  const { user, ready, activeWallet, embeddedWallet, wallets } = useWallet();
   const { authenticated } = usePrivy();
-  const { wallets } = useWallets();
   const { createWallet } = useCreateWallet();
+  const { onboardingCompleted, loading: onboardingLoading } = useOnboarding();
   const [step, setStep] = useState<Step>('welcome');
   const [pseudo, setPseudo] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -28,7 +29,17 @@ const Onboarding = () => {
 
   const privyUserId = (user as any)?.id ?? '';
   const privyEmail = (user as any)?.email?.address ?? (user as any)?.google?.email ?? null;
-  const walletAddress = activeWallet?.address ?? wallets?.[0]?.address ?? null;
+  const externalWallet = wallets.find((wallet: any) => wallet.walletClientType !== 'privy') ?? null;
+  const walletAddress = embeddedWallet?.address ?? null;
+  const connectedAddress = activeWallet?.address ?? externalWallet?.address ?? null;
+
+  useEffect(() => {
+    if (!ready || onboardingLoading) return;
+
+    if (onboardingCompleted) {
+      navigate('/', { replace: true });
+    }
+  }, [ready, onboardingLoading, onboardingCompleted, navigate]);
 
   // When we reach 'connect' step and user is already authenticated, create embedded wallet
   useEffect(() => {
@@ -40,7 +51,7 @@ const Onboarding = () => {
           await createWallet();
         } catch (err: any) {
           console.log('Wallet creation result:', err?.message);
-          toast.error('Unable to create wallet automatically');
+          toast.error('Unable to create your ReforestWallet');
         } finally {
           setCreatingWallet(false);
           setSaving(false);
@@ -50,7 +61,7 @@ const Onboarding = () => {
     }
   }, [step, authenticated, walletAddress, creatingWallet, createWallet]);
 
-  // When wallet becomes available, complete onboarding
+  // When embedded wallet becomes available, complete onboarding
   useEffect(() => {
     if (step === 'connect' && walletAddress && privyUserId) {
       handleComplete();
@@ -62,6 +73,12 @@ const Onboarding = () => {
       toast.error('Please connect first');
       return;
     }
+
+    if (!walletAddress) {
+      toast.error('Wallet creation is still in progress');
+      return;
+    }
+
     setSaving(true);
     try {
       const { data, error } = await supabase.functions.invoke('save-onboarding', {
@@ -77,7 +94,21 @@ const Onboarding = () => {
           password,
         },
       });
-      if (error) throw error;
+
+      const responseError = typeof data === 'object' && data && 'error' in data ? String((data as any).error) : '';
+
+      if (error) {
+        const errorText = `${error.message ?? ''} ${(error as any)?.context?.error ?? ''} ${responseError}`.toLowerCase();
+
+        if (errorText.includes('pseudo') || errorText.includes('username') || errorText.includes('already taken') || (error as any)?.status === 409) {
+          setPseudoError('This username is already taken');
+          setStep('pseudo');
+          return;
+        }
+
+        throw error;
+      }
+
       toast.success('Welcome to ReforestWallet! 🌱');
       setStep('complete');
       setTimeout(() => navigate('/'), 1500);
@@ -86,7 +117,7 @@ const Onboarding = () => {
       const contextMessage = err?.context?.error || '';
       const fullMessage = `${rawMessage} ${contextMessage}`.toLowerCase();
 
-      if (fullMessage.includes('pseudo') || fullMessage.includes('username')) {
+      if (fullMessage.includes('pseudo') || fullMessage.includes('username') || fullMessage.includes('already taken')) {
         setPseudoError('This username is already taken');
         setStep('pseudo');
       } else {
@@ -225,11 +256,15 @@ const Onboarding = () => {
             <div className="text-center">
               <div className={iconBox}><TreePine className={iconClass} /></div>
               <h2 className={heading}>Create your ReforestWallet</h2>
-              <p className={subtitle}>Creating your secure wallet...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Creating your secure wallet...</p>
             </div>
             <div className="flex flex-col items-center gap-3 py-4">
               <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 animate-spin text-primary" />
-              <p className="text-xs sm:text-sm text-muted-foreground">Creating your ReforestWallet...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {connectedAddress && !walletAddress
+                  ? 'Detected an external wallet, creating your embedded ReforestWallet...'
+                  : 'Creating your ReforestWallet...'}
+              </p>
             </div>
           </div>
         )}
