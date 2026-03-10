@@ -1,7 +1,7 @@
 import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { useWallet } from '@/hooks/useWallet';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Search, Settings, Eye, EyeOff, TrendingUp, TrendingDown } from 'lucide-react';
+import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Search, Settings, Eye, EyeOff, TrendingUp } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useState } from 'react';
 
