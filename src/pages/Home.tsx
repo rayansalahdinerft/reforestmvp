@@ -127,40 +127,46 @@ const Home = () => {
 
             {/* My Assets */}
             <div>
-              <h3 className="text-base font-semibold text-primary mb-3">My Assets</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold text-foreground">My Assets</h3>
+                <span className="text-xs text-muted-foreground">{sortedBalances.length} tokens</span>
+              </div>
               {loading ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-[72px] rounded-2xl bg-card border border-border animate-pulse" />
+                <div className="space-y-1">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-[60px] rounded-xl bg-card/50 animate-pulse" />
                   ))}
                 </div>
               ) : sortedBalances.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8 text-sm">No tokens found</p>
+                <div className="text-center py-10">
+                  <p className="text-muted-foreground text-sm mb-1">No tokens found</p>
+                  <p className="text-muted-foreground/60 text-xs">Buy or receive tokens to get started</p>
+                </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {sortedBalances.map((token) => (
                     <div
                       key={token.symbol}
-                      className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-card border border-border active:bg-secondary transition-all"
+                      className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-card/60 active:bg-card/80 transition-all"
                     >
                       <div className="flex items-center gap-3">
                         {token.logoURI ? (
-                          <img src={token.logoURI} alt={token.symbol} className="w-10 h-10 rounded-full" />
+                          <img src={token.logoURI} alt={token.symbol} className="w-9 h-9 rounded-full" />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-primary">
+                          <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-primary">
                             {token.symbol.slice(0, 3)}
                           </div>
                         )}
                         <div>
-                          <p className="font-semibold text-sm text-foreground">{token.symbol}</p>
-                          <p className="text-xs text-muted-foreground tabular-nums">
+                          <p className="font-semibold text-sm text-foreground">{token.name}</p>
+                          <p className="text-[11px] text-muted-foreground tabular-nums">
                             {token.balance} {token.symbol}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-sm text-foreground tabular-nums">
-                          ${token.balanceUsd.toFixed(2)}
+                          €{token.balanceUsd.toFixed(2)}
                         </p>
                       </div>
                     </div>

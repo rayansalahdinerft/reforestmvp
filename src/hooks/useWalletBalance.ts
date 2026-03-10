@@ -143,7 +143,7 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
       return cachedPrices;
     }
 
-    const ids = ['ethereum', 'usd-coin', 'tether'];
+    const ids = [...new Set(ERC20_TOKENS.map(t => t.coingeckoId).concat('ethereum'))];
     
     // Try CoinGecko API directly first
     try {
@@ -158,11 +158,10 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
       
       if (priceRes.ok) {
         const priceData = await priceRes.json();
-        const prices: Record<string, number> = {
-          ethereum: priceData.ethereum?.usd || 0,
-          'usd-coin': priceData['usd-coin']?.usd || 1,
-          tether: priceData.tether?.usd || 1,
-        };
+        const prices: Record<string, number> = {};
+        for (const id of ids) {
+          prices[id] = priceData[id]?.usd || (id === 'usd-coin' || id === 'tether' || id === 'dai' ? 1 : 0);
+        }
         cachedPrices = prices;
         cacheTimestamp = now;
         return prices;
