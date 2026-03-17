@@ -19,6 +19,13 @@ if (!globalForPolyfills.process) {
   globalForPolyfills.process = process;
 }
 
+// Patch process.nextTick for Web3Auth's stream dependencies
+if (globalForPolyfills.process && typeof globalForPolyfills.process.nextTick !== 'function') {
+  (globalForPolyfills.process as any).nextTick = (fn: (...args: any[]) => void, ...args: any[]) => {
+    setTimeout(() => fn(...args), 0);
+  };
+}
+
 const bootstrap = async () => {
   const { default: App } = await import("./App.tsx");
   createRoot(document.getElementById("root")!).render(<App />);
