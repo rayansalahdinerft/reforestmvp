@@ -16,10 +16,23 @@ const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
   const { openConnect, address, authenticated, embeddedWallet, ready } = useWallet();
   const { profile } = useOnboarding();
+  const { tokens: marketTokens } = useMarketData();
   const navigate = useNavigate();
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Build a map of symbol -> sparkline data & 24h change from market data
+  const sparklineMap = useMemo(() => {
+    const map: Record<string, { sparkline: number[]; change24h: number }> = {};
+    for (const mt of marketTokens) {
+      const sym = mt.symbol.toUpperCase();
+      if (mt.sparkline_in_7d?.price && mt.sparkline_in_7d.price.length > 0) {
+        map[sym] = { sparkline: mt.sparkline_in_7d.price, change24h: mt.price_change_percentage_24h };
+      }
+    }
+    return map;
+  }, [marketTokens]);
 
   useEffect(() => {
     if (ready && authenticated && !embeddedWallet) {
