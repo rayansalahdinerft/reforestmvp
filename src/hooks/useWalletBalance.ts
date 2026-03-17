@@ -130,10 +130,19 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
   const [priceError, setPriceError] = useState(false);
   const fetchingRef = useRef(false);
 
-  // Get native balance
-  const { data: nativeBalance, refetch: refetchBalance } = useBalance({
-    address: address as `0x${string}` | undefined,
-  });
+  // Native ETH balance state
+  const [nativeBalanceWei, setNativeBalanceWei] = useState<bigint>(0n);
+
+  const fetchNativeBalance = useCallback(async () => {
+    if (!address) return;
+    try {
+      const publicClient = createPublicClient({ chain: mainnet, transport: http() });
+      const bal = await publicClient.getBalance({ address: address as `0x${string}` });
+      setNativeBalanceWei(bal);
+    } catch (e) {
+      console.error('Error fetching native balance:', e);
+    }
+  }, [address]);
 
   const fetchPrices = async (): Promise<Record<string, number>> => {
     // Check cache first
