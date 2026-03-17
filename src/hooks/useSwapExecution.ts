@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
-import { parseUnits, formatUnits, createPublicClient, http } from 'viem';
+import { useWallet } from '@/hooks/useWallet';
+import { parseUnits, formatUnits, createPublicClient, createWalletClient, custom, http } from 'viem';
 import { mainnet, polygon, arbitrum, optimism, base, avalanche, bsc } from 'viem/chains';
 import { supabase } from '@/integrations/supabase/client';
 import { ERC20_ABI, NATIVE_TOKEN_ADDRESS } from '@/config/contracts';
