@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X, CreditCard, ArrowLeftRight, Send } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { parseEther, parseUnits, isAddress } from 'viem';
@@ -15,12 +16,14 @@ import SwapSuccessConfetti from './SwapSuccessConfetti';
 import { addSwapToHistory } from './SwapHistory';
 
 const FEE_PERCENT = 0.01;
-const REFORESTATION_PERCENT = 0.40; // 40% of fee goes to NGO (swap mode)
-const BUY_REFORESTATION_PERCENT = 0.002; // 0.2% of amount goes to NGO (buy mode)
-const CHAIN_ID = 1; // Ethereum mainnet only
+const REFORESTATION_PERCENT = 0.40;
+const BUY_REFORESTATION_PERCENT = 0.002;
+const CHAIN_ID = 1;
 
 const SwapCard = () => {
-  const [mode, setMode] = useState<'swap' | 'buy' | 'send'>('swap');
+  const [searchParams] = useSearchParams();
+  const initialMode = (searchParams.get('mode') as 'swap' | 'buy' | 'send') || 'swap';
+  const [mode, setMode] = useState<'swap' | 'buy' | 'send'>(initialMode);
   const [sellAmount, setSellAmount] = useState('');
   const [buyAmount, setBuyAmount] = useState('');
   const [buyFiatAmount, setBuyFiatAmount] = useState('');
