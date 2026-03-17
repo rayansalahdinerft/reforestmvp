@@ -1,69 +1,47 @@
-import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
-import { useCallback, useMemo } from 'react';
+import { useWeb3AuthContext } from '@/providers/WalletProvider';
+import { useCallback } from 'react';
 
 /**
- * Unified wallet hook wrapping Privy
+ * Unified wallet hook wrapping Web3Auth
  */
 export const useWallet = () => {
-  const { ready, authenticated, user, login, logout } = usePrivy();
-  const { wallets } = useWallets();
-  const { createWallet } = useCreateWallet();
-
-  const embeddedWallet = useMemo(
-    () => wallets.find((wallet: any) => wallet.walletClientType === 'privy') ?? null,
-    [wallets]
-  );
-
-  const externalWallet = useMemo(
-    () => wallets.find((wallet: any) => wallet.walletClientType !== 'privy') ?? null,
-    [wallets]
-  );
-
-  const activeWallet = embeddedWallet ?? externalWallet ?? null;
-  const address = activeWallet?.address ?? null;
-  const isConnected = ready && authenticated && !!address;
-  const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
+  const {
+    web3auth,
+    provider,
+    address,
+    isConnected,
+    ready,
+    authenticated,
+    user,
+    login,
+    logout,
+  } = useWeb3AuthContext();
 
   const openConnect = useCallback(async () => {
     if (!ready) return;
-
-    if (authenticated) {
-      if (!embeddedWallet) {
-        try {
-          await createWallet();
-        } catch (error) {
-          console.error('Failed to create embedded wallet:', error);
-        }
-      }
-      return;
+    if (!authenticated) {
+      await login();
     }
-
-    login();
-  }, [ready, authenticated, embeddedWallet, createWallet, login]);
+  }, [ready, authenticated, login]);
 
   const disconnect = useCallback(async () => {
     await logout();
   }, [logout]);
 
   const getProvider = useCallback(async () => {
-    if (!activeWallet) return null;
-    try {
-      return await activeWallet.getEthereumProvider();
-    } catch {
-      return null;
-    }
-  }, [activeWallet]);
+    return provider ?? null;
+  }, [provider]);
 
   return {
     address,
     isConnected,
     ready,
     authenticated,
-    chainId,
-    activeWallet,
-    embeddedWallet,
-    externalWallet,
-    wallets,
+    chainId: 1,
+    activeWallet: provider ? { address, chainId: '1' } : null,
+    embeddedWallet: provider ? { address } : null,
+    externalWallet: null,
+    wallets: provider ? [{ address, walletClientType: 'web3auth' }] : [],
     user,
     connectors: [],
     isPending: !ready,

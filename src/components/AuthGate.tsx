@@ -1,8 +1,8 @@
-import { usePrivy } from '@privy-io/react-auth';
+import { useWallet } from '@/hooks/useWallet';
 import { Loader2 } from 'lucide-react';
 
 const AuthGate = ({ children }: { children: React.ReactNode }) => {
-  const { ready, authenticated, login } = usePrivy();
+  const { ready, authenticated, openConnect } = useWallet();
 
   if (!ready) {
     return (
@@ -23,7 +23,7 @@ const AuthGate = ({ children }: { children: React.ReactNode }) => {
           </p>
         </div>
         <button
-          onClick={login}
+          onClick={openConnect}
           className="w-full max-w-[320px] py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-base active:scale-[0.97] transition-transform"
         >
           Get Started
