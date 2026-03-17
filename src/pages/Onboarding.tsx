@@ -44,11 +44,11 @@ const Onboarding = () => {
     try {
       const { data, error } = await supabase.functions.invoke('save-onboarding', {
         body: {
-          dynamicUserId: privyUserId,
+          dynamicUserId: web3AuthUserId,
           firstName: pseudo.trim(),
           lastName: '',
           pseudo: pseudo.trim(),
-          email: privyEmail,
+          email: web3AuthEmail,
           dateOfBirth: null,
           avatarUrl: `preset:${selectedAvatar}`,
           walletAddress: null,
