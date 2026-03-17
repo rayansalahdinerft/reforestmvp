@@ -29,8 +29,25 @@ export const useSwapExecution = () => {
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
-  const { address: userAddress } = useAccount();
-  const { sendTransactionAsync } = useSendTransaction();
+  const { address: userAddress, getProvider } = useWallet();
+
+  const sendTransaction = async (params: { to: `0x${string}`; data?: `0x${string}`; value?: bigint; chainId?: number }) => {
+    const web3Provider = await getProvider();
+    if (!web3Provider) throw new Error('No provider');
+    const chain = params.chainId ? CHAIN_CONFIG[params.chainId] ?? mainnet : mainnet;
+    const walletClient = createWalletClient({
+      chain,
+      transport: custom(web3Provider),
+      account: userAddress as `0x${string}`,
+    });
+    return await walletClient.sendTransaction({
+      to: params.to,
+      data: params.data,
+      value: params.value,
+      account: userAddress as `0x${string}`,
+      chain,
+    });
+  };
 
   const checkAndApproveToken = async (
     tokenAddress: `0x${string}`,

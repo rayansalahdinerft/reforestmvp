@@ -309,12 +309,15 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
 
   // Refetch function that also refreshes the balance from chain
   const refetch = useCallback(async () => {
-    // Clear cache to force fresh prices
     cachedPrices = {};
     cacheTimestamp = 0;
-    await refetchBalance();
+    await fetchNativeBalance();
     await fetchBalances();
-  }, [fetchBalances, refetchBalance]);
+  }, [fetchBalances, fetchNativeBalance]);
+
+  useEffect(() => {
+    fetchNativeBalance();
+  }, [fetchNativeBalance]);
 
   useEffect(() => {
     fetchBalances();
