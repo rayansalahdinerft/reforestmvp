@@ -27,16 +27,13 @@ const CACHE_TTL_MS = 60 * 1000; // 60 seconds
 
 // CoinGecko IDs (used for market data + sparkline 7D)
 const TOKEN_IDS = [
-  // Major
-  'bitcoin', 'ethereum', 'binancecoin', 'solana',
-  // Layer 2
-  'arbitrum', 'avalanche-2',
-  // DeFi
-  'uniswap', 'aave', 'chainlink', 'curve-dao-token',
-  // Stablecoins
-  'usd-coin', 'tether', 'dai',
-  // Meme
-  'dogecoin', 'shiba-inu', 'pepe', 'bonk',
+  'bitcoin', 'ethereum', 'tether', 'binancecoin', 'solana',
+  'usd-coin', 'ripple', 'cardano', 'dogecoin', 'avalanche-2',
+  'tron', 'chainlink', 'polkadot', 'matic-network', 'shiba-inu',
+  'dai', 'uniswap', 'litecoin', 'pepe', 'aave',
+  'render-token', 'arbitrum', 'fetch-ai', 'maker', 'optimism',
+  'the-graph', 'starknet', 'lido-dao', 'worldcoin-wld', 'pendle',
+  'curve-dao-token', 'bonk',
 ];
 
 // Category mapping
