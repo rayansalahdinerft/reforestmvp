@@ -9,6 +9,8 @@ import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
+import { useMarketData } from '@/hooks/useMarketData';
+import SparklineChart from '@/components/SparklineChart';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
