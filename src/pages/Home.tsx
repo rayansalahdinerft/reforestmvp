@@ -1,15 +1,14 @@
 import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { useWallet } from '@/hooks/useWallet';
-import { useActiveWallet } from '@/contexts/ActiveWalletContext';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, Send, ArrowDownToLine, ArrowLeftRight, DollarSign, Eye, EyeOff, TrendingUp, Copy, Check, X } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import qrcode from 'qrcode-generator';
 import { toast } from 'sonner';
 import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
 import { useOnboarding } from '@/hooks/useOnboarding';
-import { resolveAvatarUrl } from '@/utils/avatarResolver';
+import FloatingLeaves from '@/components/impact/FloatingLeaves';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -20,7 +19,11 @@ const Home = () => {
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Web3Auth handles wallet creation automatically on connect
+  useEffect(() => {
+    if (ready && authenticated && !embeddedWallet) {
+      openConnect();
+    }
+  }, [ready, authenticated, embeddedWallet, openConnect]);
 
   const sortedBalances = [...balances].sort((a, b) => b.balanceUsd - a.balanceUsd);
 
@@ -33,10 +36,6 @@ const Home = () => {
     }
   };
 
-  const truncatedAddress = address
-    ? `${address.slice(0, 6)}...${address.slice(-4)}`
-    : '';
-
   const qrSvg = useMemo(() => {
     if (!address) return '';
     const qr = qrcode(0, 'M');
@@ -46,10 +45,11 @@ const Home = () => {
   }, [address]);
 
   return (
-    <div className="min-h-[100dvh] bg-background relative">
+    <div className="min-h-[100dvh] bg-background relative overflow-hidden">
+      <FloatingLeaves />
       <div className="pt-[max(0.75rem,env(safe-area-inset-top))]" />
 
-      <div className="px-4 pb-24 space-y-5">
+      <div className="px-4 pb-24 space-y-5 relative z-10">
         {!isConnected ? (
           <div className="mt-4">
             <div
@@ -65,49 +65,41 @@ const Home = () => {
         ) : (
           <>
             {/* Balance Card */}
-            <div
-              className="rounded-3xl p-5 relative overflow-hidden"
-              style={{ background: 'linear-gradient(145deg, #152012, #1A2917)' }}
-            >
-              {/* Decorative circles */}
-              <div
-                className="absolute right-4 top-4 w-32 h-32 rounded-full opacity-40"
-                style={{ background: 'radial-gradient(circle, #2d5a27 0%, transparent 70%)' }}
-              />
-              <div
-                className="absolute right-16 top-8 w-24 h-24 rounded-full opacity-30"
-                style={{ background: 'radial-gradient(circle, #1e4a1a 0%, transparent 70%)' }}
-              />
-              <div
-                className="absolute -left-4 -bottom-4 w-20 h-20 rounded-full opacity-25"
-                style={{ background: 'radial-gradient(circle, #2d5a27 0%, transparent 70%)' }}
-              />
+            <div className="rounded-3xl relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #0D1A0B, #152012 40%, #1A2917)' }}>
+              {/* Organic shapes */}
+              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsl(142 76% 52% / 0.25), transparent 70%)' }} />
+              <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(162 72% 48% / 0.3), transparent 70%)' }} />
+              <div className="absolute -left-6 bottom-0 w-24 h-24 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(142 76% 52% / 0.2), transparent 70%)' }} />
+              <div className="absolute left-1/3 -bottom-4 w-36 h-36 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, hsl(142 76% 52% / 0.15), transparent 70%)' }} />
+              
+              {/* Subtle leaf texture line */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] opacity-20" style={{ background: 'linear-gradient(90deg, transparent, hsl(142 76% 52% / 0.5), transparent)' }} />
 
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm text-foreground/50 font-medium">Total Balance</p>
-                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform">
-                    {hideBalance ? <EyeOff className="w-4 h-4 text-foreground/50" /> : <Eye className="w-4 h-4 text-foreground/50" />}
+              <div className="relative z-10 px-5 pt-5 pb-5">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-foreground/40 font-medium tracking-wider uppercase">Total Balance</p>
+                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-foreground/5">
+                    {hideBalance ? <EyeOff className="w-3.5 h-3.5 text-foreground/40" /> : <Eye className="w-3.5 h-3.5 text-foreground/40" />}
                   </button>
                 </div>
-                <p className="text-[2.25rem] font-bold text-foreground tabular-nums tracking-tight mb-3 leading-none">
+                <p className="text-[2.5rem] font-bold text-foreground tabular-nums tracking-tight mb-4 leading-none">
                   {hideBalance ? '••••••' : `€${totalValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold">
                     <TrendingUp className="w-3 h-3" />
                     +0.00%
                   </span>
-                  <span className="text-xs text-foreground/40">Last 24h</span>
+                  <span className="text-[10px] text-foreground/30">Last 24h</span>
                 </div>
                 {priceError && (
-                  <p className="text-xs text-yellow-500 mt-1">⚠️ Prices may be inaccurate</p>
+                  <p className="text-xs text-yellow-500 mt-2">⚠️ Prices may be inaccurate</p>
                 )}
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-2.5">
               {[
                 { icon: Send, label: 'Envoyer', action: () => setActivePanel('send') },
                 { icon: ArrowDownToLine, label: 'Recevoir', action: () => setActivePanel('receive') },
@@ -117,12 +109,12 @@ const Home = () => {
                 <button
                   key={label}
                   onClick={action}
-                  className="flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border/50 active:scale-95 active:bg-secondary transition-all"
+                  className="flex flex-col items-center gap-2 py-3 rounded-2xl bg-card border border-border/40 active:scale-95 active:bg-secondary transition-all"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-secondary/80 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-foreground" />
+                  <div className="w-11 h-11 rounded-xl bg-secondary/80 flex items-center justify-center">
+                    <Icon className="w-[18px] h-[18px] text-foreground" />
                   </div>
-                  <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+                  <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
                 </button>
               ))}
             </div>
@@ -131,12 +123,12 @@ const Home = () => {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-base font-semibold text-foreground">My Assets</h3>
-                <span className="text-xs text-muted-foreground">{sortedBalances.length} tokens</span>
+                <span className="text-xs text-primary/60">{sortedBalances.length} tokens</span>
               </div>
               {loading ? (
                 <div className="space-y-1">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-[60px] rounded-xl bg-card/50 animate-pulse" />
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="h-[56px] rounded-xl bg-card/50 animate-pulse" />
                   ))}
                 </div>
               ) : sortedBalances.length === 0 ? (
@@ -145,7 +137,7 @@ const Home = () => {
                   <p className="text-muted-foreground/60 text-xs">Buy or receive tokens to get started</p>
                 </div>
               ) : (
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {sortedBalances.map((token) => (
                     <div
                       key={token.symbol}
@@ -153,7 +145,7 @@ const Home = () => {
                     >
                       <div className="flex items-center gap-3">
                         {token.logoURI ? (
-                          <img src={token.logoURI} alt={token.symbol} className="w-9 h-9 rounded-full" />
+                          <img src={token.logoURI} alt={token.symbol} className="w-9 h-9 rounded-full bg-secondary/50" />
                         ) : (
                           <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-primary">
                             {token.symbol.slice(0, 3)}
