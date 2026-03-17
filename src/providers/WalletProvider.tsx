@@ -12,6 +12,20 @@ const web3AuthContextConfig: Web3AuthContextConfig = {
   web3AuthOptions: {
     clientId: WEB3AUTH_CLIENT_ID,
     web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
+    uiConfig: {
+      appName: 'ReforestWallet',
+      appUrl: 'https://reforestmvp.lovable.app',
+      logoLight: 'https://reforestmvp.lovable.app/icon.png',
+      logoDark: 'https://reforestmvp.lovable.app/icon.png',
+      defaultLanguage: 'fr',
+      mode: 'dark',
+      theme: {
+        primary: '#34D399',
+        onPrimary: '#000000',
+      },
+      loginMethodsOrder: ['google', 'apple', 'github', 'email_passwordless'],
+      primaryButton: 'socialLogin',
+    },
   },
 };
 
