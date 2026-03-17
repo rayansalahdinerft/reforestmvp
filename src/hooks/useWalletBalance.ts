@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useWallet } from '@/hooks/useWallet';
-import { useBalance } from 'wagmi';
-import { createPublicClient, http, formatUnits } from 'viem';
+import { createPublicClient, http, formatUnits, formatEther } from 'viem';
 import { mainnet } from 'viem/chains';
 import { supabase } from '@/integrations/supabase/client';
 
