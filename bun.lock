@@ -43,6 +43,7 @@
         "@tanstack/react-query": "^5.90.20",
         "@types/three": "^0.160.0",
         "@web3auth/modal": "^10.15.0",
+        "buffer": "^6.0.3",
         "canvas-confetti": "^1.9.4",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -1951,13 +1952,7 @@
 
     "@eslint/eslintrc/globals": ["globals@14.0.0", "", {}, "sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ=="],
 
-    "@ethereumjs/common/@ethereumjs/util": ["@ethereumjs/util@10.1.1", "", { "dependencies": { "@ethereumjs/rlp": "^10.1.1", "@noble/curves": "^2.0.1", "@noble/hashes": "^2.0.1" } }, "sha512-r2EhaeEmLZXVs1dT2HJFQysAkr63ZWATu/9tgYSp1IlvjvwyC++DLg5kCDwMM49HBq3sOAhrPnXkoqf9DV2gbw=="],
-
     "@ethereumjs/common/eventemitter3": ["eventemitter3@5.0.1", "", {}, "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="],
-
-    "@ethereumjs/tx/@ethereumjs/rlp": ["@ethereumjs/rlp@10.1.1", "", { "bin": { "rlp": "bin/rlp.cjs" } }, "sha512-jbnWTEwcpoY+gE0r+wxfDG9zgiu54DcTcwnc9sX3DsqKR4l5K7x2V8mQL3Et6hURa4DuT9g7z6ukwpBLFchszg=="],
-
-    "@ethereumjs/tx/@ethereumjs/util": ["@ethereumjs/util@10.1.1", "", { "dependencies": { "@ethereumjs/rlp": "^10.1.1", "@noble/curves": "^2.0.1", "@noble/hashes": "^2.0.1" } }, "sha512-r2EhaeEmLZXVs1dT2HJFQysAkr63ZWATu/9tgYSp1IlvjvwyC++DLg5kCDwMM49HBq3sOAhrPnXkoqf9DV2gbw=="],
 
     "@ethereumjs/tx/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
 
@@ -1971,8 +1966,6 @@
 
     "@ionic/utils-fs/fs-extra": ["fs-extra@9.1.0", "", { "dependencies": { "at-least-node": "^1.0.0", "graceful-fs": "^4.2.0", "jsonfile": "^6.0.1", "universalify": "^2.0.0" } }, "sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ=="],
 
-    "@ionic/utils-process/signal-exit": ["signal-exit@3.0.7", "", {}, "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="],
-
     "@isaacs/cliui/string-width": ["string-width@5.1.2", "", { "dependencies": { "eastasianwidth": "^0.2.0", "emoji-regex": "^9.2.2", "strip-ansi": "^7.0.1" } }, "sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA=="],
 
     "@isaacs/cliui/strip-ansi": ["strip-ansi@7.1.0", "", { "dependencies": { "ansi-regex": "^6.0.1" } }, "sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ=="],
@@ -1982,12 +1975,6 @@
     "@metamask/abi-utils/@metamask/utils": ["@metamask/utils@11.10.0", "", { "dependencies": { "@ethereumjs/tx": "^4.2.0", "@metamask/superstruct": "^3.1.0", "@noble/hashes": "^1.3.1", "@scure/base": "^1.1.3", "@types/debug": "^4.1.7", "@types/lodash": "^4.17.20", "debug": "^4.3.4", "lodash": "^4.17.21", "pony-cause": "^2.1.10", "semver": "^7.5.4", "uuid": "^9.0.1" } }, "sha512-+bWmTOANx1MbBW6RFM8Se4ZoigFYGXiuIrkhjj4XnG5Aez8uWaTSZ76yn9srKKClv+PoEVoAuVtcUOogFEMUNA=="],
 
     "@metamask/delegation-core/@metamask/utils": ["@metamask/utils@11.10.0", "", { "dependencies": { "@ethereumjs/tx": "^4.2.0", "@metamask/superstruct": "^3.1.0", "@noble/hashes": "^1.3.1", "@scure/base": "^1.1.3", "@types/debug": "^4.1.7", "@types/lodash": "^4.17.20", "debug": "^4.3.4", "lodash": "^4.17.21", "pony-cause": "^2.1.10", "semver": "^7.5.4", "uuid": "^9.0.1" } }, "sha512-+bWmTOANx1MbBW6RFM8Se4ZoigFYGXiuIrkhjj4XnG5Aez8uWaTSZ76yn9srKKClv+PoEVoAuVtcUOogFEMUNA=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors": ["@metamask/rpc-errors@6.4.0", "", { "dependencies": { "@metamask/utils": "^9.0.0", "fast-safe-stringify": "^2.0.6" } }, "sha512-1ugFO1UoirU2esS3juZanS/Fo8C8XYocCuBpfZI5N7ECtoG+zu0wF+uWZASik6CkO6w9n/Iebt4iI4pT0vptpg=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils": ["@metamask/utils@8.5.0", "", { "dependencies": { "@ethereumjs/tx": "^4.2.0", "@metamask/superstruct": "^3.0.0", "@noble/hashes": "^1.3.1", "@scure/base": "^1.1.3", "@types/debug": "^4.1.7", "debug": "^4.3.4", "pony-cause": "^2.1.10", "semver": "^7.5.4", "uuid": "^9.0.1" } }, "sha512-I6bkduevXb72TIM9q2LRO63JSsF9EXduh3sBr9oybNX2hNNpr/j1tEjXrsG0Uabm4MJ1xkGAQEMwifvKZIkyxQ=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils": ["@metamask/utils@8.5.0", "", { "dependencies": { "@ethereumjs/tx": "^4.2.0", "@metamask/superstruct": "^3.0.0", "@noble/hashes": "^1.3.1", "@scure/base": "^1.1.3", "@types/debug": "^4.1.7", "debug": "^4.3.4", "pony-cause": "^2.1.10", "semver": "^7.5.4", "uuid": "^9.0.1" } }, "sha512-I6bkduevXb72TIM9q2LRO63JSsF9EXduh3sBr9oybNX2hNNpr/j1tEjXrsG0Uabm4MJ1xkGAQEMwifvKZIkyxQ=="],
 
     "@metamask/json-rpc-middleware-stream/readable-stream": ["readable-stream@3.6.2", "", { "dependencies": { "inherits": "^2.0.3", "string_decoder": "^1.1.1", "util-deprecate": "^1.0.1" } }, "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA=="],
 
@@ -2007,8 +1994,6 @@
 
     "@metamask/sdk-communication-layer/readable-stream": ["readable-stream@3.6.2", "", { "dependencies": { "inherits": "^2.0.3", "string_decoder": "^1.1.1", "util-deprecate": "^1.0.1" } }, "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA=="],
 
-    "@metamask/sdk-communication-layer/uuid": ["uuid@8.3.2", "", { "bin": "dist/bin/uuid" }, "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="],
-
     "@metamask/utils/@ethereumjs/tx": ["@ethereumjs/tx@4.2.0", "", { "dependencies": { "@ethereumjs/common": "^3.2.0", "@ethereumjs/rlp": "^4.0.1", "@ethereumjs/util": "^8.1.0", "ethereum-cryptography": "^2.0.0" } }, "sha512-1nc6VO4jtFd172BbSnTnDQVr9IYBFl1y4xPzZdtkrkKIncBCkdbgfdRV+MiTkJYAtTxvV12GRZLqBFT1PNK6Yw=="],
 
     "@metamask/utils/uuid": ["uuid@9.0.1", "", { "bin": "dist/bin/uuid" }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
@@ -2027,65 +2012,11 @@
 
     "@toruslabs/broadcast-channel/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
 
-    "@toruslabs/broadcast-channel/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/customauth/@toruslabs/broadcast-channel": ["@toruslabs/broadcast-channel@12.0.0", "", { "dependencies": { "@babel/runtime": "^7.26.9", "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/metadata-helpers": "^7.0.1", "base64url": "^3.0.1", "loglevel": "^1.9.2", "oblivious-set": "1.4.0", "socket.io-client": "^4.8.1", "unload": "^2.4.1" } }, "sha512-ZdkZWEbxLaoRFPXYrlAnuaXDejsYS7Nl0mL+trBkRcN/agsNoOeS/t7LExGP74Opdcj06bYJeB5KmhN6938kKw=="],
-
-    "@toruslabs/customauth/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@toruslabs/customauth/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/customauth/@toruslabs/http-helpers": ["@toruslabs/http-helpers@8.1.1", "", { "dependencies": { "deepmerge": "^4.3.1", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "^7.x", "@sentry/core": "^9.x" } }, "sha512-bcymgOEAHjWJtqWvbCw+jCLk8vch5V53E/17moM0kAQO+tY0omhsMpZYDtFcbF3xl8/fLyW7G0HGUfThPykQ7A=="],
-
-    "@toruslabs/customauth/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@toruslabs/customauth/@toruslabs/session-manager": ["@toruslabs/session-manager@4.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2" }, "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "^4.35.0" } }, "sha512-26GflDkna9kDF4kd7+XmFAsI69CIz/ZSmsbQH6ehylaNDYcro/xuPQB2SnzyRMi4VMkLXYDwHapm2OBURmuMbQ=="],
-
-    "@toruslabs/customauth/deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
-
-    "@toruslabs/ethereum-controllers/@ethereumjs/rlp": ["@ethereumjs/rlp@10.1.1", "", { "bin": { "rlp": "bin/rlp.cjs" } }, "sha512-jbnWTEwcpoY+gE0r+wxfDG9zgiu54DcTcwnc9sX3DsqKR4l5K7x2V8mQL3Et6hURa4DuT9g7z6ukwpBLFchszg=="],
-
-    "@toruslabs/ethereum-controllers/@ethereumjs/util": ["@ethereumjs/util@10.1.1", "", { "dependencies": { "@ethereumjs/rlp": "^10.1.1", "@noble/curves": "^2.0.1", "@noble/hashes": "^2.0.1" } }, "sha512-r2EhaeEmLZXVs1dT2HJFQysAkr63ZWATu/9tgYSp1IlvjvwyC++DLg5kCDwMM49HBq3sOAhrPnXkoqf9DV2gbw=="],
-
-    "@toruslabs/ethereum-controllers/@toruslabs/base-controllers": ["@toruslabs/base-controllers@8.17.0", "", { "dependencies": { "@ethereumjs/util": "^10.1.0", "@toruslabs/broadcast-channel": "^12.0.0", "@toruslabs/http-helpers": "^8.1.1", "@web3auth/auth": "^10.8.0", "async-mutex": "^0.5.0", "bignumber.js": "^9.3.1", "bowser": "^2.13.1", "ethereum-cryptography": "^3.2.0", "events": "^3.3.0", "jwt-decode": "^4.0.0", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-AQwl7VANyIwXSCXNnSg5Is8L4W4rMd6LprYthzp5C9DimzGTIqj+rvjvh1dhaM+fbBCHrln75vveiVuW6pRRNA=="],
-
-    "@toruslabs/ethereum-controllers/@toruslabs/http-helpers": ["@toruslabs/http-helpers@8.1.1", "", { "dependencies": { "deepmerge": "^4.3.1", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "^7.x", "@sentry/core": "^9.x" } }, "sha512-bcymgOEAHjWJtqWvbCw+jCLk8vch5V53E/17moM0kAQO+tY0omhsMpZYDtFcbF3xl8/fLyW7G0HGUfThPykQ7A=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth": ["@web3auth/auth@10.8.0", "", { "dependencies": { "@ethereumjs/util": "^10.1.0", "@toruslabs/constants": "^15.0.0", "@toruslabs/customauth": "^21.3.2", "@toruslabs/ffjavascript": "^5.0.0", "@toruslabs/metadata-helpers": "^7.0.2", "@toruslabs/secure-pub-sub": "^3.0.2", "@toruslabs/session-manager": "^4.0.2", "@toruslabs/starkware-crypto": "^5.0.0", "@toruslabs/tweetnacl-js": "^1.0.4", "base64url": "^3.0.1", "bip39": "^3.1.0", "bn.js": "^5.2.2", "deepmerge": "^4.3.1", "enc-utils": "^3.0.0", "end-of-stream": "^1.4.5", "events": "^3.3.0", "json-stable-stringify": "^1.3.0", "loglevel": "^1.9.2", "once": "^1.4.0", "pump": "^3.0.3", "readable-stream": "^4.7.0", "ts-custom-error": "^3.3.1", "typed-emitter": "^2.1.0" }, "optionalDependencies": { "@nx/nx-linux-x64-gnu": "^22.0.2", "@rollup/rollup-linux-x64-gnu": "^4.52.5" }, "peerDependencies": { "@babel/runtime": "7.x", "color": "^5.x" } }, "sha512-c0a7HVzzbO8IygPetCzw6CkUIcFkWlXSjIAQkJwwMSYtWofsHYhYLLMV7cixSgvIOxQKCuRcvO6Qo7fxz9BiBg=="],
-
-    "@toruslabs/ethereum-controllers/deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
-
-    "@toruslabs/ethereum-controllers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@toruslabs/ethereum-controllers/permissionless": ["permissionless@0.3.4", "", { "peerDependencies": { "ox": "^0.11.3", "viem": "^2.44.4" } }, "sha512-pml3Do0e/AMoAq89tzpXlhhxmVdOigQCCoC+df/kRCVFiJ9pQTgzKQKhxYTWWB2xW/AOgwBwGzLBfqFZrDpFiA=="],
-
-    "@toruslabs/ethereum-controllers/uuid": ["uuid@8.3.2", "", { "bin": "dist/bin/uuid" }, "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="],
-
-    "@toruslabs/fetch-node-details/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@toruslabs/fetch-node-details/@toruslabs/http-helpers": ["@toruslabs/http-helpers@8.1.1", "", { "dependencies": { "deepmerge": "^4.3.1", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "^7.x", "@sentry/core": "^9.x" } }, "sha512-bcymgOEAHjWJtqWvbCw+jCLk8vch5V53E/17moM0kAQO+tY0omhsMpZYDtFcbF3xl8/fLyW7G0HGUfThPykQ7A=="],
-
-    "@toruslabs/fnd-base/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@toruslabs/metadata-helpers/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
     "@toruslabs/secure-pub-sub/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/secure-pub-sub/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
 
     "@toruslabs/session-manager/@rollup/rollup-linux-x64-gnu": ["@rollup/rollup-linux-x64-gnu@4.59.0", "", { "os": "linux", "cpu": "x64" }, "sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg=="],
 
     "@toruslabs/session-manager/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/session-manager/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/torus.js/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@toruslabs/torus.js/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/torus.js/@toruslabs/http-helpers": ["@toruslabs/http-helpers@8.1.1", "", { "dependencies": { "deepmerge": "^4.3.1", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "^7.x", "@sentry/core": "^9.x" } }, "sha512-bcymgOEAHjWJtqWvbCw+jCLk8vch5V53E/17moM0kAQO+tY0omhsMpZYDtFcbF3xl8/fLyW7G0HGUfThPykQ7A=="],
-
-    "@toruslabs/torus.js/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
 
     "@typescript-eslint/eslint-plugin/ignore": ["ignore@7.0.5", "", {}, "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg=="],
 
@@ -2119,32 +2050,6 @@
 
     "@web3auth/modal/tailwind-merge": ["tailwind-merge@3.5.0", "", {}, "sha512-I8K9wewnVDkL1NTGoqWmVEIlUcB9gFriAEkXkfCjX5ib8ezGxtR3xD7iZIxrfArjEsH7F1CHD4RFUtxefdqV/A=="],
 
-    "@web3auth/no-modal/@ethereumjs/util": ["@ethereumjs/util@10.1.1", "", { "dependencies": { "@ethereumjs/rlp": "^10.1.1", "@noble/curves": "^2.0.1", "@noble/hashes": "^2.0.1" } }, "sha512-r2EhaeEmLZXVs1dT2HJFQysAkr63ZWATu/9tgYSp1IlvjvwyC++DLg5kCDwMM49HBq3sOAhrPnXkoqf9DV2gbw=="],
-
-    "@web3auth/no-modal/@toruslabs/base-controllers": ["@toruslabs/base-controllers@8.17.0", "", { "dependencies": { "@ethereumjs/util": "^10.1.0", "@toruslabs/broadcast-channel": "^12.0.0", "@toruslabs/http-helpers": "^8.1.1", "@web3auth/auth": "^10.8.0", "async-mutex": "^0.5.0", "bignumber.js": "^9.3.1", "bowser": "^2.13.1", "ethereum-cryptography": "^3.2.0", "events": "^3.3.0", "jwt-decode": "^4.0.0", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-AQwl7VANyIwXSCXNnSg5Is8L4W4rMd6LprYthzp5C9DimzGTIqj+rvjvh1dhaM+fbBCHrln75vveiVuW6pRRNA=="],
-
-    "@web3auth/no-modal/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@web3auth/no-modal/@toruslabs/http-helpers": ["@toruslabs/http-helpers@8.1.1", "", { "dependencies": { "deepmerge": "^4.3.1", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "^7.x", "@sentry/core": "^9.x" } }, "sha512-bcymgOEAHjWJtqWvbCw+jCLk8vch5V53E/17moM0kAQO+tY0omhsMpZYDtFcbF3xl8/fLyW7G0HGUfThPykQ7A=="],
-
-    "@web3auth/no-modal/@toruslabs/secure-pub-sub": ["@toruslabs/secure-pub-sub@3.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2", "loglevel": "^1.9.2", "socket.io-client": "^4.8.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-JxqXSMlKnT2Q8ER0dpjtciT/yYO6KV/bZFxVWF9T6t2u20PaVU+bo9MSYWPxSdz76szEt7DwRHxwjDMhzZKFeA=="],
-
-    "@web3auth/no-modal/@web3auth/auth": ["@web3auth/auth@10.8.0", "", { "dependencies": { "@ethereumjs/util": "^10.1.0", "@toruslabs/constants": "^15.0.0", "@toruslabs/customauth": "^21.3.2", "@toruslabs/ffjavascript": "^5.0.0", "@toruslabs/metadata-helpers": "^7.0.2", "@toruslabs/secure-pub-sub": "^3.0.2", "@toruslabs/session-manager": "^4.0.2", "@toruslabs/starkware-crypto": "^5.0.0", "@toruslabs/tweetnacl-js": "^1.0.4", "base64url": "^3.0.1", "bip39": "^3.1.0", "bn.js": "^5.2.2", "deepmerge": "^4.3.1", "enc-utils": "^3.0.0", "end-of-stream": "^1.4.5", "events": "^3.3.0", "json-stable-stringify": "^1.3.0", "loglevel": "^1.9.2", "once": "^1.4.0", "pump": "^3.0.3", "readable-stream": "^4.7.0", "ts-custom-error": "^3.3.1", "typed-emitter": "^2.1.0" }, "optionalDependencies": { "@nx/nx-linux-x64-gnu": "^22.0.2", "@rollup/rollup-linux-x64-gnu": "^4.52.5" }, "peerDependencies": { "@babel/runtime": "7.x", "color": "^5.x" } }, "sha512-c0a7HVzzbO8IygPetCzw6CkUIcFkWlXSjIAQkJwwMSYtWofsHYhYLLMV7cixSgvIOxQKCuRcvO6Qo7fxz9BiBg=="],
-
-    "@web3auth/no-modal/deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers": ["@toruslabs/base-controllers@8.17.0", "", { "dependencies": { "@ethereumjs/util": "^10.1.0", "@toruslabs/broadcast-channel": "^12.0.0", "@toruslabs/http-helpers": "^8.1.1", "@web3auth/auth": "^10.8.0", "async-mutex": "^0.5.0", "bignumber.js": "^9.3.1", "bowser": "^2.13.1", "ethereum-cryptography": "^3.2.0", "events": "^3.3.0", "jwt-decode": "^4.0.0", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-AQwl7VANyIwXSCXNnSg5Is8L4W4rMd6LprYthzp5C9DimzGTIqj+rvjvh1dhaM+fbBCHrln75vveiVuW6pRRNA=="],
-
-    "@web3auth/ws-embed/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@web3auth/ws-embed/@toruslabs/http-helpers": ["@toruslabs/http-helpers@8.1.1", "", { "dependencies": { "deepmerge": "^4.3.1", "loglevel": "^1.9.2" }, "peerDependencies": { "@babel/runtime": "^7.x", "@sentry/core": "^9.x" } }, "sha512-bcymgOEAHjWJtqWvbCw+jCLk8vch5V53E/17moM0kAQO+tY0omhsMpZYDtFcbF3xl8/fLyW7G0HGUfThPykQ7A=="],
-
-    "@web3auth/ws-embed/@web3auth/auth": ["@web3auth/auth@10.8.0", "", { "dependencies": { "@ethereumjs/util": "^10.1.0", "@toruslabs/constants": "^15.0.0", "@toruslabs/customauth": "^21.3.2", "@toruslabs/ffjavascript": "^5.0.0", "@toruslabs/metadata-helpers": "^7.0.2", "@toruslabs/secure-pub-sub": "^3.0.2", "@toruslabs/session-manager": "^4.0.2", "@toruslabs/starkware-crypto": "^5.0.0", "@toruslabs/tweetnacl-js": "^1.0.4", "base64url": "^3.0.1", "bip39": "^3.1.0", "bn.js": "^5.2.2", "deepmerge": "^4.3.1", "enc-utils": "^3.0.0", "end-of-stream": "^1.4.5", "events": "^3.3.0", "json-stable-stringify": "^1.3.0", "loglevel": "^1.9.2", "once": "^1.4.0", "pump": "^3.0.3", "readable-stream": "^4.7.0", "ts-custom-error": "^3.3.1", "typed-emitter": "^2.1.0" }, "optionalDependencies": { "@nx/nx-linux-x64-gnu": "^22.0.2", "@rollup/rollup-linux-x64-gnu": "^4.52.5" }, "peerDependencies": { "@babel/runtime": "7.x", "color": "^5.x" } }, "sha512-c0a7HVzzbO8IygPetCzw6CkUIcFkWlXSjIAQkJwwMSYtWofsHYhYLLMV7cixSgvIOxQKCuRcvO6Qo7fxz9BiBg=="],
-
-    "@web3auth/ws-embed/deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
-
-    "@web3auth/ws-embed/readable-stream": ["readable-stream@4.7.0", "", { "dependencies": { "abort-controller": "^3.0.0", "buffer": "^6.0.3", "events": "^3.3.0", "process": "^0.11.10", "string_decoder": "^1.3.0" } }, "sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg=="],
-
     "@xrplf/isomorphic/eventemitter3": ["eventemitter3@5.0.1", "", {}, "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="],
 
     "ansi-styles/color-convert": ["color-convert@2.0.1", "", { "dependencies": { "color-name": "~1.1.4" } }, "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ=="],
@@ -2152,10 +2057,6 @@
     "anymatch/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
 
     "bip32/@types/node": ["@types/node@10.12.18", "", {}, "sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ=="],
-
-    "borsh/bs58": ["bs58@4.0.1", "", { "dependencies": { "base-x": "^3.0.2" } }, "sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw=="],
-
-    "bs58check/bs58": ["bs58@4.0.1", "", { "dependencies": { "base-x": "^3.0.2" } }, "sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw=="],
 
     "chokidar/glob-parent": ["glob-parent@5.1.2", "", { "dependencies": { "is-glob": "^4.0.1" } }, "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="],
 
@@ -2201,8 +2102,6 @@
 
     "jayson/commander": ["commander@2.20.3", "", {}, "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ=="],
 
-    "jayson/uuid": ["uuid@8.3.2", "", { "bin": "dist/bin/uuid" }, "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="],
-
     "jayson/ws": ["ws@7.5.10", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": "^5.0.2" } }, "sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ=="],
 
     "jsonfile/universalify": ["universalify@2.0.1", "", {}, "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw=="],
@@ -2227,13 +2126,9 @@
 
     "react-dom/scheduler": ["scheduler@0.23.2", "", { "dependencies": { "loose-envify": "^1.1.0" } }, "sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ=="],
 
-    "react-reconciler/scheduler": ["scheduler@0.21.0", "", { "dependencies": { "loose-envify": "^1.1.0" } }, "sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ=="],
-
     "readdirp/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
 
     "rimraf/glob": ["glob@13.0.6", "", { "dependencies": { "minimatch": "^10.2.2", "minipass": "^7.1.3", "path-scurry": "^2.0.2" } }, "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw=="],
-
-    "ripple-address-codec/base-x": ["base-x@3.0.11", "", { "dependencies": { "safe-buffer": "^5.0.1" } }, "sha512-xz7wQ8xDhdyP7tQxwdteLYeFfS68tSMNCZ/Y37WJ4bhGfKPpqEIlmIyueQHqOyoPhE6xNUqjzRr8ra0eF9VRvA=="],
 
     "rpc-websockets/eventemitter3": ["eventemitter3@5.0.4", "", {}, "sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw=="],
 
@@ -2242,14 +2137,6 @@
     "rpc-websockets/uuid": ["uuid@11.1.0", "", { "bin": "dist/esm/bin/uuid" }, "sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A=="],
 
     "stats-gl/three": ["three@0.170.0", "", {}, "sha512-FQK+LEpYc0fBD+J8g6oSEyyNzjp+Q7Ks1C568WWaoMRLW+TkNNWmenWeGgJjV105Gd+p/2ql1ZcjYvNiPZBhuQ=="],
-
-    "string-width-cjs/emoji-regex": ["emoji-regex@8.0.0", "", {}, "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="],
-
-    "string-width-cjs/strip-ansi": ["strip-ansi@6.0.1", "", { "dependencies": { "ansi-regex": "^5.0.1" } }, "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A=="],
-
-    "strip-ansi/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
-
-    "strip-ansi-cjs/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
 
     "strip-literal/js-tokens": ["js-tokens@9.0.1", "", {}, "sha512-mxa9E9ITFOt0ban3j6L5MpjwegGz6lBQmM1IJkWeBZGcMxto50+eWdjC/52xDbS2vy0k7vIMK0Fe2wfL9OQSpQ=="],
 
@@ -2271,27 +2158,9 @@
 
     "vite/esbuild": ["esbuild@0.21.5", "", { "optionalDependencies": { "@esbuild/aix-ppc64": "0.21.5", "@esbuild/android-arm": "0.21.5", "@esbuild/android-arm64": "0.21.5", "@esbuild/android-x64": "0.21.5", "@esbuild/darwin-arm64": "0.21.5", "@esbuild/darwin-x64": "0.21.5", "@esbuild/freebsd-arm64": "0.21.5", "@esbuild/freebsd-x64": "0.21.5", "@esbuild/linux-arm": "0.21.5", "@esbuild/linux-arm64": "0.21.5", "@esbuild/linux-ia32": "0.21.5", "@esbuild/linux-loong64": "0.21.5", "@esbuild/linux-mips64el": "0.21.5", "@esbuild/linux-ppc64": "0.21.5", "@esbuild/linux-riscv64": "0.21.5", "@esbuild/linux-s390x": "0.21.5", "@esbuild/linux-x64": "0.21.5", "@esbuild/netbsd-x64": "0.21.5", "@esbuild/openbsd-x64": "0.21.5", "@esbuild/sunos-x64": "0.21.5", "@esbuild/win32-arm64": "0.21.5", "@esbuild/win32-ia32": "0.21.5", "@esbuild/win32-x64": "0.21.5" }, "bin": "bin/esbuild" }, "sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw=="],
 
-    "wif/bs58check": ["bs58check@2.1.2", "", { "dependencies": { "bs58": "^4.0.0", "create-hash": "^1.1.0", "safe-buffer": "^5.1.2" } }, "sha512-0TS1jicxdU09dwJMNZtVAfzPi6Q6QeN0pM1Fkzrjn+XYHvzMKPU3pHVpva+769iNVSfIYWf7LJ6WR+BuuMf8cA=="],
-
-    "wrap-ansi-cjs/string-width": ["string-width@4.2.3", "", { "dependencies": { "emoji-regex": "^8.0.0", "is-fullwidth-code-point": "^3.0.0", "strip-ansi": "^6.0.1" } }, "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="],
-
-    "wrap-ansi-cjs/strip-ansi": ["strip-ansi@6.0.1", "", { "dependencies": { "ansi-regex": "^5.0.1" } }, "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A=="],
-
     "xml2js/xmlbuilder": ["xmlbuilder@11.0.1", "", {}, "sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA=="],
 
     "xrpl-secret-numbers/ripple-keypairs": ["ripple-keypairs@2.0.0", "", { "dependencies": { "@noble/curves": "^1.0.0", "@xrplf/isomorphic": "^1.0.0", "ripple-address-codec": "^5.0.0" } }, "sha512-b5rfL2EZiffmklqZk1W+dvSy97v3V/C7936WxCCgDynaGPp7GE6R2XO7EU9O2LlM/z95rj870IylYnOQs+1Rag=="],
-
-    "@ethereumjs/common/@ethereumjs/util/@ethereumjs/rlp": ["@ethereumjs/rlp@10.1.1", "", { "bin": { "rlp": "bin/rlp.cjs" } }, "sha512-jbnWTEwcpoY+gE0r+wxfDG9zgiu54DcTcwnc9sX3DsqKR4l5K7x2V8mQL3Et6hURa4DuT9g7z6ukwpBLFchszg=="],
-
-    "@ethereumjs/common/@ethereumjs/util/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
-
-    "@ethereumjs/common/@ethereumjs/util/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@ethereumjs/tx/@ethereumjs/util/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
-
-    "@ethereumjs/tx/@ethereumjs/util/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@ethereumjs/util/@noble/curves/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
 
     "@ionic/utils-fs/fs-extra/universalify": ["universalify@2.0.1", "", {}, "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw=="],
 
@@ -2309,16 +2178,6 @@
 
     "@metamask/delegation-core/@metamask/utils/uuid": ["uuid@9.0.1", "", { "bin": "dist/bin/uuid" }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
 
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils": ["@metamask/utils@9.3.0", "", { "dependencies": { "@ethereumjs/tx": "^4.2.0", "@metamask/superstruct": "^3.1.0", "@noble/hashes": "^1.3.1", "@scure/base": "^1.1.3", "@types/debug": "^4.1.7", "debug": "^4.3.4", "pony-cause": "^2.1.10", "semver": "^7.5.4", "uuid": "^9.0.1" } }, "sha512-w8CVbdkDrVXFJbfBSlDfafDR6BAkpDmv1bC1UJVCoVny5tW2RKAdn9i68Xf7asYT4TnUhl/hN4zfUiKQq9II4g=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx": ["@ethereumjs/tx@4.2.0", "", { "dependencies": { "@ethereumjs/common": "^3.2.0", "@ethereumjs/rlp": "^4.0.1", "@ethereumjs/util": "^8.1.0", "ethereum-cryptography": "^2.0.0" } }, "sha512-1nc6VO4jtFd172BbSnTnDQVr9IYBFl1y4xPzZdtkrkKIncBCkdbgfdRV+MiTkJYAtTxvV12GRZLqBFT1PNK6Yw=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/uuid": ["uuid@9.0.1", "", { "bin": "dist/bin/uuid" }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx": ["@ethereumjs/tx@4.2.0", "", { "dependencies": { "@ethereumjs/common": "^3.2.0", "@ethereumjs/rlp": "^4.0.1", "@ethereumjs/util": "^8.1.0", "ethereum-cryptography": "^2.0.0" } }, "sha512-1nc6VO4jtFd172BbSnTnDQVr9IYBFl1y4xPzZdtkrkKIncBCkdbgfdRV+MiTkJYAtTxvV12GRZLqBFT1PNK6Yw=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/uuid": ["uuid@9.0.1", "", { "bin": "dist/bin/uuid" }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
-
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx": ["@ethereumjs/tx@4.2.0", "", { "dependencies": { "@ethereumjs/common": "^3.2.0", "@ethereumjs/rlp": "^4.0.1", "@ethereumjs/util": "^8.1.0", "ethereum-cryptography": "^2.0.0" } }, "sha512-1nc6VO4jtFd172BbSnTnDQVr9IYBFl1y4xPzZdtkrkKIncBCkdbgfdRV+MiTkJYAtTxvV12GRZLqBFT1PNK6Yw=="],
 
     "@metamask/rpc-errors/@metamask/utils/uuid": ["uuid@9.0.1", "", { "bin": "dist/bin/uuid" }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
@@ -2335,107 +2194,13 @@
 
     "@metamask/utils/@ethereumjs/tx/ethereum-cryptography": ["ethereum-cryptography@2.2.1", "", { "dependencies": { "@noble/curves": "1.4.2", "@noble/hashes": "1.4.0", "@scure/bip32": "1.4.0", "@scure/bip39": "1.3.0" } }, "sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg=="],
 
-    "@toruslabs/customauth/@toruslabs/broadcast-channel/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/customauth/@toruslabs/metadata-helpers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@toruslabs/customauth/@toruslabs/session-manager/@rollup/rollup-linux-x64-gnu": ["@rollup/rollup-linux-x64-gnu@4.59.0", "", { "os": "linux", "cpu": "x64" }, "sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg=="],
-
-    "@toruslabs/customauth/@toruslabs/session-manager/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/ethereum-controllers/@ethereumjs/util/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
-
-    "@toruslabs/ethereum-controllers/@ethereumjs/util/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@toruslabs/ethereum-controllers/@toruslabs/base-controllers/@toruslabs/broadcast-channel": ["@toruslabs/broadcast-channel@12.0.0", "", { "dependencies": { "@babel/runtime": "^7.26.9", "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/metadata-helpers": "^7.0.1", "base64url": "^3.0.1", "loglevel": "^1.9.2", "oblivious-set": "1.4.0", "socket.io-client": "^4.8.1", "unload": "^2.4.1" } }, "sha512-ZdkZWEbxLaoRFPXYrlAnuaXDejsYS7Nl0mL+trBkRcN/agsNoOeS/t7LExGP74Opdcj06bYJeB5KmhN6938kKw=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@nx/nx-linux-x64-gnu": ["@nx/nx-linux-x64-gnu@22.5.4", "", { "os": "linux", "cpu": "x64" }, "sha512-1+vicSYEOtc7CNMoRCjo59no4gFe8w2nGIT127wk1yeW3EJzRVNlOA7Deu10NUUbzLeOvHc8EFOaU7clT+F7XQ=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@rollup/rollup-linux-x64-gnu": ["@rollup/rollup-linux-x64-gnu@4.59.0", "", { "os": "linux", "cpu": "x64" }, "sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/constants": ["@toruslabs/constants@15.0.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-0nr6vU3FQT2eRsnPYRwfVIkjwawLTkDTkCusiny9DgAw1M2zbmNqPOAqWuljUcDaK/u4VB0/PrN5SzhVBLnNGg=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/ffjavascript": ["@toruslabs/ffjavascript@5.0.0", "", {}, "sha512-smC85L5SREn31pA+XayZ86Cxd+2VeRzKKZ5ytLrMDYb5ZrXpUAd9Hr2HlaJbQiGPQgyR6KxOU9W5qyHSLFJmHg=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/secure-pub-sub": ["@toruslabs/secure-pub-sub@3.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2", "loglevel": "^1.9.2", "socket.io-client": "^4.8.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-JxqXSMlKnT2Q8ER0dpjtciT/yYO6KV/bZFxVWF9T6t2u20PaVU+bo9MSYWPxSdz76szEt7DwRHxwjDMhzZKFeA=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/session-manager": ["@toruslabs/session-manager@4.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2" }, "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "^4.35.0" } }, "sha512-26GflDkna9kDF4kd7+XmFAsI69CIz/ZSmsbQH6ehylaNDYcro/xuPQB2SnzyRMi4VMkLXYDwHapm2OBURmuMbQ=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/starkware-crypto": ["@toruslabs/starkware-crypto@5.0.0", "", { "dependencies": { "assert": "^2.1.0", "bip39": "^3.1.0", "bn.js": "^5.2.1", "elliptic": "^6.6.1", "enc-utils": "^3.0.0", "ethereum-cryptography": "^3.1.0", "hash.js": "^1.1.7" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-CZjpkeuT0hBsX5dNGEekLcjR2n6UHzh682Pt/AheJYL4+zrupqPWZTfvOlo4K3Iihyv6FzRZmrbHLdQutkz5oQ=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/readable-stream": ["readable-stream@4.7.0", "", { "dependencies": { "abort-controller": "^3.0.0", "buffer": "^6.0.3", "events": "^3.3.0", "process": "^0.11.10", "string_decoder": "^1.3.0" } }, "sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg=="],
-
-    "@toruslabs/ethereum-controllers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@toruslabs/fetch-node-details/@toruslabs/http-helpers/deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
-
-    "@toruslabs/torus.js/@toruslabs/http-helpers/deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
-
-    "@toruslabs/torus.js/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
     "@typescript-eslint/typescript-estree/minimatch/brace-expansion": ["brace-expansion@2.0.2", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ=="],
 
     "@walletconnect/utils/ox/@noble/curves": ["@noble/curves@1.9.1", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-k11yZxZg+t+gWvBbIswW0yoJlu8cHOC7dhunwOzoWH/mXGBiYyR4YY6hAEK/3EUs4UpB8la1RfdRpeGsFHkWsA=="],
 
     "@walletconnect/utils/ox/eventemitter3": ["eventemitter3@5.0.1", "", {}, "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="],
 
-    "@web3auth/no-modal/@ethereumjs/util/@ethereumjs/rlp": ["@ethereumjs/rlp@10.1.1", "", { "bin": { "rlp": "bin/rlp.cjs" } }, "sha512-jbnWTEwcpoY+gE0r+wxfDG9zgiu54DcTcwnc9sX3DsqKR4l5K7x2V8mQL3Et6hURa4DuT9g7z6ukwpBLFchszg=="],
-
-    "@web3auth/no-modal/@ethereumjs/util/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
-
-    "@web3auth/no-modal/@ethereumjs/util/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@web3auth/no-modal/@toruslabs/base-controllers/@toruslabs/broadcast-channel": ["@toruslabs/broadcast-channel@12.0.0", "", { "dependencies": { "@babel/runtime": "^7.26.9", "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/metadata-helpers": "^7.0.1", "base64url": "^3.0.1", "loglevel": "^1.9.2", "oblivious-set": "1.4.0", "socket.io-client": "^4.8.1", "unload": "^2.4.1" } }, "sha512-ZdkZWEbxLaoRFPXYrlAnuaXDejsYS7Nl0mL+trBkRcN/agsNoOeS/t7LExGP74Opdcj06bYJeB5KmhN6938kKw=="],
-
-    "@web3auth/no-modal/@toruslabs/base-controllers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@web3auth/no-modal/@toruslabs/secure-pub-sub/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@web3auth/no-modal/@toruslabs/secure-pub-sub/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@nx/nx-linux-x64-gnu": ["@nx/nx-linux-x64-gnu@22.5.4", "", { "os": "linux", "cpu": "x64" }, "sha512-1+vicSYEOtc7CNMoRCjo59no4gFe8w2nGIT127wk1yeW3EJzRVNlOA7Deu10NUUbzLeOvHc8EFOaU7clT+F7XQ=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@rollup/rollup-linux-x64-gnu": ["@rollup/rollup-linux-x64-gnu@4.59.0", "", { "os": "linux", "cpu": "x64" }, "sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/ffjavascript": ["@toruslabs/ffjavascript@5.0.0", "", {}, "sha512-smC85L5SREn31pA+XayZ86Cxd+2VeRzKKZ5ytLrMDYb5ZrXpUAd9Hr2HlaJbQiGPQgyR6KxOU9W5qyHSLFJmHg=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/session-manager": ["@toruslabs/session-manager@4.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2" }, "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "^4.35.0" } }, "sha512-26GflDkna9kDF4kd7+XmFAsI69CIz/ZSmsbQH6ehylaNDYcro/xuPQB2SnzyRMi4VMkLXYDwHapm2OBURmuMbQ=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/starkware-crypto": ["@toruslabs/starkware-crypto@5.0.0", "", { "dependencies": { "assert": "^2.1.0", "bip39": "^3.1.0", "bn.js": "^5.2.1", "elliptic": "^6.6.1", "enc-utils": "^3.0.0", "ethereum-cryptography": "^3.1.0", "hash.js": "^1.1.7" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-CZjpkeuT0hBsX5dNGEekLcjR2n6UHzh682Pt/AheJYL4+zrupqPWZTfvOlo4K3Iihyv6FzRZmrbHLdQutkz5oQ=="],
-
-    "@web3auth/no-modal/@web3auth/auth/readable-stream": ["readable-stream@4.7.0", "", { "dependencies": { "abort-controller": "^3.0.0", "buffer": "^6.0.3", "events": "^3.3.0", "process": "^0.11.10", "string_decoder": "^1.3.0" } }, "sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@ethereumjs/util": ["@ethereumjs/util@10.1.1", "", { "dependencies": { "@ethereumjs/rlp": "^10.1.1", "@noble/curves": "^2.0.1", "@noble/hashes": "^2.0.1" } }, "sha512-r2EhaeEmLZXVs1dT2HJFQysAkr63ZWATu/9tgYSp1IlvjvwyC++DLg5kCDwMM49HBq3sOAhrPnXkoqf9DV2gbw=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@toruslabs/broadcast-channel": ["@toruslabs/broadcast-channel@12.0.0", "", { "dependencies": { "@babel/runtime": "^7.26.9", "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/metadata-helpers": "^7.0.1", "base64url": "^3.0.1", "loglevel": "^1.9.2", "oblivious-set": "1.4.0", "socket.io-client": "^4.8.1", "unload": "^2.4.1" } }, "sha512-ZdkZWEbxLaoRFPXYrlAnuaXDejsYS7Nl0mL+trBkRcN/agsNoOeS/t7LExGP74Opdcj06bYJeB5KmhN6938kKw=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@ethereumjs/util": ["@ethereumjs/util@10.1.1", "", { "dependencies": { "@ethereumjs/rlp": "^10.1.1", "@noble/curves": "^2.0.1", "@noble/hashes": "^2.0.1" } }, "sha512-r2EhaeEmLZXVs1dT2HJFQysAkr63ZWATu/9tgYSp1IlvjvwyC++DLg5kCDwMM49HBq3sOAhrPnXkoqf9DV2gbw=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@nx/nx-linux-x64-gnu": ["@nx/nx-linux-x64-gnu@22.5.4", "", { "os": "linux", "cpu": "x64" }, "sha512-1+vicSYEOtc7CNMoRCjo59no4gFe8w2nGIT127wk1yeW3EJzRVNlOA7Deu10NUUbzLeOvHc8EFOaU7clT+F7XQ=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@rollup/rollup-linux-x64-gnu": ["@rollup/rollup-linux-x64-gnu@4.59.0", "", { "os": "linux", "cpu": "x64" }, "sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/ffjavascript": ["@toruslabs/ffjavascript@5.0.0", "", {}, "sha512-smC85L5SREn31pA+XayZ86Cxd+2VeRzKKZ5ytLrMDYb5ZrXpUAd9Hr2HlaJbQiGPQgyR6KxOU9W5qyHSLFJmHg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/secure-pub-sub": ["@toruslabs/secure-pub-sub@3.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2", "loglevel": "^1.9.2", "socket.io-client": "^4.8.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-JxqXSMlKnT2Q8ER0dpjtciT/yYO6KV/bZFxVWF9T6t2u20PaVU+bo9MSYWPxSdz76szEt7DwRHxwjDMhzZKFeA=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/session-manager": ["@toruslabs/session-manager@4.0.2", "", { "dependencies": { "@toruslabs/constants": "^14.2.0", "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "@toruslabs/metadata-helpers": "^7.0.2" }, "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "^4.35.0" } }, "sha512-26GflDkna9kDF4kd7+XmFAsI69CIz/ZSmsbQH6ehylaNDYcro/xuPQB2SnzyRMi4VMkLXYDwHapm2OBURmuMbQ=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/starkware-crypto": ["@toruslabs/starkware-crypto@5.0.0", "", { "dependencies": { "assert": "^2.1.0", "bip39": "^3.1.0", "bn.js": "^5.2.1", "elliptic": "^6.6.1", "enc-utils": "^3.0.0", "ethereum-cryptography": "^3.1.0", "hash.js": "^1.1.7" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-CZjpkeuT0hBsX5dNGEekLcjR2n6UHzh682Pt/AheJYL4+zrupqPWZTfvOlo4K3Iihyv6FzRZmrbHLdQutkz5oQ=="],
-
     "ansi-styles/color-convert/color-name": ["color-name@1.1.4", "", {}, "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA=="],
-
-    "borsh/bs58/base-x": ["base-x@3.0.11", "", { "dependencies": { "safe-buffer": "^5.0.1" } }, "sha512-xz7wQ8xDhdyP7tQxwdteLYeFfS68tSMNCZ/Y37WJ4bhGfKPpqEIlmIyueQHqOyoPhE6xNUqjzRr8ra0eF9VRvA=="],
-
-    "bs58check/bs58/base-x": ["base-x@3.0.11", "", { "dependencies": { "safe-buffer": "^5.0.1" } }, "sha512-xz7wQ8xDhdyP7tQxwdteLYeFfS68tSMNCZ/Y37WJ4bhGfKPpqEIlmIyueQHqOyoPhE6xNUqjzRr8ra0eF9VRvA=="],
 
     "ethers/@types/node/undici-types": ["undici-types@6.19.8", "", {}, "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="],
 
@@ -2460,8 +2225,6 @@
     "rimraf/glob/minimatch": ["minimatch@10.2.3", "", { "dependencies": { "brace-expansion": "^5.0.2" } }, "sha512-Rwi3pnapEqirPSbWbrZaa6N3nmqq4Xer/2XooiOKyV3q12ML06f7MOuc5DVH8ONZIFhwIYQ3yzPH4nt7iWHaTg=="],
 
     "rimraf/glob/path-scurry": ["path-scurry@2.0.2", "", { "dependencies": { "lru-cache": "^11.0.0", "minipass": "^7.1.2" } }, "sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg=="],
-
-    "string-width-cjs/strip-ansi/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
 
     "unstorage/chokidar/readdirp": ["readdirp@5.0.0", "", {}, "sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ=="],
 
@@ -2511,12 +2274,6 @@
 
     "vite/esbuild/@esbuild/win32-x64": ["@esbuild/win32-x64@0.21.5", "", { "os": "win32", "cpu": "x64" }, "sha512-tQd/1efJuzPC6rCFwEvLtci/xNFcTZknmXs98FYDfGE4wP9ClFV98nyKrzJKVPMhdDnjzLhdUyMX4PsQAPjwIw=="],
 
-    "wif/bs58check/bs58": ["bs58@4.0.1", "", { "dependencies": { "base-x": "^3.0.2" } }, "sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw=="],
-
-    "wrap-ansi-cjs/string-width/emoji-regex": ["emoji-regex@8.0.0", "", {}, "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="],
-
-    "wrap-ansi-cjs/strip-ansi/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
-
     "xrpl-secret-numbers/ripple-keypairs/ripple-address-codec": ["ripple-address-codec@5.0.0", "", { "dependencies": { "@scure/base": "^1.1.3", "@xrplf/isomorphic": "^1.0.0" } }, "sha512-de7osLRH/pt5HX2xw2TRJtbdLLWHu0RXirpQaEeCnWKY5DYHykh3ETSkofvm0aX0LJiV7kwkegJxQkmbO94gWw=="],
 
     "@metamask/abi-utils/@metamask/utils/@ethereumjs/tx/@ethereumjs/common": ["@ethereumjs/common@3.2.0", "", { "dependencies": { "@ethereumjs/util": "^8.1.0", "crc-32": "^1.2.0" } }, "sha512-pksvzI0VyLgmuEF2FA/JR/4/y6hcPq8OUail3/AvycBaW1d5VSauOZzqGvJ3RTmR4MU35lWE8KseKOsEhrFRBA=="],
@@ -2535,26 +2292,6 @@
 
     "@metamask/delegation-core/@metamask/utils/@ethereumjs/tx/ethereum-cryptography": ["ethereum-cryptography@2.2.1", "", { "dependencies": { "@noble/curves": "1.4.2", "@noble/hashes": "1.4.0", "@scure/bip32": "1.4.0", "@scure/bip39": "1.3.0" } }, "sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg=="],
 
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx": ["@ethereumjs/tx@4.2.0", "", { "dependencies": { "@ethereumjs/common": "^3.2.0", "@ethereumjs/rlp": "^4.0.1", "@ethereumjs/util": "^8.1.0", "ethereum-cryptography": "^2.0.0" } }, "sha512-1nc6VO4jtFd172BbSnTnDQVr9IYBFl1y4xPzZdtkrkKIncBCkdbgfdRV+MiTkJYAtTxvV12GRZLqBFT1PNK6Yw=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/uuid": ["uuid@9.0.1", "", { "bin": "dist/bin/uuid" }, "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/@ethereumjs/common": ["@ethereumjs/common@3.2.0", "", { "dependencies": { "@ethereumjs/util": "^8.1.0", "crc-32": "^1.2.0" } }, "sha512-pksvzI0VyLgmuEF2FA/JR/4/y6hcPq8OUail3/AvycBaW1d5VSauOZzqGvJ3RTmR4MU35lWE8KseKOsEhrFRBA=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/@ethereumjs/rlp": ["@ethereumjs/rlp@4.0.1", "", { "bin": { "rlp": "bin/rlp" } }, "sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/@ethereumjs/util": ["@ethereumjs/util@8.1.0", "", { "dependencies": { "@ethereumjs/rlp": "^4.0.1", "ethereum-cryptography": "^2.0.0", "micro-ftch": "^0.3.1" } }, "sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography": ["ethereum-cryptography@2.2.1", "", { "dependencies": { "@noble/curves": "1.4.2", "@noble/hashes": "1.4.0", "@scure/bip32": "1.4.0", "@scure/bip39": "1.3.0" } }, "sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/@ethereumjs/common": ["@ethereumjs/common@3.2.0", "", { "dependencies": { "@ethereumjs/util": "^8.1.0", "crc-32": "^1.2.0" } }, "sha512-pksvzI0VyLgmuEF2FA/JR/4/y6hcPq8OUail3/AvycBaW1d5VSauOZzqGvJ3RTmR4MU35lWE8KseKOsEhrFRBA=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/@ethereumjs/rlp": ["@ethereumjs/rlp@4.0.1", "", { "bin": { "rlp": "bin/rlp" } }, "sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/@ethereumjs/util": ["@ethereumjs/util@8.1.0", "", { "dependencies": { "@ethereumjs/rlp": "^4.0.1", "ethereum-cryptography": "^2.0.0", "micro-ftch": "^0.3.1" } }, "sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography": ["ethereum-cryptography@2.2.1", "", { "dependencies": { "@noble/curves": "1.4.2", "@noble/hashes": "1.4.0", "@scure/bip32": "1.4.0", "@scure/bip39": "1.3.0" } }, "sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg=="],
-
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/@ethereumjs/common": ["@ethereumjs/common@3.2.0", "", { "dependencies": { "@ethereumjs/util": "^8.1.0", "crc-32": "^1.2.0" } }, "sha512-pksvzI0VyLgmuEF2FA/JR/4/y6hcPq8OUail3/AvycBaW1d5VSauOZzqGvJ3RTmR4MU35lWE8KseKOsEhrFRBA=="],
 
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/@ethereumjs/rlp": ["@ethereumjs/rlp@4.0.1", "", { "bin": { "rlp": "bin/rlp" } }, "sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw=="],
@@ -2571,79 +2308,9 @@
 
     "@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39": ["@scure/bip39@1.3.0", "", { "dependencies": { "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ=="],
 
-    "@toruslabs/customauth/@toruslabs/metadata-helpers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@toruslabs/ethereum-controllers/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/ethereum-controllers/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/ethereum-controllers/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/metadata-helpers/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/secure-pub-sub/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/secure-pub-sub/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/session-manager/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@toruslabs/ethereum-controllers/@web3auth/auth/@toruslabs/session-manager/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@web3auth/no-modal/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@web3auth/no-modal/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@web3auth/no-modal/@toruslabs/base-controllers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@web3auth/no-modal/@toruslabs/secure-pub-sub/@toruslabs/metadata-helpers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/metadata-helpers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/session-manager/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/starkware-crypto/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@ethereumjs/util/@ethereumjs/rlp": ["@ethereumjs/rlp@10.1.1", "", { "bin": { "rlp": "bin/rlp.cjs" } }, "sha512-jbnWTEwcpoY+gE0r+wxfDG9zgiu54DcTcwnc9sX3DsqKR4l5K7x2V8mQL3Et6hURa4DuT9g7z6ukwpBLFchszg=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@ethereumjs/util/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@ethereumjs/util/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@toruslabs/broadcast-channel/@toruslabs/metadata-helpers": ["@toruslabs/metadata-helpers@7.0.2", "", { "dependencies": { "@toruslabs/eccrypto": "^6.0.2", "@toruslabs/http-helpers": "^8.1.0", "elliptic": "^6.6.1", "ethereum-cryptography": "^3.1.0", "json-stable-stringify": "^1.2.1" }, "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-N8UeKwtTlRlGAuQJQfYwCshsu5g9Fte8Xe6ZEt/WH6blNAoKjz579BPN4FrS478JIj/kMtIkD1guT84Umpdv1w=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@ethereumjs/util/@ethereumjs/rlp": ["@ethereumjs/rlp@10.1.1", "", { "bin": { "rlp": "bin/rlp.cjs" } }, "sha512-jbnWTEwcpoY+gE0r+wxfDG9zgiu54DcTcwnc9sX3DsqKR4l5K7x2V8mQL3Et6hURa4DuT9g7z6ukwpBLFchszg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@ethereumjs/util/@noble/curves": ["@noble/curves@2.0.1", "", { "dependencies": { "@noble/hashes": "2.0.1" } }, "sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@ethereumjs/util/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/metadata-helpers/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/metadata-helpers/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/secure-pub-sub/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/secure-pub-sub/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/session-manager/@toruslabs/constants": ["@toruslabs/constants@14.2.0", "", { "peerDependencies": { "@babel/runtime": "7.x" } }, "sha512-Mb5EfYNSPyvvw5s1JXnpZwritCgp4NmLni1imTqrSKGV3yikYhUn1ufyLMAHGnBBgv4AuMIXBIe3EpJJ+SpA0g=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/session-manager/@toruslabs/eccrypto": ["@toruslabs/eccrypto@6.2.0", "", { "dependencies": { "elliptic": "^6.6.1" } }, "sha512-GbVAXDC5AIecb01gEafiiZzVfRNGiNk85R7ZUDMpUjoYGOy6/FdHdM4x2ySqBj7B6xiXWf+rMfr99J7+TLjyxg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/starkware-crypto/ethereum-cryptography": ["ethereum-cryptography@3.2.0", "", { "dependencies": { "@noble/ciphers": "1.3.0", "@noble/curves": "1.9.0", "@noble/hashes": "1.8.0", "@scure/bip32": "1.7.0", "@scure/bip39": "1.6.0" } }, "sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg=="],
-
-    "hash-base/readable-stream/string_decoder/safe-buffer": ["safe-buffer@5.1.2", "", {}, "sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g=="],
-
     "rimraf/glob/minimatch/brace-expansion": ["brace-expansion@5.0.3", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-fy6KJm2RawA5RcHkLa1z/ScpBeA762UF9KmZQxwIbDtRJrgLzM10depAiEQ+CXYcoiqW1/m96OAAoke2nE9EeA=="],
 
     "rimraf/glob/path-scurry/lru-cache": ["lru-cache@11.2.6", "", {}, "sha512-ESL2CrkS/2wTPfuend7Zhkzo2u0daGJ/A2VucJOgQ/C48S/zB8MMeMHSGKYpXhIjbPxfuezITkaBH1wqv00DDQ=="],
-
-    "wif/bs58check/bs58/base-x": ["base-x@3.0.11", "", { "dependencies": { "safe-buffer": "^5.0.1" } }, "sha512-xz7wQ8xDhdyP7tQxwdteLYeFfS68tSMNCZ/Y37WJ4bhGfKPpqEIlmIyueQHqOyoPhE6xNUqjzRr8ra0eF9VRvA=="],
 
     "@metamask/abi-utils/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/curves": ["@noble/curves@1.4.2", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw=="],
 
@@ -2661,30 +2328,6 @@
 
     "@metamask/delegation-core/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39": ["@scure/bip39@1.3.0", "", { "dependencies": { "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ=="],
 
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/@ethereumjs/common": ["@ethereumjs/common@3.2.0", "", { "dependencies": { "@ethereumjs/util": "^8.1.0", "crc-32": "^1.2.0" } }, "sha512-pksvzI0VyLgmuEF2FA/JR/4/y6hcPq8OUail3/AvycBaW1d5VSauOZzqGvJ3RTmR4MU35lWE8KseKOsEhrFRBA=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/@ethereumjs/rlp": ["@ethereumjs/rlp@4.0.1", "", { "bin": { "rlp": "bin/rlp" } }, "sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/@ethereumjs/util": ["@ethereumjs/util@8.1.0", "", { "dependencies": { "@ethereumjs/rlp": "^4.0.1", "ethereum-cryptography": "^2.0.0", "micro-ftch": "^0.3.1" } }, "sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography": ["ethereum-cryptography@2.2.1", "", { "dependencies": { "@noble/curves": "1.4.2", "@noble/hashes": "1.4.0", "@scure/bip32": "1.4.0", "@scure/bip39": "1.3.0" } }, "sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/curves": ["@noble/curves@1.4.2", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/hashes": ["@noble/hashes@1.4.0", "", {}, "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32": ["@scure/bip32@1.4.0", "", { "dependencies": { "@noble/curves": "~1.4.0", "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39": ["@scure/bip39@1.3.0", "", { "dependencies": { "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/curves": ["@noble/curves@1.4.2", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/hashes": ["@noble/hashes@1.4.0", "", {}, "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32": ["@scure/bip32@1.4.0", "", { "dependencies": { "@noble/curves": "~1.4.0", "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39": ["@scure/bip39@1.3.0", "", { "dependencies": { "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ=="],
-
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/curves": ["@noble/curves@1.4.2", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw=="],
 
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/hashes": ["@noble/hashes@1.4.0", "", {}, "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="],
@@ -2697,20 +2340,6 @@
 
     "@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
 
-    "@web3auth/no-modal/@toruslabs/secure-pub-sub/@toruslabs/metadata-helpers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/metadata-helpers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@web3auth/no-modal/@web3auth/auth/@toruslabs/starkware-crypto/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@web3auth/ws-embed/@toruslabs/base-controllers/@ethereumjs/util/@noble/curves/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@ethereumjs/util/@noble/curves/@noble/hashes": ["@noble/hashes@2.0.1", "", {}, "sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/metadata-helpers/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
-    "@web3auth/ws-embed/@web3auth/auth/@toruslabs/starkware-crypto/ethereum-cryptography/@noble/curves": ["@noble/curves@1.9.0", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg=="],
-
     "rimraf/glob/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
 
     "@metamask/abi-utils/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
@@ -2721,28 +2350,8 @@
 
     "@metamask/delegation-core/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
 
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/curves": ["@noble/curves@1.4.2", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@noble/hashes": ["@noble/hashes@1.4.0", "", {}, "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32": ["@scure/bip32@1.4.0", "", { "dependencies": { "@noble/curves": "~1.4.0", "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39": ["@scure/bip39@1.3.0", "", { "dependencies": { "@noble/hashes": "~1.4.0", "@scure/base": "~1.1.6" } }, "sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-
-    "@metamask/json-rpc-engine/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-
-    "@metamask/json-rpc-middleware-stream/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
 
     "@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip32/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-
-    "@metamask/json-rpc-engine/@metamask/rpc-errors/@metamask/utils/@ethereumjs/tx/ethereum-cryptography/@scure/bip39/@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
   }
 }
