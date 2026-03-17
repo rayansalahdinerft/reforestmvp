@@ -104,7 +104,7 @@ const Home = () => {
                 { icon: Send, label: 'Envoyer', action: () => setActivePanel('send') },
                 { icon: ArrowDownToLine, label: 'Recevoir', action: () => setActivePanel('receive') },
                 { icon: ArrowLeftRight, label: 'Échanger', action: () => navigate('/') },
-                { icon: DollarSign, label: 'Acheter', action: () => setActivePanel('buy') },
+                { icon: DollarSign, label: 'Acheter', action: () => navigate('/?mode=buy') },
               ].map(({ icon: Icon, label, action }) => (
                 <button
                   key={label}
