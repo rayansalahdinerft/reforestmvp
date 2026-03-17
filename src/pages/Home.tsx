@@ -153,33 +153,54 @@ const Home = () => {
                 </div>
               ) : (
                 <div className="space-y-0.5">
-                  {sortedBalances.map((token) => (
-                    <div
-                      key={token.symbol}
-                      className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-card/60 active:bg-card/80 transition-all"
-                    >
-                      <div className="flex items-center gap-3">
-                        {token.logoURI ? (
-                          <img src={token.logoURI} alt={token.symbol} className="w-9 h-9 rounded-full bg-secondary/50" />
-                        ) : (
-                          <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-primary">
-                            {token.symbol.slice(0, 3)}
+                  {sortedBalances.map((token) => {
+                    const sparkData = sparklineMap[token.symbol.toUpperCase()];
+                    const change24h = sparkData?.change24h ?? 0;
+                    const isPositive = change24h >= 0;
+                    return (
+                      <div
+                        key={token.symbol}
+                        className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-card/60 active:bg-card/80 transition-all"
+                      >
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          {token.logoURI ? (
+                            <img src={token.logoURI} alt={token.symbol} className="w-9 h-9 rounded-full bg-secondary/50 flex-shrink-0" />
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
+                              {token.symbol.slice(0, 3)}
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm text-foreground truncate">{token.name}</p>
+                            <p className="text-[11px] text-muted-foreground tabular-nums">
+                              {token.balance} {token.symbol}
+                            </p>
                           </div>
-                        )}
-                        <div>
-                          <p className="font-semibold text-sm text-foreground">{token.name}</p>
-                          <p className="text-[11px] text-muted-foreground tabular-nums">
-                            {token.balance} {token.symbol}
+                        </div>
+                        {/* Mini sparkline */}
+                        <div className="flex-shrink-0 mx-2">
+                          {sparkData?.sparkline ? (
+                            <SparklineChart
+                              data={sparkData.sparkline.slice(-24)}
+                              width={56}
+                              height={24}
+                              isPositive={isPositive}
+                            />
+                          ) : (
+                            <div className="w-[56px] h-[24px]" />
+                          )}
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="font-semibold text-sm text-foreground tabular-nums">
+                            €{token.balanceUsd.toFixed(2)}
+                          </p>
+                          <p className={`text-[10px] tabular-nums font-medium ${isPositive ? 'text-primary' : 'text-destructive'}`}>
+                            {isPositive ? '+' : ''}{change24h.toFixed(2)}%
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-sm text-foreground tabular-nums">
-                          €{token.balanceUsd.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
