@@ -31,21 +31,20 @@ export const useSwapExecution = () => {
 
   const { address: userAddress, getProvider } = useWallet();
 
-  const sendTransaction = async (params: { to: `0x${string}`; data?: `0x${string}`; value?: bigint; chainId?: number }) => {
+  const sendTransactionAsync = async (params: { to: `0x${string}`; data?: `0x${string}`; value?: bigint; gas?: bigint }) => {
     const web3Provider = await getProvider();
     if (!web3Provider) throw new Error('No provider');
-    const chain = params.chainId ? CHAIN_CONFIG[params.chainId] ?? mainnet : mainnet;
     const walletClient = createWalletClient({
-      chain,
+      chain: mainnet,
       transport: custom(web3Provider),
       account: userAddress as `0x${string}`,
     });
     return await walletClient.sendTransaction({
       to: params.to,
       data: params.data,
-      value: params.value,
+      value: params.value ?? 0n,
       account: userAddress as `0x${string}`,
-      chain,
+      chain: mainnet,
     });
   };
 
