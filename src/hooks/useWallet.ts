@@ -1,19 +1,18 @@
-import { useWeb3Auth } from '@web3auth/modal/react';
-import { useWeb3AuthConnect } from '@web3auth/modal/react';
-import { useWeb3AuthDisconnect } from '@web3auth/modal/react';
-import { useWeb3AuthUser } from '@web3auth/modal/react';
+import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthDisconnect, useWeb3AuthUser } from '@web3auth/modal/react';
 import { useCallback, useState, useEffect } from 'react';
 
 /**
  * Unified wallet hook wrapping Web3Auth v10
  */
 export const useWallet = () => {
-  const { isConnected: web3AuthConnected, isInitialized, provider } = useWeb3Auth();
-  const { connect } = useWeb3AuthConnect();
+  const { isConnected: web3AuthConnected, isInitializing, provider, initError } = useWeb3Auth();
+  const { connect, loading: connectLoading } = useWeb3AuthConnect();
   const { disconnect: web3AuthDisconnect } = useWeb3AuthDisconnect();
   const { userInfo } = useWeb3AuthUser();
 
   const [address, setAddress] = useState<string | null>(null);
+
+  const ready = !isInitializing;
 
   useEffect(() => {
     const getAddress = async () => {
@@ -34,12 +33,11 @@ export const useWallet = () => {
     getAddress();
   }, [web3AuthConnected, provider]);
 
-  const ready = isInitialized;
   const authenticated = web3AuthConnected;
   const isConnected = ready && authenticated && !!address;
 
   const openConnect = useCallback(async () => {
-    if (!ready) return;
+    if (!ready || connectLoading) return;
     if (!authenticated) {
       try {
         await connect();
@@ -47,7 +45,7 @@ export const useWallet = () => {
         console.error('Web3Auth connect error:', error);
       }
     }
-  }, [ready, authenticated, connect]);
+  }, [ready, authenticated, connect, connectLoading]);
 
   const disconnectWallet = useCallback(async () => {
     try {
@@ -64,6 +62,10 @@ export const useWallet = () => {
 
   const user = userInfo ?? null;
 
+  if (initError) {
+    console.error('Web3Auth init error:', initError);
+  }
+
   return {
     address,
     isConnected,
@@ -76,7 +78,7 @@ export const useWallet = () => {
     wallets: provider ? [{ address, walletClientType: 'web3auth' }] : [],
     user,
     connectors: [],
-    isPending: !ready,
+    isPending: !ready || connectLoading,
     openConnect,
     disconnect: disconnectWallet,
     getProvider,
