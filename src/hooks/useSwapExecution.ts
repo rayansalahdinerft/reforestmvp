@@ -45,7 +45,7 @@ export const useSwapExecution = () => {
       value: params.value ?? 0n,
       account: userAddress as `0x${string}`,
       chain: mainnet,
-    });
+    } as any);
   };
 
   const checkAndApproveToken = async (
