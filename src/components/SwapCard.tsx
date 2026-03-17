@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowDown, ChevronDown, Sparkles, TrendingUp, Loader2, CheckCircle, AlertCircle, SlidersHorizontal, X, CreditCard, ArrowLeftRight, Send } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
-import { useBalance, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther, parseUnits, isAddress } from 'viem';
 import TokenSelectorModal from './TokenSelectorModal';
 import { useSwapQuote } from '@/hooks/useSwapQuote';
