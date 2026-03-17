@@ -192,7 +192,7 @@ export const useSwapExecution = () => {
       setStatus('error');
       return { error: errorMessage };
     }
-  }, [sendTransactionAsync, userAddress]);
+  }, [userAddress, getProvider]);
 
   const reset = useCallback(() => {
     setStatus('idle');
