@@ -1,12 +1,19 @@
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PrivyProvider } from '@privy-io/react-auth';
-import { WagmiProvider } from 'wagmi';
-import { config } from '@/config/wallet';
+import { Web3AuthProvider } from '@web3auth/modal/react';
+import { WEB3AUTH_NETWORK } from '@web3auth/modal';
+import type { Web3AuthContextConfig } from '@web3auth/modal/react';
 
 const queryClient = new QueryClient();
 
-const PRIVY_APP_ID = 'cmm96j8ng01oa0cjp846ak29q';
+const WEB3AUTH_CLIENT_ID = 'BB7V6S0sAUaLJ8wETSFLy00pdthCoY2yQOAaLnEiHfuQpGLWRRlmHCxAzzkU_FUltrLnD7L5jGLSMbaUh-zCT8s';
+
+const web3AuthContextConfig: Web3AuthContextConfig = {
+  web3AuthOptions: {
+    clientId: WEB3AUTH_CLIENT_ID,
+    web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET,
+  },
+};
 
 interface WalletProviderProps {
   children: ReactNode;
@@ -14,27 +21,10 @@ interface WalletProviderProps {
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   return (
-    <PrivyProvider
-      appId={PRIVY_APP_ID}
-      config={{
-        appearance: {
-          theme: 'dark',
-          accentColor: '#22c55e',
-          logo: '/icon.png',
-        },
-        loginMethods: ['email', 'wallet', 'google', 'apple', 'passkey'],
-        embeddedWallets: {
-          ethereum: {
-            createOnLogin: 'users-without-wallets',
-          },
-        },
-      }}
-    >
+    <Web3AuthProvider config={web3AuthContextConfig}>
       <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={config}>
-          {children}
-        </WagmiProvider>
+        {children}
       </QueryClientProvider>
-    </PrivyProvider>
+    </Web3AuthProvider>
   );
 };

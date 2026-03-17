@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
-import { parseUnits, formatUnits, createPublicClient, http } from 'viem';
+import { useWallet } from '@/hooks/useWallet';
+import { parseUnits, formatUnits, createPublicClient, createWalletClient, custom, http } from 'viem';
 import { mainnet, polygon, arbitrum, optimism, base, avalanche, bsc } from 'viem/chains';
 import { supabase } from '@/integrations/supabase/client';
 import { ERC20_ABI, NATIVE_TOKEN_ADDRESS } from '@/config/contracts';
@@ -29,8 +29,24 @@ export const useSwapExecution = () => {
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
-  const { address: userAddress } = useAccount();
-  const { sendTransactionAsync } = useSendTransaction();
+  const { address: userAddress, getProvider } = useWallet();
+
+  const sendTransactionAsync = async (params: { to: `0x${string}`; data?: `0x${string}`; value?: bigint; gas?: bigint }) => {
+    const web3Provider = await getProvider();
+    if (!web3Provider) throw new Error('No provider');
+    const walletClient = createWalletClient({
+      chain: mainnet,
+      transport: custom(web3Provider),
+      account: userAddress as `0x${string}`,
+    });
+    return await walletClient.sendTransaction({
+      to: params.to,
+      data: params.data,
+      value: params.value ?? 0n,
+      account: userAddress as `0x${string}`,
+      chain: mainnet,
+    } as any);
+  };
 
   const checkAndApproveToken = async (
     tokenAddress: `0x${string}`,
@@ -176,7 +192,7 @@ export const useSwapExecution = () => {
       setStatus('error');
       return { error: errorMessage };
     }
-  }, [sendTransactionAsync, userAddress]);
+  }, [userAddress, getProvider]);
 
   const reset = useCallback(() => {
     setStatus('idle');

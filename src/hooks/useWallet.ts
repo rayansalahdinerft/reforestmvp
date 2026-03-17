@@ -1,74 +1,84 @@
-import { usePrivy, useWallets, useCreateWallet } from '@privy-io/react-auth';
-import { useCallback, useMemo } from 'react';
+import { useWeb3Auth } from '@web3auth/modal/react';
+import { useWeb3AuthConnect } from '@web3auth/modal/react';
+import { useWeb3AuthDisconnect } from '@web3auth/modal/react';
+import { useWeb3AuthUser } from '@web3auth/modal/react';
+import { useCallback, useState, useEffect } from 'react';
 
 /**
- * Unified wallet hook wrapping Privy
+ * Unified wallet hook wrapping Web3Auth v10
  */
 export const useWallet = () => {
-  const { ready, authenticated, user, login, logout } = usePrivy();
-  const { wallets } = useWallets();
-  const { createWallet } = useCreateWallet();
+  const { isConnected: web3AuthConnected, isInitialized, provider } = useWeb3Auth();
+  const { connect } = useWeb3AuthConnect();
+  const { disconnect: web3AuthDisconnect } = useWeb3AuthDisconnect();
+  const { userInfo } = useWeb3AuthUser();
 
-  const embeddedWallet = useMemo(
-    () => wallets.find((wallet: any) => wallet.walletClientType === 'privy') ?? null,
-    [wallets]
-  );
+  const [address, setAddress] = useState<string | null>(null);
 
-  const externalWallet = useMemo(
-    () => wallets.find((wallet: any) => wallet.walletClientType !== 'privy') ?? null,
-    [wallets]
-  );
+  useEffect(() => {
+    const getAddress = async () => {
+      if (web3AuthConnected && provider) {
+        try {
+          const accounts = await provider.request<never, string[]>({ method: 'eth_accounts' });
+          if (accounts && accounts.length > 0) {
+            setAddress(accounts[0]);
+          }
+        } catch (err) {
+          console.error('Failed to get accounts:', err);
+          setAddress(null);
+        }
+      } else {
+        setAddress(null);
+      }
+    };
+    getAddress();
+  }, [web3AuthConnected, provider]);
 
-  const activeWallet = embeddedWallet ?? externalWallet ?? null;
-  const address = activeWallet?.address ?? null;
+  const ready = isInitialized;
+  const authenticated = web3AuthConnected;
   const isConnected = ready && authenticated && !!address;
-  const chainId = activeWallet?.chainId ? Number(activeWallet.chainId.split(':')[1]) : undefined;
 
   const openConnect = useCallback(async () => {
     if (!ready) return;
-
-    if (authenticated) {
-      if (!embeddedWallet) {
-        try {
-          await createWallet();
-        } catch (error) {
-          console.error('Failed to create embedded wallet:', error);
-        }
+    if (!authenticated) {
+      try {
+        await connect();
+      } catch (error) {
+        console.error('Web3Auth connect error:', error);
       }
-      return;
     }
+  }, [ready, authenticated, connect]);
 
-    login();
-  }, [ready, authenticated, embeddedWallet, createWallet, login]);
-
-  const disconnect = useCallback(async () => {
-    await logout();
-  }, [logout]);
+  const disconnectWallet = useCallback(async () => {
+    try {
+      await web3AuthDisconnect();
+    } catch (e) {
+      console.error('Disconnect error:', e);
+    }
+    setAddress(null);
+  }, [web3AuthDisconnect]);
 
   const getProvider = useCallback(async () => {
-    if (!activeWallet) return null;
-    try {
-      return await activeWallet.getEthereumProvider();
-    } catch {
-      return null;
-    }
-  }, [activeWallet]);
+    return provider ?? null;
+  }, [provider]);
+
+  const user = userInfo ?? null;
 
   return {
     address,
     isConnected,
     ready,
     authenticated,
-    chainId,
-    activeWallet,
-    embeddedWallet,
-    externalWallet,
-    wallets,
+    chainId: 1,
+    activeWallet: provider ? { address, chainId: '1' } : null,
+    embeddedWallet: provider ? { address } : null,
+    externalWallet: null,
+    wallets: provider ? [{ address, walletClientType: 'web3auth' }] : [],
     user,
     connectors: [],
     isPending: !ready,
     openConnect,
-    disconnect,
+    disconnect: disconnectWallet,
     getProvider,
   };
 };

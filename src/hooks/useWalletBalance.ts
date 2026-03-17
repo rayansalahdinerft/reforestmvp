@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useWallet } from '@/hooks/useWallet';
-import { useBalance } from 'wagmi';
-import { createPublicClient, http, formatUnits } from 'viem';
+import { createPublicClient, http, formatUnits, formatEther } from 'viem';
 import { mainnet } from 'viem/chains';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -131,10 +130,19 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
   const [priceError, setPriceError] = useState(false);
   const fetchingRef = useRef(false);
 
-  // Get native balance
-  const { data: nativeBalance, refetch: refetchBalance } = useBalance({
-    address: address as `0x${string}` | undefined,
-  });
+  // Native ETH balance state
+  const [nativeBalanceWei, setNativeBalanceWei] = useState<bigint>(0n);
+
+  const fetchNativeBalance = useCallback(async () => {
+    if (!address) return;
+    try {
+      const publicClient = createPublicClient({ chain: mainnet, transport: http() });
+      const bal = await publicClient.getBalance({ address: address as `0x${string}` });
+      setNativeBalanceWei(bal);
+    } catch (e) {
+      console.error('Error fetching native balance:', e);
+    }
+  }, [address]);
 
   const fetchPrices = async (): Promise<Record<string, number>> => {
     // Check cache first
@@ -247,9 +255,7 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
       }
 
       // Format native ETH balance
-      const ethBalance = nativeBalance 
-        ? Number(nativeBalance.value) / Math.pow(10, nativeBalance.decimals) 
-        : 0;
+      const ethBalance = Number(formatEther(nativeBalanceWei));
       const ethBalanceUsd = ethBalance * ethPrice;
 
       const tokenBalances: TokenBalance[] = [
@@ -299,16 +305,19 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
       setLoading(false);
       fetchingRef.current = false;
     }
-  }, [isConnected, address, nativeBalance]);
+  }, [isConnected, address, nativeBalanceWei]);
 
   // Refetch function that also refreshes the balance from chain
   const refetch = useCallback(async () => {
-    // Clear cache to force fresh prices
     cachedPrices = {};
     cacheTimestamp = 0;
-    await refetchBalance();
+    await fetchNativeBalance();
     await fetchBalances();
-  }, [fetchBalances, refetchBalance]);
+  }, [fetchBalances, fetchNativeBalance]);
+
+  useEffect(() => {
+    fetchNativeBalance();
+  }, [fetchNativeBalance]);
 
   useEffect(() => {
     fetchBalances();
