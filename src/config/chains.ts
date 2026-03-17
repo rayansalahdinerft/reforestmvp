@@ -1,4 +1,4 @@
-import { mainnet } from 'wagmi/chains';
+import { mainnet } from 'viem/chains';
 
 // Only Ethereum mainnet is supported
 export const SUPPORTED_EVM_CHAINS = [mainnet] as const;
