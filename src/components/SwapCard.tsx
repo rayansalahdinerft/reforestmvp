@@ -42,14 +42,25 @@ const SwapCard = () => {
   const chainInfo = CHAIN_INFO[CHAIN_ID];
 
   // Get native ETH balance for MAX button
-  const { data: nativeBalance } = useBalance({
-    address: address as `0x${string}` | undefined,
-  });
+  const [nativeBalanceWei, setNativeBalanceWei] = useState<bigint>(0n);
+  useEffect(() => {
+    const fetchBal = async () => {
+      if (!address) return;
+      try {
+        const { createPublicClient, http } = await import('viem');
+        const { mainnet } = await import('viem/chains');
+        const client = createPublicClient({ chain: mainnet, transport: http() });
+        const bal = await client.getBalance({ address: address as `0x${string}` });
+        setNativeBalanceWei(bal);
+      } catch {}
+    };
+    fetchBal();
+  }, [address]);
   
   // Calculate formatted balance for MAX button (only ETH for now)
   const isNativeToken = sellToken?.address?.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-  const maxBalance = isNativeToken && nativeBalance 
-    ? (Number(nativeBalance.value) / Math.pow(10, nativeBalance.decimals)).toFixed(6)
+  const maxBalance = isNativeToken && nativeBalanceWei > 0n 
+    ? (Number(nativeBalanceWei) / 1e18).toFixed(6)
     : null;
 
   const { 
@@ -60,11 +71,54 @@ const SwapCard = () => {
     reset: resetSwap 
   } = useSwapExecution();
 
-  // Send transaction hook
-  const { sendTransaction, data: sendTxHash, isPending: isSending, reset: resetSend } = useSendTransaction();
-  const { isLoading: isSendConfirming, isSuccess: isSendSuccess } = useWaitForTransactionReceipt({
-    hash: sendTxHash,
-  });
+  // Send transaction state
+  const [sendTxHash, setSendTxHash] = useState<`0x${string}` | null>(null);
+  const [isSending, setIsSending] = useState(false);
+  const [isSendConfirming, setIsSendConfirming] = useState(false);
+  const [isSendSuccess, setIsSendSuccess] = useState(false);
+  
+  const { getProvider } = useWallet();
+  
+  const sendTransaction = async (params: { to: `0x${string}`; value: bigint }) => {
+    setIsSending(true);
+    setIsSendSuccess(false);
+    setSendTxHash(null);
+    try {
+      const provider = await getProvider();
+      if (!provider) throw new Error('No provider');
+      const { createWalletClient, createPublicClient, custom, http } = await import('viem');
+      const { mainnet } = await import('viem/chains');
+      const walletClient = createWalletClient({
+        chain: mainnet,
+        transport: custom(provider),
+        account: address as `0x${string}`,
+      });
+      const hash = await walletClient.sendTransaction({
+        to: params.to,
+        value: params.value,
+        account: address as `0x${string}`,
+        chain: mainnet,
+      } as any);
+      setSendTxHash(hash);
+      setIsSending(false);
+      setIsSendConfirming(true);
+      const publicClient = createPublicClient({ chain: mainnet, transport: http() });
+      await publicClient.waitForTransactionReceipt({ hash });
+      setIsSendConfirming(false);
+      setIsSendSuccess(true);
+    } catch (e) {
+      console.error('Send error:', e);
+      setIsSending(false);
+      setIsSendConfirming(false);
+    }
+  };
+  
+  const resetSend = () => {
+    setSendTxHash(null);
+    setIsSending(false);
+    setIsSendConfirming(false);
+    setIsSendSuccess(false);
+  };
 
   // Initialize tokens on mount
   useEffect(() => {
