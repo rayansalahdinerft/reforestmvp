@@ -23,8 +23,8 @@ const Onboarding = () => {
   const [saving, setSaving] = useState(false);
   const [pseudoError, setPseudoError] = useState('');
 
-  const privyUserId = (user as any)?.id ?? '';
-  const privyEmail = (user as any)?.email?.address ?? (user as any)?.google?.email ?? null;
+  const web3AuthUserId = (user as any)?.verifierId ?? (user as any)?.email ?? '';
+  const web3AuthEmail = (user as any)?.email ?? null;
 
   useEffect(() => {
     if (!ready || onboardingLoading) return;
