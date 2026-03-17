@@ -305,7 +305,7 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
       setLoading(false);
       fetchingRef.current = false;
     }
-  }, [isConnected, address, nativeBalance]);
+  }, [isConnected, address, nativeBalanceWei]);
 
   // Refetch function that also refreshes the balance from chain
   const refetch = useCallback(async () => {
