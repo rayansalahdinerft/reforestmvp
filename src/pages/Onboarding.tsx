@@ -34,7 +34,7 @@ const Onboarding = () => {
   }, [ready, onboardingLoading, onboardingCompleted, navigate]);
 
   const handleSaveProfile = async () => {
-    if (!privyUserId) {
+    if (!web3AuthUserId) {
       toast.error('Please connect first');
       return;
     }
