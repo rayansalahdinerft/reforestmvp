@@ -1,18 +1,17 @@
 import { useWeb3Auth } from '@web3auth/modal/react';
+import { useWeb3AuthConnect } from '@web3auth/modal/react';
+import { useWeb3AuthDisconnect } from '@web3auth/modal/react';
+import { useWeb3AuthUser } from '@web3auth/modal/react';
 import { useCallback, useState, useEffect } from 'react';
 
 /**
- * Unified wallet hook wrapping Web3Auth
+ * Unified wallet hook wrapping Web3Auth v10
  */
 export const useWallet = () => {
-  const {
-    isConnected: web3AuthConnected,
-    isInitialized,
-    connect,
-    disconnect: web3AuthDisconnect,
-    provider,
-    userInfo,
-  } = useWeb3Auth();
+  const { isConnected: web3AuthConnected, isInitialized, provider } = useWeb3Auth();
+  const { connect } = useWeb3AuthConnect();
+  const { disconnect: web3AuthDisconnect } = useWeb3AuthDisconnect();
+  const { userInfo } = useWeb3AuthUser();
 
   const [address, setAddress] = useState<string | null>(null);
 
