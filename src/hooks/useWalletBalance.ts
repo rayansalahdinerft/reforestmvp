@@ -255,9 +255,7 @@ export const useWalletBalance = (overrideAddress?: string | null) => {
       }
 
       // Format native ETH balance
-      const ethBalance = nativeBalance 
-        ? Number(nativeBalance.value) / Math.pow(10, nativeBalance.decimals) 
-        : 0;
+      const ethBalance = Number(formatEther(nativeBalanceWei));
       const ethBalanceUsd = ethBalance * ethPrice;
 
       const tokenBalances: TokenBalance[] = [
