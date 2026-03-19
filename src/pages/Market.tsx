@@ -7,6 +7,7 @@ import { useMarketData, TOKEN_CATEGORIES, type MarketToken } from "@/hooks/useMa
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2, Database, AlertTriangle, Star } from "lucide-react";
 import { useState, useMemo } from "react";
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const CATEGORIES = ['All', 'Watchlist', 'Major', 'Layer 2', 'DeFi', 'Stablecoin', 'Meme'];
 
