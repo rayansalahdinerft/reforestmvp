@@ -10,6 +10,7 @@ import { Wallet, RefreshCw, Settings } from "lucide-react";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { resolveAvatarUrl } from "@/utils/avatarResolver";
 import { useNavigate } from "react-router-dom";
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const Portfolio = () => {
   const { activeAddress } = useActiveWallet();
