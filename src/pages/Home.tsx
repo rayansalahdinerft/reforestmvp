@@ -13,6 +13,7 @@ import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
 import mascot from '@/assets/mascot/panda-green-3d.png';
 import mascotPeek from '@/assets/mascot/panda-peek.png';
+import mascotSleep from '@/assets/mascot/panda-green-eyes-closed.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -23,6 +24,17 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
+  const [mascotPhase, setMascotPhase] = useState<'idle' | 'closing' | 'peeking'>('idle');
+  const [showBubble, setShowBubble] = useState(false);
+
+  const bubbleMessages = [
+    "J'ai rien vu hein… 👀",
+    "C'est secret ! 🤫",
+    "Promis je regarde pas… 😏",
+    "Bon ok je triche un peu 🙈",
+    "Ton solde est safe avec moi 🔒",
+  ];
+  const [bubbleText, setBubbleText] = useState(bubbleMessages[0]);
 
   // Build a map of symbol -> sparkline data & 24h change from market data
   const sparklineMap = useMemo(() => {
@@ -52,6 +64,43 @@ const Home = () => {
       setTimeout(() => setCopied(false), 2000);
     }
   };
+
+  const toggleBalance = () => {
+    const newHide = !hideBalance;
+    setHideBalance(newHide);
+    if (newHide) {
+      // Phase 1: eyes closing
+      setMascotPhase('closing');
+      setBubbleText(bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)]);
+      // Phase 2: peek after a beat
+      setTimeout(() => {
+        setMascotPhase('peeking');
+        setShowBubble(true);
+      }, 800);
+      // Hide bubble after a while
+      setTimeout(() => setShowBubble(false), 3500);
+    } else {
+      setMascotPhase('idle');
+      setShowBubble(false);
+    }
+  };
+
+  const getMascotImage = () => {
+    switch (mascotPhase) {
+      case 'closing': return mascotSleep;
+      case 'peeking': return mascotPeek;
+      default: return mascot;
+    }
+  };
+
+  const getMascotAnimation = () => {
+    switch (mascotPhase) {
+      case 'closing': return 'animate-[breathe_2s_ease-in-out_infinite]';
+      case 'peeking': return 'animate-wiggle';
+      default: return 'animate-bounce-slow';
+    }
+  };
+
 
   const qrSvg = useMemo(() => {
     if (!address) return '';
@@ -91,13 +140,20 @@ const Home = () => {
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
               
-              {/* Mascot - peeks when balance hidden */}
-              <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-500 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
+              {/* Mascot - animated phases */}
+              <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-700 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
                 <img
-                  src={hideBalance ? mascotPeek : mascot}
+                  src={getMascotImage()}
                   alt="Mascot"
-                  className={`w-full h-full object-contain transition-transform duration-500 ease-in-out ${hideBalance ? 'animate-wiggle' : 'animate-bounce-slow'}`}
+                  className={`w-full h-full object-contain transition-all duration-700 ease-in-out ${getMascotAnimation()}`}
                 />
+              </div>
+
+              {/* Speech bubble */}
+              <div className={`absolute right-20 bottom-8 transition-all duration-500 pointer-events-none ${showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-90'}`}>
+                <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl rounded-br-sm px-3 py-1.5 shadow-lg max-w-[140px]">
+                  <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
+                </div>
               </div>
               
               {/* Top glow line */}
@@ -106,7 +162,7 @@ const Home = () => {
               <div className="relative z-10 px-5 pt-5 pb-5">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-foreground/40 font-medium tracking-wider uppercase">Total Balance</p>
-                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-foreground/5">
+                  <button onClick={toggleBalance} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-foreground/5">
                     {hideBalance ? <EyeOff className="w-3.5 h-3.5 text-foreground/40" /> : <Eye className="w-3.5 h-3.5 text-foreground/40" />}
                   </button>
                 </div>

@@ -87,6 +87,10 @@ export default {
           "60%": { transform: "rotate(2deg)" },
           "75%": { transform: "rotate(-1deg)" },
         },
+        "breathe": {
+          "0%, 100%": { transform: "scale(1) translateY(0)" },
+          "50%": { transform: "scale(1.03) translateY(-2px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
