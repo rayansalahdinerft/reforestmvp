@@ -11,7 +11,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
-import mascot from '@/assets/mascot/panda-green-3d.png';
+import BalanceMascot from '@/components/home/BalanceMascot';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -22,16 +22,7 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
-  const [mascotState, setMascotState] = useState<'idle' | 'walking' | 'guarding'>('idle');
-  const [showBubble, setShowBubble] = useState(false);
-
-  const bubbleMessages = [
-    "J'ai rien vu hein… 👀",
-    "C'est secret ! 🤫",
-    "Promis je regarde pas… 😏",
-    "Ton solde est safe avec moi 🔒",
-  ];
-  const [bubbleText, setBubbleText] = useState(bubbleMessages[0]);
+  
 
   // Build a map of symbol -> sparkline data & 24h change from market data
   const sparklineMap = useMemo(() => {
@@ -63,21 +54,7 @@ const Home = () => {
   };
 
   const toggleBalance = () => {
-    const newHide = !hideBalance;
-    setHideBalance(newHide);
-    if (newHide) {
-      setMascotState('walking');
-      setBubbleText(bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)]);
-      setTimeout(() => {
-        setMascotState('guarding');
-        setShowBubble(true);
-      }, 600);
-      setTimeout(() => setShowBubble(false), 4000);
-    } else {
-      setMascotState('walking');
-      setShowBubble(false);
-      setTimeout(() => setMascotState('idle'), 600);
-    }
+    setHideBalance((prev) => !prev);
   };
 
 
@@ -102,7 +79,14 @@ const Home = () => {
               style={{ background: 'linear-gradient(135deg, #0F2B0A, #1A3D14 50%, #225A1E)' }}
               onClick={openConnect}
             >
-              <img src={mascot} alt="ReforestWallet mascot" className="w-28 h-28 mx-auto mb-4 drop-shadow-xl animate-bounce-slow" style={{ filter: 'drop-shadow(0 8px 20px hsl(145 85% 55% / 0.3))' }} />
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center animate-roam">
+                <div className="w-12 h-12 rounded-full bg-primary border border-primary/50 relative">
+                  <div className="absolute -top-1 left-1 w-3 h-3 rounded-full bg-foreground" />
+                  <div className="absolute -top-1 right-1 w-3 h-3 rounded-full bg-foreground" />
+                  <div className="absolute top-4 left-3 w-1.5 h-1.5 rounded-full bg-foreground" />
+                  <div className="absolute top-4 right-3 w-1.5 h-1.5 rounded-full bg-foreground" />
+                </div>
+              </div>
               <h2 className="text-xl font-bold text-foreground mb-1">Welcome to ReforestWallet</h2>
               <p className="text-sm text-muted-foreground mb-4">Connect your wallet to get started</p>
               <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm">
@@ -119,38 +103,7 @@ const Home = () => {
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
               
-              {/* Mascot - single image, CSS animated */}
-              <div 
-                className={`absolute pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-20 ${
-                  mascotState === 'guarding' 
-                    ? 'w-[100px] h-[100px] left-1/2 -translate-x-1/2 bottom-6' 
-                    : mascotState === 'walking'
-                    ? 'w-[90px] h-[90px] left-1/2 -translate-x-1/2 -bottom-1'
-                    : 'w-[80px] h-[80px] -right-1 -bottom-1'
-                }`}
-                style={{ filter: 'drop-shadow(0 6px 20px hsl(145 85% 55% / 0.3))' }}
-              >
-                <img
-                  src={mascot}
-                  alt="Mascot"
-                  className={`w-full h-full object-contain transition-transform duration-1000 ease-in-out ${
-                    mascotState === 'guarding' 
-                      ? 'animate-guard' 
-                      : mascotState === 'walking'
-                      ? 'animate-waddle'
-                      : 'animate-roam'
-                  }`}
-                />
-              </div>
-
-              {/* Speech bubble */}
-              <div className={`absolute left-1/2 -translate-x-1/2 bottom-[110px] z-30 transition-all duration-500 pointer-events-none ${showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-75'}`}>
-                <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl px-3 py-1.5 shadow-lg">
-                  <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
-                  {/* Bubble tail */}
-                  <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card/95 border-b border-r border-border/50 rotate-45" />
-                </div>
-              </div>
+              <BalanceMascot isHidden={hideBalance} />
               
               {/* Top glow line */}
               <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />
