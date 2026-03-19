@@ -22,14 +22,13 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
-  const [mascotPhase, setMascotPhase] = useState<'idle' | 'closing' | 'peeking'>('idle');
+  const [mascotState, setMascotState] = useState<'idle' | 'walking' | 'guarding'>('idle');
   const [showBubble, setShowBubble] = useState(false);
 
   const bubbleMessages = [
     "J'ai rien vu hein… 👀",
     "C'est secret ! 🤫",
     "Promis je regarde pas… 😏",
-    "Bon ok je triche un peu 🙈",
     "Ton solde est safe avec moi 🔒",
   ];
   const [bubbleText, setBubbleText] = useState(bubbleMessages[0]);
