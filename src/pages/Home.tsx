@@ -11,6 +11,9 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
+import frog3d from '@/assets/animals/frog-3d.png';
+import parrot3d from '@/assets/animals/parrot-3d.png';
+import chameleon3d from '@/assets/animals/chameleon-3d.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
