@@ -11,6 +11,9 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
+import frog3d from '@/assets/animals/frog-3d.png';
+import parrot3d from '@/assets/animals/parrot-3d.png';
+import chameleon3d from '@/assets/animals/chameleon-3d.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -80,15 +83,20 @@ const Home = () => {
         ) : (
           <>
             {/* Balance Card */}
-            <div className="rounded-3xl relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #0D1A0B, #152012 40%, #1A2917)' }}>
-              {/* Organic shapes */}
-              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsl(142 76% 52% / 0.25), transparent 70%)' }} />
-              <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(162 72% 48% / 0.3), transparent 70%)' }} />
-              <div className="absolute -left-6 bottom-0 w-24 h-24 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(142 76% 52% / 0.2), transparent 70%)' }} />
-              <div className="absolute left-1/3 -bottom-4 w-36 h-36 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, hsl(142 76% 52% / 0.15), transparent 70%)' }} />
+            <div className="rounded-3xl relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #0F2B0A, #1A3D14 40%, #225A1E)' }}>
+              {/* Vivid organic shapes */}
+              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
+              <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
+              <div className="absolute -left-6 bottom-0 w-24 h-24 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.25), transparent 70%)' }} />
+              <div className="absolute left-1/3 -bottom-4 w-36 h-36 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.2), transparent 70%)' }} />
               
-              {/* Subtle leaf texture line */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] opacity-20" style={{ background: 'linear-gradient(90deg, transparent, hsl(142 76% 52% / 0.5), transparent)' }} />
+              {/* 3D Animals */}
+              <img src={frog3d} alt="" className="absolute -right-2 -bottom-2 w-20 h-20 opacity-70 pointer-events-none drop-shadow-lg" style={{ filter: 'drop-shadow(0 0 8px hsl(145 85% 55% / 0.3))' }} />
+              <img src={parrot3d} alt="" className="absolute right-14 -top-1 w-14 h-14 opacity-50 pointer-events-none rotate-12 drop-shadow-lg" style={{ filter: 'drop-shadow(0 0 6px hsl(145 85% 55% / 0.2))' }} />
+              <img src={chameleon3d} alt="" className="absolute -left-1 top-1/2 -translate-y-1/2 w-12 h-12 opacity-40 pointer-events-none -rotate-12 drop-shadow-lg" style={{ filter: 'drop-shadow(0 0 6px hsl(145 85% 55% / 0.2))' }} />
+              
+              {/* Subtle top line */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />
 
               <div className="relative z-10 px-5 pt-5 pb-5">
                 <div className="flex items-center justify-between mb-2">
