@@ -4,6 +4,7 @@ import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import { useIsMobile } from "@/hooks/use-mobile";
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const Index = () => {
   const isMobile = useIsMobile();
