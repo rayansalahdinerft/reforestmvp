@@ -133,12 +133,12 @@ const Home = () => {
                 <img
                   src={mascot}
                   alt="Mascot"
-                  className={`w-full h-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                  className={`w-full h-full object-contain transition-transform duration-1000 ease-in-out ${
                     mascotState === 'guarding' 
-                      ? 'animate-[guard_3s_ease-in-out_infinite] scale-110' 
+                      ? 'animate-guard' 
                       : mascotState === 'walking'
-                      ? 'animate-[waddle_0.4s_ease-in-out_infinite]'
-                      : 'animate-[roam_6s_ease-in-out_infinite]'
+                      ? 'animate-waddle'
+                      : 'animate-roam'
                   }`}
                 />
               </div>
