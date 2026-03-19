@@ -65,13 +65,41 @@ const Home = () => {
     }
   };
 
-  const qrSvg = useMemo(() => {
-    if (!address) return '';
-    const qr = qrcode(0, 'M');
-    qr.addData(address);
-    qr.make();
-    return qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
-  }, [address]);
+  const toggleBalance = () => {
+    const newHide = !hideBalance;
+    setHideBalance(newHide);
+    if (newHide) {
+      // Phase 1: eyes closing
+      setMascotPhase('closing');
+      setBubbleText(bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)]);
+      // Phase 2: peek after a beat
+      setTimeout(() => {
+        setMascotPhase('peeking');
+        setShowBubble(true);
+      }, 800);
+      // Hide bubble after a while
+      setTimeout(() => setShowBubble(false), 3500);
+    } else {
+      setMascotPhase('idle');
+      setShowBubble(false);
+    }
+  };
+
+  const getMascotImage = () => {
+    switch (mascotPhase) {
+      case 'closing': return mascotSleep;
+      case 'peeking': return mascotPeek;
+      default: return mascot;
+    }
+  };
+
+  const getMascotAnimation = () => {
+    switch (mascotPhase) {
+      case 'closing': return 'animate-[breathe_2s_ease-in-out_infinite]';
+      case 'peeking': return 'animate-wiggle';
+      default: return 'animate-bounce-slow';
+    }
+  };
 
   return (
     <div className="min-h-[100dvh] bg-background relative overflow-hidden">
