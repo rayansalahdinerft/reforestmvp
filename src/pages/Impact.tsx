@@ -9,6 +9,7 @@ import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
 import NftCertificate from "@/components/impact/NftCertificate";
 import ShareImpactCard from "@/components/impact/ShareImpactCard";
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const NFT_CERTS = [
   { milestone: 1_000, label: "Forest Steel", description: "1,000 trees planted", rarity: "uncommon" as const },
