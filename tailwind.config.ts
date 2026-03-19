@@ -79,6 +79,14 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
         },
+        "wiggle": {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "15%": { transform: "rotate(-3deg) scale(1.05)" },
+          "30%": { transform: "rotate(3deg) scale(1.05)" },
+          "45%": { transform: "rotate(-2deg)" },
+          "60%": { transform: "rotate(2deg)" },
+          "75%": { transform: "rotate(-1deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

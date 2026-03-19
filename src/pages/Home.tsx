@@ -91,13 +91,12 @@ const Home = () => {
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
               
-              {/* Mascot - toggles pose */}
+              {/* Mascot - peeks when balance hidden */}
               <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-500 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
                 <img
-                  src={hideBalance ? mascotHide : mascot}
+                  src={hideBalance ? mascotPeek : mascot}
                   alt="Mascot"
-                  className="w-full h-full object-contain transition-transform duration-500 ease-in-out"
-                  style={{ transform: hideBalance ? 'scale(1.05)' : 'scale(1)' }}
+                  className={`w-full h-full object-contain transition-transform duration-500 ease-in-out ${hideBalance ? 'animate-wiggle' : 'animate-bounce-slow'}`}
                 />
               </div>
               
