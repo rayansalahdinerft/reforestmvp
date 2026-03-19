@@ -22,16 +22,7 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
-  const [mascotState, setMascotState] = useState<'idle' | 'walking' | 'guarding'>('idle');
   const [showBubble, setShowBubble] = useState(false);
-
-  const bubbleMessages = [
-    "J'ai rien vu hein… 👀",
-    "C'est secret ! 🤫",
-    "Promis je regarde pas… 😏",
-    "Ton solde est safe avec moi 🔒",
-  ];
-  const [bubbleText, setBubbleText] = useState(bubbleMessages[0]);
 
   // Build a map of symbol -> sparkline data & 24h change from market data
   const sparklineMap = useMemo(() => {
