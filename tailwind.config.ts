@@ -92,6 +92,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "bounce-slow": "bounce-slow 3s ease-in-out infinite",
+        "wiggle": "wiggle 1.5s ease-in-out infinite",
       },
     },
   },
