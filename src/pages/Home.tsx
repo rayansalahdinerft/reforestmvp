@@ -54,21 +54,7 @@ const Home = () => {
   };
 
   const toggleBalance = () => {
-    const newHide = !hideBalance;
-    setHideBalance(newHide);
-    if (newHide) {
-      setMascotState('walking');
-      setBubbleText(bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)]);
-      setTimeout(() => {
-        setMascotState('guarding');
-        setShowBubble(true);
-      }, 600);
-      setTimeout(() => setShowBubble(false), 4000);
-    } else {
-      setMascotState('walking');
-      setShowBubble(false);
-      setTimeout(() => setMascotState('idle'), 600);
-    }
+    setHideBalance((prev) => !prev);
   };
 
 
