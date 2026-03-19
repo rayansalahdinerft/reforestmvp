@@ -12,6 +12,7 @@ import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
 import mascot from '@/assets/mascot/panda-green-3d.png';
+import mascotHide from '@/assets/mascot/panda-green-eyes-closed.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
