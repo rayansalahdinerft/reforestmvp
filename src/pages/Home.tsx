@@ -103,38 +103,7 @@ const Home = () => {
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
               
-              {/* Mascot - single image, CSS animated */}
-              <div 
-                className={`absolute pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-20 ${
-                  mascotState === 'guarding' 
-                    ? 'w-[100px] h-[100px] left-1/2 -translate-x-1/2 bottom-6' 
-                    : mascotState === 'walking'
-                    ? 'w-[90px] h-[90px] left-1/2 -translate-x-1/2 -bottom-1'
-                    : 'w-[80px] h-[80px] -right-1 -bottom-1'
-                }`}
-                style={{ filter: 'drop-shadow(0 6px 20px hsl(145 85% 55% / 0.3))' }}
-              >
-                <img
-                  src={mascot}
-                  alt="Mascot"
-                  className={`w-full h-full object-contain transition-transform duration-1000 ease-in-out ${
-                    mascotState === 'guarding' 
-                      ? 'animate-guard' 
-                      : mascotState === 'walking'
-                      ? 'animate-waddle'
-                      : 'animate-roam'
-                  }`}
-                />
-              </div>
-
-              {/* Speech bubble */}
-              <div className={`absolute left-1/2 -translate-x-1/2 bottom-[110px] z-30 transition-all duration-500 pointer-events-none ${showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-75'}`}>
-                <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl px-3 py-1.5 shadow-lg">
-                  <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
-                  {/* Bubble tail */}
-                  <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card/95 border-b border-r border-border/50 rotate-45" />
-                </div>
-              </div>
+              <BalanceMascot isHidden={hideBalance} />
               
               {/* Top glow line */}
               <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />
