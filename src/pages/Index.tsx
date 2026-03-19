@@ -4,6 +4,7 @@ import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
 import { useIsMobile } from "@/hooks/use-mobile";
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -36,8 +37,9 @@ const Index = () => {
           <TreeCounter />
         </div>
 
-        <div className="flex justify-center mb-4 sm:mb-6">
+        <div className="flex justify-center mb-4 sm:mb-6 relative">
           <SwapCard />
+          <img src={mascot} alt="" className="hidden sm:block absolute -right-4 bottom-0 w-20 h-20 pointer-events-none opacity-80 drop-shadow-xl" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.2))' }} />
         </div>
 
         <div className="hidden sm:flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 text-xs sm:text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.4s' }}>

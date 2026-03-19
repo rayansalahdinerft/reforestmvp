@@ -11,7 +11,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
-import mascot from '@/assets/mascot/panda-roux-3d.png';
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -69,13 +69,17 @@ const Home = () => {
         {!isConnected ? (
           <div className="mt-4">
             <div
-              className="rounded-3xl p-6 text-center active:scale-[0.98] transition-transform cursor-pointer"
-              style={{ background: 'linear-gradient(135deg, #152012, #1A2917)' }}
+              className="rounded-3xl p-8 text-center active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #0F2B0A, #1A3D14 50%, #225A1E)' }}
               onClick={openConnect}
             >
-              <Wallet className="w-12 h-12 text-primary mx-auto mb-3 opacity-60" />
-              <h2 className="text-lg font-semibold text-foreground mb-1">Connect Your Wallet</h2>
-              <p className="text-sm text-muted-foreground">Tap to get started</p>
+              <img src={mascot} alt="ReforestWallet mascot" className="w-28 h-28 mx-auto mb-4 drop-shadow-xl animate-bounce-slow" style={{ filter: 'drop-shadow(0 8px 20px hsl(145 85% 55% / 0.3))' }} />
+              <h2 className="text-xl font-bold text-foreground mb-1">Welcome to ReforestWallet</h2>
+              <p className="text-sm text-muted-foreground mb-4">Connect your wallet to get started</p>
+              <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm">
+                <Wallet className="w-4 h-4" />
+                Get Started
+              </div>
             </div>
           </div>
         ) : (
@@ -88,8 +92,8 @@ const Home = () => {
               <div className="absolute -left-6 bottom-0 w-24 h-24 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.25), transparent 70%)' }} />
               <div className="absolute left-1/3 -bottom-4 w-36 h-36 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.2), transparent 70%)' }} />
               
-              {/* 3D Mascot - Panda Roux */}
-              <img src={mascot} alt="ReforestWallet mascot" className="absolute -right-3 -bottom-3 w-24 h-24 pointer-events-none drop-shadow-xl" style={{ filter: 'drop-shadow(0 4px 12px hsl(145 85% 55% / 0.25))' }} />
+              
+              {/* Subtle top line */}
               
               {/* Subtle top line */}
               <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />

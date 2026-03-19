@@ -7,6 +7,7 @@ import { useMarketData, TOKEN_CATEGORIES, type MarketToken } from "@/hooks/useMa
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { TrendingUp, TrendingDown, Search, RefreshCw, Loader2, Database, AlertTriangle, Star } from "lucide-react";
 import { useState, useMemo } from "react";
+import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const CATEGORIES = ['All', 'Watchlist', 'Major', 'Layer 2', 'DeFi', 'Stablecoin', 'Meme'];
 
@@ -59,6 +60,7 @@ const Market = () => {
       <main className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero */}
         <div className="text-center mb-6 sm:mb-10 animate-fade-in">
+          <img src={mascot} alt="" className="w-12 h-12 mx-auto mb-3 drop-shadow-lg" style={{ filter: 'drop-shadow(0 4px 10px hsl(145 85% 55% / 0.2))' }} />
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2 sm:mb-4 tracking-tight">
             <span className="text-primary">Market</span> Overview
           </h1>
