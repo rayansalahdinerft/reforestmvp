@@ -12,8 +12,6 @@ import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
 import mascot from '@/assets/mascot/panda-green-3d.png';
-import mascotPeek from '@/assets/mascot/panda-peek.png';
-import mascotSleep from '@/assets/mascot/panda-green-eyes-closed.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -24,14 +22,13 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
-  const [mascotPhase, setMascotPhase] = useState<'idle' | 'closing' | 'peeking'>('idle');
+  const [mascotState, setMascotState] = useState<'idle' | 'walking' | 'guarding'>('idle');
   const [showBubble, setShowBubble] = useState(false);
 
   const bubbleMessages = [
     "J'ai rien vu hein… 👀",
     "C'est secret ! 🤫",
     "Promis je regarde pas… 😏",
-    "Bon ok je triche un peu 🙈",
     "Ton solde est safe avec moi 🔒",
   ];
   const [bubbleText, setBubbleText] = useState(bubbleMessages[0]);
@@ -69,35 +66,17 @@ const Home = () => {
     const newHide = !hideBalance;
     setHideBalance(newHide);
     if (newHide) {
-      // Phase 1: eyes closing
-      setMascotPhase('closing');
+      setMascotState('walking');
       setBubbleText(bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)]);
-      // Phase 2: peek after a beat
       setTimeout(() => {
-        setMascotPhase('peeking');
+        setMascotState('guarding');
         setShowBubble(true);
-      }, 800);
-      // Hide bubble after a while
-      setTimeout(() => setShowBubble(false), 3500);
+      }, 600);
+      setTimeout(() => setShowBubble(false), 4000);
     } else {
-      setMascotPhase('idle');
+      setMascotState('walking');
       setShowBubble(false);
-    }
-  };
-
-  const getMascotImage = () => {
-    switch (mascotPhase) {
-      case 'closing': return mascotSleep;
-      case 'peeking': return mascotPeek;
-      default: return mascot;
-    }
-  };
-
-  const getMascotAnimation = () => {
-    switch (mascotPhase) {
-      case 'closing': return 'animate-[breathe_2s_ease-in-out_infinite]';
-      case 'peeking': return 'animate-wiggle';
-      default: return 'animate-bounce-slow';
+      setTimeout(() => setMascotState('idle'), 600);
     }
   };
 
@@ -140,19 +119,36 @@ const Home = () => {
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
               
-              {/* Mascot - animated phases */}
-              <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-700 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
+              {/* Mascot - single image, CSS animated */}
+              <div 
+                className={`absolute pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-20 ${
+                  mascotState === 'guarding' 
+                    ? 'w-[100px] h-[100px] left-1/2 -translate-x-1/2 bottom-6' 
+                    : mascotState === 'walking'
+                    ? 'w-[90px] h-[90px] left-1/2 -translate-x-1/2 -bottom-1'
+                    : 'w-[80px] h-[80px] -right-1 -bottom-1'
+                }`}
+                style={{ filter: 'drop-shadow(0 6px 20px hsl(145 85% 55% / 0.3))' }}
+              >
                 <img
-                  src={getMascotImage()}
+                  src={mascot}
                   alt="Mascot"
-                  className={`w-full h-full object-contain transition-all duration-700 ease-in-out ${getMascotAnimation()}`}
+                  className={`w-full h-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                    mascotState === 'guarding' 
+                      ? 'animate-[guard_3s_ease-in-out_infinite] scale-110' 
+                      : mascotState === 'walking'
+                      ? 'animate-[waddle_0.4s_ease-in-out_infinite]'
+                      : 'animate-[roam_6s_ease-in-out_infinite]'
+                  }`}
                 />
               </div>
 
               {/* Speech bubble */}
-              <div className={`absolute right-20 bottom-8 transition-all duration-500 pointer-events-none ${showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-90'}`}>
-                <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl rounded-br-sm px-3 py-1.5 shadow-lg max-w-[140px]">
+              <div className={`absolute left-1/2 -translate-x-1/2 bottom-[110px] z-30 transition-all duration-500 pointer-events-none ${showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-75'}`}>
+                <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl px-3 py-1.5 shadow-lg">
                   <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
+                  {/* Bubble tail */}
+                  <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card/95 border-b border-r border-border/50 rotate-45" />
                 </div>
               </div>
               
