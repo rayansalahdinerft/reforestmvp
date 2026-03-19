@@ -66,35 +66,17 @@ const Home = () => {
     const newHide = !hideBalance;
     setHideBalance(newHide);
     if (newHide) {
-      // Phase 1: eyes closing
-      setMascotPhase('closing');
+      setMascotState('walking');
       setBubbleText(bubbleMessages[Math.floor(Math.random() * bubbleMessages.length)]);
-      // Phase 2: peek after a beat
       setTimeout(() => {
-        setMascotPhase('peeking');
+        setMascotState('guarding');
         setShowBubble(true);
-      }, 800);
-      // Hide bubble after a while
-      setTimeout(() => setShowBubble(false), 3500);
+      }, 600);
+      setTimeout(() => setShowBubble(false), 4000);
     } else {
-      setMascotPhase('idle');
+      setMascotState('walking');
       setShowBubble(false);
-    }
-  };
-
-  const getMascotImage = () => {
-    switch (mascotPhase) {
-      case 'closing': return mascotSleep;
-      case 'peeking': return mascotPeek;
-      default: return mascot;
-    }
-  };
-
-  const getMascotAnimation = () => {
-    switch (mascotPhase) {
-      case 'closing': return 'animate-[breathe_2s_ease-in-out_infinite]';
-      case 'peeking': return 'animate-wiggle';
-      default: return 'animate-bounce-slow';
+      setTimeout(() => setMascotState('idle'), 600);
     }
   };
 
