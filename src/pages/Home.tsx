@@ -22,7 +22,7 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
-  const [showBubble, setShowBubble] = useState(false);
+  
 
   // Build a map of symbol -> sparkline data & 24h change from market data
   const sparklineMap = useMemo(() => {
