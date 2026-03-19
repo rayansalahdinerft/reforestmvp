@@ -11,9 +11,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
-import frog3d from '@/assets/animals/frog-3d.png';
-import parrot3d from '@/assets/animals/parrot-3d.png';
-import chameleon3d from '@/assets/animals/chameleon-3d.png';
+import mascot from '@/assets/mascot/panda-roux-3d.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -90,10 +88,8 @@ const Home = () => {
               <div className="absolute -left-6 bottom-0 w-24 h-24 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.25), transparent 70%)' }} />
               <div className="absolute left-1/3 -bottom-4 w-36 h-36 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.2), transparent 70%)' }} />
               
-              {/* 3D Animals */}
-              <img src={frog3d} alt="" className="absolute -right-2 -bottom-2 w-20 h-20 opacity-70 pointer-events-none drop-shadow-lg" style={{ filter: 'drop-shadow(0 0 8px hsl(145 85% 55% / 0.3))' }} />
-              <img src={parrot3d} alt="" className="absolute right-14 -top-1 w-14 h-14 opacity-50 pointer-events-none rotate-12 drop-shadow-lg" style={{ filter: 'drop-shadow(0 0 6px hsl(145 85% 55% / 0.2))' }} />
-              <img src={chameleon3d} alt="" className="absolute -left-1 top-1/2 -translate-y-1/2 w-12 h-12 opacity-40 pointer-events-none -rotate-12 drop-shadow-lg" style={{ filter: 'drop-shadow(0 0 6px hsl(145 85% 55% / 0.2))' }} />
+              {/* 3D Mascot - Panda Roux */}
+              <img src={mascot} alt="ReforestWallet mascot" className="absolute -right-3 -bottom-3 w-24 h-24 pointer-events-none drop-shadow-xl" style={{ filter: 'drop-shadow(0 4px 12px hsl(145 85% 55% / 0.25))' }} />
               
               {/* Subtle top line */}
               <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />
