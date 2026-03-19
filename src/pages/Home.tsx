@@ -140,13 +140,20 @@ const Home = () => {
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
               
-              {/* Mascot - peeks when balance hidden */}
-              <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-500 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
+              {/* Mascot - animated phases */}
+              <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-700 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
                 <img
-                  src={hideBalance ? mascotPeek : mascot}
+                  src={getMascotImage()}
                   alt="Mascot"
-                  className={`w-full h-full object-contain transition-transform duration-500 ease-in-out ${hideBalance ? 'animate-wiggle' : 'animate-bounce-slow'}`}
+                  className={`w-full h-full object-contain transition-all duration-700 ease-in-out ${getMascotAnimation()}`}
                 />
+              </div>
+
+              {/* Speech bubble */}
+              <div className={`absolute right-20 bottom-8 transition-all duration-500 pointer-events-none ${showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-90'}`}>
+                <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl rounded-br-sm px-3 py-1.5 shadow-lg max-w-[140px]">
+                  <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
+                </div>
               </div>
               
               {/* Top glow line */}
@@ -155,7 +162,7 @@ const Home = () => {
               <div className="relative z-10 px-5 pt-5 pb-5">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-foreground/40 font-medium tracking-wider uppercase">Total Balance</p>
-                  <button onClick={() => setHideBalance(!hideBalance)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-foreground/5">
+                  <button onClick={toggleBalance} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-foreground/5">
                     {hideBalance ? <EyeOff className="w-3.5 h-3.5 text-foreground/40" /> : <Eye className="w-3.5 h-3.5 text-foreground/40" />}
                   </button>
                 </div>
