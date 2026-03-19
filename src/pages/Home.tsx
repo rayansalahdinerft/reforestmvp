@@ -79,7 +79,14 @@ const Home = () => {
               style={{ background: 'linear-gradient(135deg, #0F2B0A, #1A3D14 50%, #225A1E)' }}
               onClick={openConnect}
             >
-              <img src={mascot} alt="ReforestWallet mascot" className="w-28 h-28 mx-auto mb-4 drop-shadow-xl animate-bounce-slow" style={{ filter: 'drop-shadow(0 8px 20px hsl(145 85% 55% / 0.3))' }} />
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center animate-roam">
+                <div className="w-12 h-12 rounded-full bg-primary border border-primary/50 relative">
+                  <div className="absolute -top-1 left-1 w-3 h-3 rounded-full bg-foreground" />
+                  <div className="absolute -top-1 right-1 w-3 h-3 rounded-full bg-foreground" />
+                  <div className="absolute top-4 left-3 w-1.5 h-1.5 rounded-full bg-foreground" />
+                  <div className="absolute top-4 right-3 w-1.5 h-1.5 rounded-full bg-foreground" />
+                </div>
+              </div>
               <h2 className="text-xl font-bold text-foreground mb-1">Welcome to ReforestWallet</h2>
               <p className="text-sm text-muted-foreground mb-4">Connect your wallet to get started</p>
               <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm">
