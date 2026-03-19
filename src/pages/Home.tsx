@@ -12,6 +12,7 @@ import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
 import mascot from '@/assets/mascot/panda-green-3d.png';
+import mascotHide from '@/assets/mascot/panda-green-eyes-closed.png';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -89,13 +90,18 @@ const Home = () => {
               {/* Vivid organic shapes */}
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
               <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
-              <div className="absolute -left-6 bottom-0 w-24 h-24 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.25), transparent 70%)' }} />
-              <div className="absolute left-1/3 -bottom-4 w-36 h-36 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.2), transparent 70%)' }} />
               
+              {/* Mascot - toggles pose */}
+              <div className="absolute -right-2 -bottom-2 w-[88px] h-[88px] pointer-events-none transition-all duration-500 ease-in-out" style={{ filter: 'drop-shadow(0 4px 16px hsl(145 85% 55% / 0.25))' }}>
+                <img
+                  src={hideBalance ? mascotHide : mascot}
+                  alt="Mascot"
+                  className="w-full h-full object-contain transition-transform duration-500 ease-in-out"
+                  style={{ transform: hideBalance ? 'scale(1.05)' : 'scale(1)' }}
+                />
+              </div>
               
-              {/* Subtle top line */}
-              
-              {/* Subtle top line */}
+              {/* Top glow line */}
               <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />
 
               <div className="relative z-10 px-5 pt-5 pb-5">
