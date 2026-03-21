@@ -3,6 +3,13 @@ import { Buffer } from "buffer";
 import process from "process";
 import "./index.css";
 
+// Patch process.nextTick BEFORE anything else
+if (typeof process.nextTick !== 'function') {
+  (process as any).nextTick = (fn: (...args: any[]) => void, ...args: any[]) => {
+    Promise.resolve().then(() => fn(...args));
+  };
+}
+
 const globalForPolyfills = globalThis as typeof globalThis & {
   Buffer?: typeof Buffer;
   process?: typeof process;
@@ -19,10 +26,10 @@ if (!globalForPolyfills.process) {
   globalForPolyfills.process = process;
 }
 
-// Patch process.nextTick for Web3Auth's stream dependencies
+// Ensure global process also has nextTick
 if (globalForPolyfills.process && typeof globalForPolyfills.process.nextTick !== 'function') {
   (globalForPolyfills.process as any).nextTick = (fn: (...args: any[]) => void, ...args: any[]) => {
-    setTimeout(() => fn(...args), 0);
+    Promise.resolve().then(() => fn(...args));
   };
 }
 
