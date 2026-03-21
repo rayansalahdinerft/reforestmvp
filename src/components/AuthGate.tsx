@@ -6,8 +6,16 @@ const AuthGate = ({ children }: { children: React.ReactNode }) => {
 
   if (!ready) {
     return (
-      <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <img src="/icon.png" alt="ReforestWallet" className="w-16 h-16 rounded-2xl" />
+        <Loader2 className="w-8 h-8 text-foreground animate-spin" />
+        <p className="text-sm text-foreground">Initialisation de la connexion…</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium"
+        >
+          Rafraîchir
+        </button>
       </div>
     );
   }
