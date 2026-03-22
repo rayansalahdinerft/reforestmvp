@@ -271,6 +271,13 @@ const Home = () => {
       {activePanel === 'buy' && (
         <BuyPanel onClose={() => setActivePanel(null)} address={address} />
       )}
+
+      {/* Token Detail Modal */}
+      <TokenDetailModal
+        token={selectedMarketToken}
+        open={!!selectedMarketToken}
+        onOpenChange={(open) => { if (!open) setSelectedMarketToken(null); }}
+      />
     </div>
   );
 };
