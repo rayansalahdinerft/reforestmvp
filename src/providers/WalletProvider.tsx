@@ -5,7 +5,7 @@ import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 
 const queryClient = new QueryClient();
 
-const DYNAMIC_ENV_ID = import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || '';
+const DYNAMIC_ENV_ID = import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID || '2bb7aefa-6c1b-4790-9960-30cac2bcf32b';
 
 interface WalletProviderProps {
   children: ReactNode;
