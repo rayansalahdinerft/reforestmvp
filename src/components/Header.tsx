@@ -20,8 +20,8 @@ const Header = () => {
 
   return (
     <header className="w-full pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 px-3 md:py-3 md:px-6 glass-effect sticky top-0 z-50 border-b border-border/50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-10">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+        <div className="flex items-center gap-10 flex-shrink-0">
           <Link to="/" className="transition-all">
             <Logo />
           </Link>
@@ -42,8 +42,8 @@ const Header = () => {
           </nav>
         </div>
         
-        <div className="flex items-center gap-3">
-          {isConnected && <WalletSwitcher />}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {isConnected && <div className="hidden md:block"><WalletSwitcher /></div>}
           <ConnectButton />
         </div>
       </div>
