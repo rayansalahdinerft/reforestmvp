@@ -23,6 +23,7 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
+  const [selectedMarketToken, setSelectedMarketToken] = useState<MarketToken | null>(null);
   
 
   // Build a map of symbol -> sparkline data & 24h change from market data
