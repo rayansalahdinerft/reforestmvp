@@ -9,9 +9,10 @@ import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
-import { useMarketData } from '@/hooks/useMarketData';
+import { useMarketData, type MarketToken } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
 import BalanceMascot from '@/components/home/BalanceMascot';
+import TokenDetailModal from '@/components/TokenDetailModal';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
