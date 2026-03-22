@@ -9,9 +9,10 @@ import SendPanel from '@/components/home/SendPanel';
 import BuyPanel from '@/components/home/BuyPanel';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
-import { useMarketData } from '@/hooks/useMarketData';
+import { useMarketData, type MarketToken } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
 import BalanceMascot from '@/components/home/BalanceMascot';
+import TokenDetailModal from '@/components/TokenDetailModal';
 
 const Home = () => {
   const { balances, totalValue, loading, isConnected, priceError } = useWalletBalance();
@@ -22,6 +23,7 @@ const Home = () => {
   const [hideBalance, setHideBalance] = useState(false);
   const [activePanel, setActivePanel] = useState<'send' | 'receive' | 'buy' | null>(null);
   const [copied, setCopied] = useState(false);
+  const [selectedMarketToken, setSelectedMarketToken] = useState<MarketToken | null>(null);
   
 
   // Build a map of symbol -> sparkline data & 24h change from market data
@@ -176,9 +178,14 @@ const Home = () => {
                     const change24h = sparkData?.change24h ?? 0;
                     const isPositive = change24h >= 0;
                     return (
-                      <div
+                      <button
                         key={token.symbol}
-                        className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-card/60 active:bg-card/80 transition-all"
+                        onClick={() => {
+                          // Find matching market token to open detail
+                          const mt = marketTokens.find(m => m.symbol.toUpperCase() === token.symbol.toUpperCase());
+                          if (mt) setSelectedMarketToken(mt);
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-card/60 active:bg-card/80 transition-all cursor-pointer text-left"
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           {token.logoURI ? (
@@ -216,7 +223,7 @@ const Home = () => {
                             {isPositive ? '+' : ''}{change24h.toFixed(2)}%
                           </p>
                         </div>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -264,6 +271,13 @@ const Home = () => {
       {activePanel === 'buy' && (
         <BuyPanel onClose={() => setActivePanel(null)} address={address} />
       )}
+
+      {/* Token Detail Modal */}
+      <TokenDetailModal
+        token={selectedMarketToken}
+        open={!!selectedMarketToken}
+        onOpenChange={(open) => { if (!open) setSelectedMarketToken(null); }}
+      />
     </div>
   );
 };

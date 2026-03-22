@@ -30,31 +30,41 @@ const BalanceMascot = ({ isHidden }: BalanceMascotProps) => {
 
   return (
     <>
-      {/* Mascot image */}
-      <div className="absolute right-2 -bottom-2 z-20 pointer-events-none w-[80px] h-[80px]">
+      {/* Mascot — blended into the card's dark green gradient */}
+      <div className="absolute right-1 bottom-1 z-20 pointer-events-none w-[76px] h-[76px]">
         <div className="relative w-full h-full">
+          {/* Soft radial glow to blend into the green gradient */}
+          <div
+            className="absolute inset-0 rounded-full blur-md opacity-60"
+            style={{ background: 'radial-gradient(circle, #1A3D14 30%, transparent 70%)' }}
+          />
           <img
             src={mascotImg}
             alt="Mascotte Panda Roux"
-            className={`w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(34,255,102,0.3)] transition-transform duration-500 ${isHidden ? 'scale-105' : 'scale-100'}`}
+            className={`relative w-full h-full object-contain transition-transform duration-500 ${isHidden ? 'scale-[1.08]' : 'scale-100'}`}
+            style={{
+              filter: 'drop-shadow(0 2px 8px rgba(34,255,102,0.15))',
+              mixBlendMode: 'normal',
+            }}
           />
-          {/* Paws covering eyes overlay */}
+          {/* Paws covering eyes — animated */}
           <div
-            className={`absolute inset-0 flex items-start justify-center pt-[18px] transition-all duration-500 ${
+            className={`absolute inset-0 flex items-start justify-center transition-all duration-500 ${
               isHidden ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
+            style={{ paddingTop: '22%' }}
           >
-            {/* Left paw */}
             <div
-              className={`w-[22px] h-[18px] rounded-full bg-[#1a3d14] border border-[#22ff66]/40 shadow-[0_0_8px_rgba(34,255,102,0.3)] transition-all duration-500 ${
-                isHidden ? 'translate-x-[2px] translate-y-0' : '-translate-x-4 -translate-y-3'
+              className={`w-[20px] h-[14px] rounded-[50%] transition-all duration-500 ${
+                isHidden ? 'translate-x-[1px] translate-y-0' : '-translate-x-3 -translate-y-2'
               }`}
+              style={{ background: 'linear-gradient(135deg, #1a3d14, #2d5a20)', boxShadow: '0 0 6px rgba(34,255,102,0.25), inset 0 1px 2px rgba(255,255,255,0.08)' }}
             />
-            {/* Right paw */}
             <div
-              className={`w-[22px] h-[18px] rounded-full bg-[#1a3d14] border border-[#22ff66]/40 shadow-[0_0_8px_rgba(34,255,102,0.3)] transition-all duration-500 ${
-                isHidden ? '-translate-x-[2px] translate-y-0' : 'translate-x-4 -translate-y-3'
+              className={`w-[20px] h-[14px] rounded-[50%] transition-all duration-500 ${
+                isHidden ? '-translate-x-[1px] translate-y-0' : 'translate-x-3 -translate-y-2'
               }`}
+              style={{ background: 'linear-gradient(135deg, #1a3d14, #2d5a20)', boxShadow: '0 0 6px rgba(34,255,102,0.25), inset 0 1px 2px rgba(255,255,255,0.08)' }}
             />
           </div>
         </div>
@@ -62,13 +72,19 @@ const BalanceMascot = ({ isHidden }: BalanceMascotProps) => {
 
       {/* Speech bubble */}
       <div
-        className={`absolute right-[12px] bottom-[82px] z-30 transition-all duration-500 pointer-events-none ${
+        className={`absolute right-[8px] bottom-[80px] z-30 transition-all duration-500 pointer-events-none ${
           showBubble ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-75'
         }`}
       >
-        <div className="relative bg-card/95 backdrop-blur-sm border border-border/50 rounded-2xl px-3 py-1.5 shadow-lg">
+        <div
+          className="relative rounded-2xl px-3 py-1.5 shadow-lg border border-primary/20"
+          style={{ background: 'linear-gradient(135deg, rgba(15,43,10,0.95), rgba(26,61,20,0.95))', backdropFilter: 'blur(8px)' }}
+        >
           <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
-          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-card/95 border-b border-r border-border/50 rotate-45" />
+          <div
+            className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 border-b border-r border-primary/20"
+            style={{ background: 'rgba(26,61,20,0.95)' }}
+          />
         </div>
       </div>
     </>
