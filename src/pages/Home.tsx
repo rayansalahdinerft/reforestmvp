@@ -11,7 +11,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData, type MarketToken } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
-import BalanceMascot from '@/components/home/BalanceMascot';
+
 import TokenDetailModal from '@/components/TokenDetailModal';
 
 const Home = () => {
