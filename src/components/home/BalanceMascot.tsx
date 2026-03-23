@@ -78,7 +78,7 @@ const BalanceMascot = ({ isHidden }: BalanceMascotProps) => {
       >
         <div
           className="relative rounded-2xl px-3 py-1.5 shadow-lg border border-primary/20"
-          style={{ background: 'linear-gradient(135deg, rgba(15,43,10,0.95), rgba(26,61,20,0.95))', backdropFilter: 'blur(8px)' }}
+          style={{ background: 'linear-gradient(135deg, rgba(13,26,13,0.95), rgba(26,46,26,0.95))', backdropFilter: 'blur(8px)' }}
         >
           <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
           <div
