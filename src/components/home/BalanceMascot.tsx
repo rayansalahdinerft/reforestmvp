@@ -31,12 +31,12 @@ const BalanceMascot = ({ isHidden }: BalanceMascotProps) => {
   return (
     <>
       {/* Mascot — blended into the card's dark green gradient */}
-      <div className="absolute right-1 bottom-1 z-20 pointer-events-none w-[76px] h-[76px]">
+      <div className="absolute right-0 bottom-0 z-20 pointer-events-none w-[90px] h-[90px]">
         <div className="relative w-full h-full">
-          {/* Soft radial glow to blend into the green gradient */}
+          {/* Soft radial glow matching the dark background */}
           <div
-            className="absolute inset-0 rounded-full blur-md opacity-60"
-            style={{ background: 'radial-gradient(circle, #1A3D14 30%, transparent 70%)' }}
+            className="absolute inset-0 rounded-full blur-lg opacity-50"
+            style={{ background: 'radial-gradient(circle, #0d1a0d 20%, transparent 70%)' }}
           />
           <img
             src={mascotImg}
