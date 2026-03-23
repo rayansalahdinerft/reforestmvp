@@ -100,10 +100,9 @@ const Home = () => {
         ) : (
           <>
             {/* Balance Card */}
-            <div className="rounded-3xl relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #0F2B0A, #1A3D14 40%, #225A1E)' }}>
-              {/* Vivid organic shapes */}
-              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, hsl(145 85% 55% / 0.3), transparent 70%)' }} />
-              <div className="absolute right-16 top-12 w-28 h-28 rounded-full opacity-25" style={{ background: 'radial-gradient(circle, hsl(160 80% 50% / 0.35), transparent 70%)' }} />
+            <div className="rounded-3xl relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at 50% 50%, #1a2e1a 0%, #0d1a0d 40%, #080e08 70%, #050805 100%)' }}>
+              {/* Subtle green glow behind mascot area */}
+              <div className="absolute right-4 bottom-4 w-32 h-32 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsl(145 60% 35% / 0.4), transparent 70%)' }} />
               
               <BalanceMascot isHidden={hideBalance} />
               

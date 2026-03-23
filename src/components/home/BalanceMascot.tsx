@@ -83,7 +83,7 @@ const BalanceMascot = ({ isHidden }: BalanceMascotProps) => {
           <p className="text-[10px] font-medium text-foreground whitespace-nowrap">{bubbleText}</p>
           <div
             className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 border-b border-r border-primary/20"
-            style={{ background: 'rgba(26,61,20,0.95)' }}
+            style={{ background: 'rgba(13,26,13,0.95)' }}
           />
         </div>
       </div>
