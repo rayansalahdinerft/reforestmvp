@@ -11,7 +11,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import FloatingLeaves from '@/components/impact/FloatingLeaves';
 import { useMarketData, type MarketToken } from '@/hooks/useMarketData';
 import SparklineChart from '@/components/SparklineChart';
-import BalanceMascot from '@/components/home/BalanceMascot';
+
 import TokenDetailModal from '@/components/TokenDetailModal';
 
 const Home = () => {
@@ -101,10 +101,6 @@ const Home = () => {
           <>
             {/* Balance Card */}
             <div className="rounded-3xl relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at 50% 50%, #1a2e1a 0%, #0d1a0d 40%, #080e08 70%, #050805 100%)' }}>
-              {/* Subtle green glow behind mascot area */}
-              <div className="absolute right-4 bottom-4 w-32 h-32 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsl(145 60% 35% / 0.4), transparent 70%)' }} />
-              
-              <BalanceMascot isHidden={hideBalance} />
               
               {/* Top glow line */}
               <div className="absolute top-0 left-0 right-0 h-[1px] opacity-20" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 60% 40% / 0.5), transparent)' }} />
