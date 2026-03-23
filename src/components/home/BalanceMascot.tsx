@@ -64,7 +64,7 @@ const BalanceMascot = ({ isHidden }: BalanceMascotProps) => {
               className={`w-[20px] h-[14px] rounded-[50%] transition-all duration-500 ${
                 isHidden ? '-translate-x-[1px] translate-y-0' : 'translate-x-3 -translate-y-2'
               }`}
-              style={{ background: 'linear-gradient(135deg, #1a3d14, #2d5a20)', boxShadow: '0 0 6px rgba(34,255,102,0.25), inset 0 1px 2px rgba(255,255,255,0.08)' }}
+              style={{ background: 'linear-gradient(135deg, #0d1a0d, #1a2e1a)', boxShadow: '0 0 6px rgba(34,255,102,0.15), inset 0 1px 2px rgba(255,255,255,0.05)' }}
             />
           </div>
         </div>
