@@ -107,7 +107,7 @@ const Home = () => {
               <BalanceMascot isHidden={hideBalance} />
               
               {/* Top glow line */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] opacity-30" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 85% 55% / 0.6), transparent)' }} />
+              <div className="absolute top-0 left-0 right-0 h-[1px] opacity-20" style={{ background: 'linear-gradient(90deg, transparent, hsl(145 60% 40% / 0.5), transparent)' }} />
 
               <div className="relative z-10 px-5 pt-5 pb-5">
                 <div className="flex items-center justify-between mb-2">
