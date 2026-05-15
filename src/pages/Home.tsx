@@ -73,7 +73,7 @@ const Home = () => {
       <FloatingLeaves />
       <div className="pt-[max(0.75rem,env(safe-area-inset-top))]" />
 
-      <div className="px-4 pb-24 space-y-5 relative z-10">
+      <div className="px-4 sm:px-6 pb-28 space-y-6 relative z-10 max-w-2xl mx-auto">
         {!isConnected ? (
           <div className="mt-4">
             <div
