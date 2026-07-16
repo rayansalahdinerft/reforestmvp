@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import Admin from "./pages/Admin";
+import NavTest from "./pages/NavTest";
 import AIChatbot from "./components/AIChatbot";
 import MobileBottomNav from "./components/MobileBottomNav";
 import AuthGate from "./components/AuthGate";
@@ -22,10 +23,11 @@ const AppLayout = () => {
   const { pathname } = useLocation();
   const isOnboarding = pathname === '/onboarding';
   const isAdmin = pathname === '/admin';
+  const isNavTest = pathname === '/nav-test';
 
   return (
     <>
-      <div className={(isOnboarding || isAdmin) ? '' : 'pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0'}>
+      <div className={(isOnboarding || isAdmin || isNavTest) ? '' : 'pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0'}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/home" element={<Home />} />
@@ -36,11 +38,12 @@ const AppLayout = () => {
           <Route path="/card" element={<Card />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/nav-test" element={<NavTest />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      {!isOnboarding && !isAdmin && <MobileBottomNav />}
-      {!isOnboarding && !isAdmin && <AIChatbot />}
+      {!isOnboarding && !isAdmin && !isNavTest && <MobileBottomNav />}
+      {!isOnboarding && !isAdmin && !isNavTest && <AIChatbot />}
     </>
   );
 };
