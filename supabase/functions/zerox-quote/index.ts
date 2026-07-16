@@ -211,9 +211,9 @@ async function getFallbackQuote(
     }
 
     // Calculate estimated output with proper decimal handling
-    // Apply 1% fee (0.99) and 0.3% slippage (0.997)
+    // Apply 0.8% fee (0.992) and 0.3% slippage (0.997)
     const amountNumber = parseFloat(amount) / Math.pow(10, fromDecimals)
-    const toAmountNumber = amountNumber * (fromPrice / toPrice) * 0.99 * 0.997 // 1% fee applied
+    const toAmountNumber = amountNumber * (fromPrice / toPrice) * 0.992 * 0.997 // 0.8% fee applied
     const toAmount = Math.floor(toAmountNumber * Math.pow(10, toDecimals))
 
     return new Response(

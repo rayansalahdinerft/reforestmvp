@@ -49,7 +49,7 @@ const Impact = () => {
       prefix: "$",
       decimals: 2,
       label: "Total Donated",
-      description: "40% of all fees collected",
+      description: "10% of all fees donated",
       color: "primary",
     },
     {
