@@ -3,19 +3,11 @@ import SwapCard from "@/components/SwapCard";
 import TreeCounter from "@/components/TreeCounter";
 import NewsTicker from "@/components/NewsTicker";
 import FloatingLeaves from "@/components/impact/FloatingLeaves";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useWallet } from "@/hooks/useWallet";
-import { Navigate } from "react-router-dom";
 import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const Index = () => {
-  const isMobile = useIsMobile();
-  const { isConnected } = useWallet();
-
-  // On mobile, redirect connected users to /home
-  if (isMobile && isConnected) {
-    return <Navigate to="/home" replace />;
-  }
+  useWallet();
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
