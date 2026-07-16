@@ -23,11 +23,10 @@ const AppLayout = () => {
   const { pathname } = useLocation();
   const isOnboarding = pathname === '/onboarding';
   const isAdmin = pathname === '/admin';
-  const isNavTest = pathname === '/nav-test';
 
   return (
     <>
-      <div className={(isOnboarding || isAdmin || isNavTest) ? '' : 'pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0'}>
+      <div className={(isOnboarding || isAdmin) ? '' : 'pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0'}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/home" element={<Home />} />
@@ -38,12 +37,11 @@ const AppLayout = () => {
           <Route path="/card" element={<Card />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/nav-test" element={<NavTest />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      {!isOnboarding && !isAdmin && !isNavTest && <MobileBottomNav />}
-      {!isOnboarding && !isAdmin && !isNavTest && <AIChatbot />}
+      {!isOnboarding && !isAdmin && <MobileBottomNav />}
+      {!isOnboarding && !isAdmin && <AIChatbot />}
     </>
   );
 };
