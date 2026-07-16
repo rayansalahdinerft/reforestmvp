@@ -9,7 +9,6 @@ import ImpactCard from "@/components/impact/ImpactCard";
 import CurrentLevel from "@/components/impact/CurrentLevel";
 import NftCertificate from "@/components/impact/NftCertificate";
 import ShareImpactCard from "@/components/impact/ShareImpactCard";
-import mascot from '@/assets/mascot/panda-green-3d.png';
 
 const NFT_CERTS = [
   { milestone: 1_000, label: "Forest Steel", description: "1,000 trees planted", rarity: "uncommon" as const },
@@ -87,7 +86,6 @@ const Impact = () => {
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero */}
         <div className="text-center mb-6 sm:mb-10 animate-fade-in">
-          <img src={mascot} alt="" className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 drop-shadow-xl" style={{ filter: 'drop-shadow(0 4px 12px hsl(145 85% 55% / 0.25))' }} />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
             Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Impact</span>
           </h1>

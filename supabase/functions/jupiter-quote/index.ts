@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 const JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6/quote';
-const FEE_BPS = 100; // 1% fee
+const FEE_BPS = 80; // 0.8% fee
 
 serve(async (req) => {
   // Handle CORS preflight

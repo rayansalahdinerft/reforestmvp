@@ -7,7 +7,7 @@ const corsHeaders = {
 
 // Fee recipient address (1% fee for reforestation)
 const FEE_RECIPIENT = '0x09a7d589709A4487e5C0cB3c74dEc41f8B219a0F'
-const FEE_BPS = '100' // 1% = 100 basis points
+const FEE_BPS = '80' // 0.8% = 80 basis points
 
 // Comprehensive token address to CoinGecko ID mapping
 const TOKEN_TO_COINGECKO: Record<string, string> = {
