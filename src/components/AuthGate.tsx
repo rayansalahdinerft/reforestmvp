@@ -1,17 +1,10 @@
-import { useEffect, useState } from 'react';
 import { useWallet } from '@/hooks/useWallet';
 import { Loader2 } from 'lucide-react';
 
 const AuthGate = ({ children }: { children: React.ReactNode }) => {
   const { ready, authenticated, openConnect } = useWallet();
-  const [initTimedOut, setInitTimedOut] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setInitTimedOut(true), 10000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!ready && !initTimedOut) {
+  if (!ready) {
     return (
       <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center gap-4 px-6 text-center">
         <img src="/icon.png" alt="ReforestWallet" className="w-16 h-16 rounded-2xl" />
