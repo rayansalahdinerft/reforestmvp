@@ -20,7 +20,7 @@ const STARKNET_STRK = '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f
 
 // Fee recipient for reforestation
 const REFOREST_FEE_RECIPIENT = '0x127677CbD1A56168CD47C5A22B584Bc9Fe8d7669';
-const FEE_BPS = 100; // 1% = 100 basis points
+const FEE_BPS = 80; // 0.8% = 80 basis points
 
 export const useStarknetSwap = () => {
   const [status, setStatus] = useState<StarknetSwapStatus>('idle');

@@ -22,8 +22,8 @@ export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 // Impact address (receives 1% of all swaps)
 export const FEE_RECIPIENT = '0x0B9CEd290B0B48dAC1fA3DA88d219adFe6a998B2' as const;
 
-// Fee in basis points (100 = 1%)
-export const FEE_BPS = 100;
+// Fee in basis points (80 = 0.8%)
+export const FEE_BPS = 80;
 
 // ABI for the ReforestFeeSplitter contract
 // Main function: swap() - takes 1% fee, forwards rest to 0x router with swap calldata

@@ -15,8 +15,8 @@ import { supabase } from '@/integrations/supabase/client';
 import SwapSuccessConfetti from './SwapSuccessConfetti';
 import { addSwapToHistory } from './SwapHistory';
 
-const FEE_PERCENT = 0.01;
-const REFORESTATION_PERCENT = 0.40;
+const FEE_PERCENT = 0.008; // 0.8% total swap fee
+const REFORESTATION_PERCENT = 0.10; // 10% of the 0.8% fee is donated (= 0.08% of tx)
 const BUY_REFORESTATION_PERCENT = 0.002;
 const CHAIN_ID = 1;
 
@@ -268,8 +268,8 @@ const SwapCard = () => {
         ? parseFloat(sellAmount || '0')
         : parseFloat(actualSellAmount) * (sellPrice || getPriceFallback(sellToken?.symbol));
       
-      const totalFee = swapUsdValue * FEE_PERCENT; // 1% of transaction
-      const donationAmount = totalFee * REFORESTATION_PERCENT; // 40% of fee = 0.4% of transaction
+      const totalFee = swapUsdValue * FEE_PERCENT; // 0.8% of transaction
+      const donationAmount = totalFee * REFORESTATION_PERCENT; // 10% of fee = 0.08% of transaction
 
       console.log('[REFOREST] Swap success - calculating donation:', {
         inputMode,
@@ -373,7 +373,7 @@ const SwapCard = () => {
   const feeAmount = sellUsdValue ? parseFloat(sellUsdValue) * FEE_PERCENT : 0;
   const reforestationAmount = mode === 'buy'
     ? (buyFiatAmount ? parseFloat(buyFiatAmount) * BUY_REFORESTATION_PERCENT : 0)
-    : feeAmount * 0.40; // 40% of fee goes to NGO
+    : feeAmount * REFORESTATION_PERCENT; // 10% of fee goes to NGO
   const treesPlanted = reforestationAmount / 2.5; // $2.50 per tree
 
   // Buy mode: estimated crypto amount

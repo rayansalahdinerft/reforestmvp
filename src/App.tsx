@@ -9,7 +9,6 @@ import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Impact from "./pages/Impact";
 import Market from "./pages/Market";
-import Leaderboard from "./pages/Leaderboard";
 import Card from "./pages/Card";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
@@ -34,7 +33,6 @@ const AppLayout = () => {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/impact" element={<Impact />} />
           <Route path="/market" element={<Market />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/card" element={<Card />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/settings" element={<Settings />} />
