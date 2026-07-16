@@ -14,7 +14,6 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import Admin from "./pages/Admin";
-import NavTest from "./pages/NavTest";
 import AIChatbot from "./components/AIChatbot";
 import MobileBottomNav from "./components/MobileBottomNav";
 import AuthGate from "./components/AuthGate";
@@ -53,17 +52,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/nav-test" element={<NavTest />} />
-            <Route
-              path="*"
-              element={
-                <AuthGate>
-                  <AppLayout />
-                </AuthGate>
-              }
-            />
-          </Routes>
+          <AuthGate>
+            <AppLayout />
+          </AuthGate>
         </BrowserRouter>
       </TooltipProvider>
     </ActiveWalletProvider>
