@@ -53,9 +53,17 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthGate>
-            <AppLayout />
-          </AuthGate>
+          <Routes>
+            <Route path="/nav-test" element={<NavTest />} />
+            <Route
+              path="*"
+              element={
+                <AuthGate>
+                  <AppLayout />
+                </AuthGate>
+              }
+            />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </ActiveWalletProvider>
